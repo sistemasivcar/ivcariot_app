@@ -82,6 +82,7 @@
 
           <el-table-column prop="name" label="Name"></el-table-column>
 
+
           <el-table-column prop="dId" label="Device Id"></el-table-column>
 
           <el-table-column
