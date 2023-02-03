@@ -12,11 +12,13 @@
 <script>
 import IotButton from '../components/Widgets/IotButton.vue'
 import IotIndicator from '../components/Widgets/IotIndicator.vue'
+import RtnumberChart from '../components/Widgets/RtnumberChart.vue'
 
 export default {
     components:{
         IotIndicator,
-        IotButton
+        IotButton,
+        RtnumberChart
     }
     
 }
