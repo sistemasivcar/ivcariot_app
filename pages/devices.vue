@@ -92,8 +92,12 @@
           <el-table-column label="Actions">
             <div slot-scope="{ row, $index }">
 
+                <el-tooltip content="Saver Status Indicator" style="margin-right:10px">
+                <i class="fas fa-database " :class="{'text-success' : row.saverRule, 'text-dark' : !row.saverRule}" ></i>
+              </el-tooltip>
+
               <el-tooltip
-                content="DB Save"
+                content="DB Saver"
                 effect="light"
                 :open-delay="300"
                 placement="top"
@@ -130,6 +134,7 @@
         </el-table>
       </card>
     </div>
+    <json :value="devices"></json>
   </div>
 </template>
 
