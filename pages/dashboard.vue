@@ -5,6 +5,7 @@
         </h2>
         <iot-indicator></iot-indicator>
         <iot-button></iot-button>
+
     </div>
 </template>
 

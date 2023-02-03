@@ -25,7 +25,6 @@ export default {
       value: false,
       config: {
         userId: "userid",
-        dId: "deviceid",
         selectedDevice: {
           name: "Home",
           dId: "8888",
@@ -45,6 +44,7 @@ export default {
   methods:{
     porcessRecivedData(data){
         this.value=data.value;
+        console.log('recived')
     }
   },
 
@@ -59,6 +59,11 @@ export default {
     const topic = `${this.config.userId}/${this.config.selectedDevice.dId}/${this.config.selectedDevice.variable}/sdata`
     this.$nuxt.$on(topic, this.porcessRecivedData);
   
-  }
+  },
+  beforeDestroy(){
+    const topic = `${this.config.userId}/${this.config.selectedDevice.dId}/${this.config.selectedDevice.variable}/sdata`
+    this.$nuxt.$off(topic)
+  },
+  
 };
 </script>
