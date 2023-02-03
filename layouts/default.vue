@@ -51,6 +51,8 @@
       </template>
     </side-bar>
 
+    <sidebar-share :background-color.sync="sidebarBackground"></sidebar-share>
+
     <div class="main-panel" :data="sidebarBackground">
       <dashboard-navbar></dashboard-navbar>
       <router-view name="header"></router-view>
@@ -90,6 +92,7 @@ import DashboardNavbar from "@/components/Layout/DashboardNavbar.vue";
 import ContentFooter from "@/components/Layout/ContentFooter.vue";
 import DashboardContent from "@/components/Layout/Content.vue";
 import { SlideYDownTransition, ZoomCenterTransition } from "vue2-transitions";
+import SideBar from '../components/SidebarPlugin/SideBar.vue';
 
 export default {
   components: {
@@ -98,11 +101,12 @@ export default {
     DashboardContent,
     SlideYDownTransition,
     ZoomCenterTransition,
-    SidebarShare
+    SidebarShare,
+    SideBar
   },
   data() {
     return {
-      sidebarBackground: "blue" //vue|blue|orange|green|red|primary
+      sidebarBackground: "primary" //vue|blue|orange|green|red|primary
     };
   },
   computed: {
