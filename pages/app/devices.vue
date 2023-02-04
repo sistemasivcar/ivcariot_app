@@ -149,7 +149,7 @@ export default {
 <script>
 import { Table, TableColumn } from "element-ui";
 import { Select, Option } from "element-ui";
-import BaseSwitch from '../components/BaseSwitch.vue';
+import BaseSwitch from '../../components/BaseSwitch.vue';
 export default {
   components: {
     [Table.name]: Table,

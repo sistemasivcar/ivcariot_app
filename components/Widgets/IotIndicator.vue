@@ -1,5 +1,5 @@
 <template>
-  <card :class="[config.column]">
+  <card >
     <!-- header-card -->
     <template slot="header">
       <h4 class="card-title">
@@ -19,26 +19,10 @@
 
 <script>
 export default {
-  //props:['config'],
+  props:['config'],
   data() {
     return {
       value: false,
-      config: {
-        userId: "userid",
-        selectedDevice: {
-          name: "Home",
-          dId: "8888",
-          templateName: "Power Sensor",
-          templateId: "984237562348756ldksjfh",
-          saverRule: false
-        },
-        variableFullName: "Pump",
-        variable: "uniquevariablename",
-        icon: "fa-sun",
-        column: "col-6",
-        widget: "indicator",
-        color:'text-primary'
-      }
     };
   },
   methods:{
