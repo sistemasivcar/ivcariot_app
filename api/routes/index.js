@@ -1,7 +1,10 @@
 const devices = require('./devices');
+const users = require('./users');
 
 const routes = {
-    devices
+    devices,
+    users,
+    
 }
 
 module.exports = routes;

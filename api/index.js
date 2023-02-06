@@ -17,6 +17,7 @@ app.use(cors());
 
 // endpoints
 require('./startup/routes.js')(app);
+
 // config db
 require('./startup/db.js')()
 // start the server for requests
