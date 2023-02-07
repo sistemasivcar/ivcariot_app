@@ -10,6 +10,7 @@
         <div class="row">
           <div class="col-4">
             <base-input
+            v-model="deviceName"
               label="Device Name"
               type="text"
               placeholder="Ex: Home, Office..."
@@ -19,6 +20,7 @@
 
           <div class="col-4">
             <base-input
+            v-model="deviceId"
               label="Device Id"
               type="text"
               placeholder="Ex: 7777-8888"
@@ -67,10 +69,11 @@
     </div>
 
     <!-- DEVICES TABLE -->
-    <div class="row">
+    <LoadingMainPanel v-if="isLoading"></LoadingMainPanel>
+    <div v-else-if="devices.length > 0" class="row">
       <card>
         <template slot="header">
-          <h4 class="card-title">Devices</h4>
+          <h4 class="card-title">My Devices</h4>
         </template>
 
         <el-table :data="devices">
@@ -81,7 +84,6 @@
           </el-table-column>
 
           <el-table-column prop="name" label="Name"></el-table-column>
-
 
           <el-table-column prop="dId" label="Device Id"></el-table-column>
 
@@ -135,13 +137,13 @@
         </el-table>
       </card>
     </div>
-    <json :value="devices"></json>
+    <json :value="$store.getters['devices/getDevices']"></json>
   </div>
 </template>
 
 <script>
 export default {
-  components: { BaseSwitch },};
+  components: { BaseSwitch, LoadingPanel },};
 </script>
 
 <style></style>
@@ -150,7 +152,9 @@ export default {
 import { Table, TableColumn } from "element-ui";
 import { Select, Option } from "element-ui";
 import BaseSwitch from '../../components/BaseSwitch.vue';
+import LoadingPanel from '../../components/LoadingPanel.vue';
 export default {
+  middleware:'authtenticated',
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
@@ -159,38 +163,71 @@ export default {
   },
   data() {
     return {
-      devices: [
-        {
-          name: "Home",
-          dId: "8888",
-          templateName: "Power Sensor",
-          templateId: "984237562348756ldksjfh",
-          saverRule:false
-        },
-        {
-          name: "Office",
-          dId: "1111",
-          templateName: "Power Sensor",
-          templateId: "984237562348756ldksjfh",
-          saverRule:true
-        },
-        {
-          name: "Farm",
-          dId: "99999",
-          templateName: "Power Sensor",
-          templateId: "984237562348756ldksjfh",
-          saverRule:false
-        }
-      ]
+      deviceName:null,
+      deviceId:null,
+      templateId:null,
+      isLoading:false
+
     };
   },
+  computed:{
+    devices(){
+      return this.$store.getters['devices/getDevices'];
+    }
+  },
   methods: {
-    deleteDevice(device) {
-      alert("DELETING " + device.name);
+    async getDevices(){
+      try {
+      await this.$store.dispatch('devices/fetchDevices')
+
+    } catch (e) {
+      this.$notify({
+          type: "danger",
+          icon:'tim-icons icon-alert-circle-exc',
+          message:e
+      });
+    }
+      
+    },
+
+    async newDevice(){
+
+      try {
+        await this.$store.dispatch('devices/newDevice')
+      } catch (e) {
+        this.$notify({
+          type: "danger",
+          icon:'tim-icons icon-alert-circle-exc',
+          message:e
+        })
+      }
+    },
+    async deleteDevice(device) {
+      try {
+        await this.$store.dispatch('devices/deleteDevice', device);
+          this.$notify({
+          type: "success",
+          icon: "tim-icons icon-check-2",
+          message: ` "${device.name.toUpperCase()}" deleted!`
+        });
+        
+      } catch (e) {
+        this.$notify({
+          type: "danger",
+          icon:'tim-icons icon-alert-circle-exc',
+          message:e
+      });
+      }
     },
     updateSaverRuleStatus(index){
         this.devices[index].saverRule=!this.devices[index].saverRule;
     }
+  },
+  mounted(){
+    this.isLoading=true;
+    this.getDevices();
+    this.isLoading=false;
   }
+  
 };
 </script>

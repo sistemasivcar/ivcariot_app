@@ -2,8 +2,8 @@ const getters = {
     getUserName(state) {
         return state.auth.userData.name;
     },
-    getName(state) {
-        return "gassston";
+    getToken(state) {
+        return state.auth.token;
     },
 
     isAuth(state) {

@@ -82,12 +82,11 @@ router.put('/', checAuth, asyncMiddleware( (req, res) => {
 
 router.delete('/', checAuth, asyncMiddleware(async (req, res) => {
 
-    const userId = req.userData._id;
+
     const dId = req.query.dId;
+    const result = await DeviceModel.deleteOne({ dId: dId });
 
-    const device = await DeviceModel.deleteOne({ userId: userId, dId: dId });
-
-    if (device.n == 0) {
+    if (result.n == 0) {
         const toSend = {
             status: "error",
             data: "Device not found"
@@ -98,7 +97,7 @@ router.delete('/', checAuth, asyncMiddleware(async (req, res) => {
 
     const toSend = {
         status: "success",
-        data: device
+        data: result
     };
     console.log('success')
     return res.status(200).json(toSend);

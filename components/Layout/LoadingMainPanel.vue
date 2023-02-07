@@ -1,5 +1,7 @@
 <template>
-  <div class="row" v-loading="true" id="loading"></div>
+  <div class="row align-justify" v-loading="true" id="loading">
+  </div>
+  
 </template>
 <script>
 import Vue from 'vue';
