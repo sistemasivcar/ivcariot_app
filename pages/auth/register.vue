@@ -15,6 +15,7 @@
             addon-left-icon="tim-icons icon-badge"
           >
           </base-input>
+          <p v-if="!nameValidity" class="text-danger">invalid name</p>
 
           <base-input
             name="email"
@@ -23,6 +24,7 @@
             addon-left-icon="tim-icons icon-email-85"
           >
           </base-input>
+          <p v-if="!emailValidity" class="text-danger">invalid email address</p>
 
           <base-input
             name="password"
@@ -32,6 +34,7 @@
             addon-left-icon="tim-icons icon-lock-circle"
           >
           </base-input>
+          <p v-if="!passwordValidity" class="text-danger">invalid password</p>
         </div>
 
         <div slot="footer">
@@ -64,6 +67,7 @@
 </template>
 <script>
 export default {
+  middleware: "notAuthenticated",
   layout: "auth",
   data() {
     return {
@@ -71,10 +75,80 @@ export default {
         name: "",
         email: "",
         password: ""
-      }
+      },
+      isValidForm: false,
+      nameValidity: true,
+      emailValidity: true,
+      passwordValidity: true
     };
   },
-  methods: {}
+  methods: {
+    clearInputs() {
+      this.name = "";
+      this.email = "";
+      this.password = "";
+    },
+
+    validateForm() {
+      if (!this.user.name || this.user.name.length < 3) {
+        this.isValidForm = false;
+        this.nameValidity = false;
+      } else {
+        this.nameValidity = true;
+        this.isValidForm = true;
+      }
+      if (!this.user.email) {
+        this.isValidForm = false;
+        this.emailValidity = false;
+      } else {
+        this.emailValidity = true;
+        this.isValidForm = true;
+      }
+      if (!this.user.password || this.user.password.length < 3) {
+        this.isValidForm = false;
+        this.passwordValidity = false;
+      } else {
+        this.passwordValidity = true;
+        this.isValidForm = true;
+      }
+    },
+    register() {
+      this.validateForm();
+      console.log(this.nameValidity, this.emailValidity, this.passwordValidity);
+      if (!this.isValidForm) return;
+
+      this.$axios
+        .post("/user/register", this.user)
+        .then(res => {
+          if (res.data.status === "success") {
+            this.$notify({
+              type: "success",
+              icon: "tim-icons icon-check-2",
+              message: "Success!, now you can login"
+            });
+
+            this.$router.push("/auth/login");
+
+            this.clearInputs();
+          }
+        })
+        .catch(err => {
+          if (err.response.data.err.errors.email.kind == "unique") {
+            this.$notify({
+              type: "danger",
+              icon: "tim-icons icon-alert-circle-exc",
+              message: "Ups, the email already exists"
+            });
+          } else {
+            this.$notify({
+              type: "danger",
+              icon: "tim-icons icon-alert-circle-exc",
+              message: "Ups, something was wrong. Try later"
+            });
+          }
+        });
+    }
+  }
 };
 </script>
 <style>

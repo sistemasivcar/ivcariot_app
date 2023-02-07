@@ -32,7 +32,7 @@
             type="primary"
             class="mb-3"
             size="lg"
-            @click="login"
+            @click="login()"
             block
           >
             Login
@@ -57,6 +57,7 @@
 <script>
 const Cookie = process.client ? require("js-cookie") : undefined;
 export default {
+  middleware:'notAuthenticated',
   name: "login-page",
   layout: "auth",
   data() {
@@ -66,6 +67,36 @@ export default {
         password: ""
       }
     };
+  },
+  methods: {
+    async login() {
+      try {
+
+        await this.$store.dispatch('auth/login', this.user);
+        this.$notify({
+          type: "success",
+          icon: "tim-icons icon-check-2",
+          message: "Welcome back, " + this.$store.getters['auth/getUserName'] + "!"
+        });
+        $nuxt.$router.push("/app/dashboard");
+
+      } catch (error) {
+        this.$notify({
+          type: "danger",
+          icon:'tim-icons icon-alert-circle-exc',
+          message:error
+        });
+      }
+    },
+
+    // isAuthtenticated(){
+    //   if(this.$store.getters.isAuth){
+    //     this.$router.push("/app/dashboard");
+    //   }
+  },
+  
+  mounted(){
+    this.$store.dispatch('auth/autologin');
   }
 };
 </script>

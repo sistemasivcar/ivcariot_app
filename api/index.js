@@ -21,7 +21,7 @@ require('./startup/routes.js')(app);
 // config db
 require('./startup/db.js')()
 // start the server for requests
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 app.listen(port, () => console.log(`\nListening on port ${port}...`.bgGreen));
 
 

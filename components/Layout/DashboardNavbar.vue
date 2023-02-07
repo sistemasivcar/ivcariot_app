@@ -69,7 +69,7 @@
         <template
           slot="title"
         >
-          <div class="photo"><img src="img/mike.jpg" /></div>
+          <div class="photo"><img src="/img/mike.jpg" /></div>
           <b class="caret d-none d-lg-block d-xl-block"></b>
           <p class="d-lg-none">Log out</p>
         </template>
@@ -81,8 +81,13 @@
         </li>
         <div class="dropdown-divider"></div>
         <li class="nav-link">
-          <a href="#" class="nav-item dropdown-item">Log out</a>
+          <a @click="logout()" class="nav-item dropdown-item">Log out</a>
         </li>
+
+        <li class="nav-link">
+          <base-button @click="logout()" class="nav-item dropdown-item">Log out</base-button>
+        </li>
+
       </base-dropdown>
     </ul>
   </base-nav>
@@ -119,6 +124,10 @@ export default {
     };
   },
   methods: {
+    logout(){
+      console.log('logout')
+      this.$store.dispatch('logout');
+    },
     capitalizeFirstLetter(string) {
       if (!string || typeof string !== 'string') {
         return ''
