@@ -24,7 +24,7 @@ require('./startup/db.js')()
 
 
 // start the server for requests
-const port = process.env.NODE_PORT || 3003;
+const port = process.env.API_PORT || 3003;
 app.listen(port, () => console.log(`\nListening on port ${port}...`.bgGreen));
 
 

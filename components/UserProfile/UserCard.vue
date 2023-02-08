@@ -6,33 +6,141 @@
       <div class="block block-two"></div>
       <div class="block block-three"></div>
       <div class="block block-four"></div>
-      <a href="javascript:void(0)">
-        <img class="avatar" src="img/emilyz.jpg" alt="..." />
-        <h5 class="title">Mike Andrew</h5>
-      </a>
-      <p class="description">Ceo/Co-Founder</p>
     </div>
-    <p></p>
-    <div class="card-description">
-      Do not be scared of the truth because we need to restart the human
-      foundation in truth And I love you like Kanye loves Kanye I love Rick
-      Owens’ bed design but the back is...
-    </div>
+     <h5 slot="header" class="title">Edit Profile</h5>
+        <form @submit.prevent="updateProfile">
+      <div class="row">
+        <div class="col-md-5">
+          <base-input
+            type="text"
+            label="Company"
+            :disabled="true"
+            placeholder="Company"
+            v-model="user.company"
+          >
+          </base-input>
+        </div>
+        <div class="col-md-3">
+          <base-input
+            type="text"
+            label="Username"
+            placeholder="Username"
+            v-model="user.username"
+          >
+          </base-input>
+        </div>
+        <div class="col-md-4">
+          <base-input
+            type="email"
+            label="Email address"
+            placeholder="mike@email.com"
+            v-model="user.email"
+          >
+          </base-input>
+        </div>
+      </div>
 
-    <div slot="footer" class="button-container">
-      <base-button class="btn-facebook" icon round>
-        <i class="fab fa-facebook"></i>
+      <div class="row">
+        <div class="col-md-6">
+          <base-input
+            type="text"
+            label="First Name"
+            placeholder="First Name"
+            v-model="user.firstName"
+          >
+          </base-input>
+        </div>
+        <div class="col-md-6">
+          <base-input
+            type="text"
+            label="Last Name"
+            placeholder="Last Name"
+            v-model="user.lastName"
+          >
+          </base-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <base-input
+            type="text"
+            label="Address"
+            placeholder="Home Address"
+            v-model="user.address"
+          >
+          </base-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <base-input
+            type="text"
+            label="City"
+            placeholder="City"
+            v-model="user.city"
+          >
+          </base-input>
+        </div>
+        <div class="col-md-4">
+          <base-input
+            type="text"
+            label="Country"
+            placeholder="Country"
+            v-model="user.country"
+          >
+          </base-input>
+        </div>
+        <div class="col-md-4">
+          <base-input
+            label="Postal Code"
+            placeholder="ZIP Code"
+            v-model="user.postalCode"
+          >
+          </base-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <base-input label="About Me">
+            <textarea
+              class="form-control"
+              placeholder="ZIP Code"
+              v-model="user.aboutMe"
+            >
+            </textarea>
+          </base-input>
+        </div>
+      </div>
+
+      <base-button native-type="submit" type="info" class="btn-fill">
+        Save
       </base-button>
-      <base-button class="btn-twitter" icon round>
-        <i class="fab fa-twitter"></i>
-      </base-button>
-      <base-button class="btn-google" icon round>
-        <i class="fab fa-google-plus"></i>
-      </base-button>
-    </div>
+    </form>
+    
+
   </card>
 </template>
 <script>
-export default {};
+export default {
+  data(){
+    return {
+      user: {
+        company: 'Creative Code Inc.',
+        username: 'michael23',
+        email: '',
+        firstName: 'Mike',
+        lastName: 'Andrew',
+        address: 'Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09',
+        city: 'New York',
+        country: 'USA',
+        postalCode: '',
+        aboutMe: `Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo.`
+      }
+    }
+  }
+};
 </script>
 <style></style>

@@ -74,7 +74,7 @@
           <p class="d-lg-none">Log out</p>
         </template>
         <li class="nav-link">
-          <a href="#" class="nav-item dropdown-item">Profile</a>
+          <nuxt-link class="nav-item dropdown-item" to="/app/profile">Profile</nuxt-link>
         </li>
         <li class="nav-link">
           <a href="#" class="nav-item dropdown-item">Settings</a>

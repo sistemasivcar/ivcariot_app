@@ -37,7 +37,7 @@
               value="1"
               v-model="templateSelectedIndex"
               placeholder="Select Template"
-              class="select-primary"
+              class="select-info"
               style="width:100%"
             >
               <el-option

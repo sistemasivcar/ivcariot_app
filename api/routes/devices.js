@@ -134,3 +134,15 @@ async function selectDevice(userId, dId) {
         return false;
     }
 }
+
+/* 
+SAVER RULES FUNCTIONS
+*/
+
+// get a rule
+
+// create a rule 
+
+//update a rule
+
+// delete a rule
