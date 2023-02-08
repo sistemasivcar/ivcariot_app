@@ -8,7 +8,7 @@ const axios = require('axios');
 const colors = require('colors');
 
 // regla de grabar en Base de Datos
-router.post('/saver-webhook', async (req, res) => {
+router.get('/saver-webhook', async (req, res) => {
 
     const data = req.body;
     console.log(data);

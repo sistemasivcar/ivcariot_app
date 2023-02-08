@@ -22,7 +22,7 @@ async function listResources() {
 
 
     try {
-        const url = "http://localhost:8085/api/v4/resources/";
+        const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/resources/`;
         const res = await axios.get(url, auth);
         const size = res.data.data.length
 
@@ -59,7 +59,7 @@ async function listResources() {
 
 
                 function printWarning() {
-                    console.log("DELETE ALL WEBHOOK EMQX RESOURCES AND RESTART NODE - youremqxdomain:8085/#/resources".red);
+                    console.log("DELETE ALL WEBHOOK EMQX RESOURCES AND RESTART NODE".red);
                     setTimeout(() => {
                         printWarning();
                     }, 1000);
@@ -81,12 +81,12 @@ async function listResources() {
 async function createResources() {
 
     try {
-        const url = "http://localhost:8085/api/v4/resources";
+        const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/resources`;
 
         const dataSaverWebhook = {
             "type": "web_hook",
             "config": {
-                url: `http://localhost:${process.env.API_PORT}/api/saver-webhook`,
+                url: `http://localhost:${process.env.API_PORT}/api/webhook/saver-webhook`,
                 headers: {
                     token: process.env.EMQX_MANAGMENT_TOKEN
                 },
@@ -98,7 +98,7 @@ async function createResources() {
         const dataAlarmWebhook = {
             "type": "web_hook",
             "config": {
-                url: `http://localhost:${process.env.API_PORT}/api/alarm-webhook`,
+                url: `http://localhost:${process.env.API_PORT}/api/webhook/alarm-webhook`,
                 headers: {
                     token: process.env.EMQX_MANAGMENT_TOKEN
                 },

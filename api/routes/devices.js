@@ -54,29 +54,34 @@ router.post('/', checAuth, asyncMiddleware(async (req, res) => {
 
     const device = await DeviceModel.create(newDevice);
 
+    await selectDevice(userId, newDevice.dId);
+    await createSaverRule(userId,newDevice.dId,true)
+   
     const toSend = {
-        status: "success"
+        status: "success",
+        data: device
     }
-
-    selectDevice(userId, newDevice.dId);
+        
     return res.status(200).json(toSend);
-
+    
 }));
 
-router.put('/', checAuth, asyncMiddleware( (req, res) => {
+router.put('/', checAuth, asyncMiddleware( async(req, res) => {
 
     const userId = req.userData._id;
     const dId = req.body.dId;
     
     console.log(dId);
-
-    if ( selectDevice(userId, dId)) {
+    const result = await selectDevice(userId, dId);
+    
+    if (result) {
         const toSend = {
             status: "success"
         };
 
         return res.json(toSend);
     } 
+    
     const toSend = {
         status: "error"
     }
@@ -128,7 +133,7 @@ async function selectDevice(userId, dId) {
         );
 
         await DeviceModel.updateOne(
-            { dId: dId, userId: userId },
+            { dId: dId},
             { selected: true }
         );
 
@@ -145,16 +150,21 @@ async function selectDevice(userId, dId) {
 SAVER RULES FUNCTIONS
 */
 
-setTimeout(() => {
-    createSaverRule("121212", "11111", false);
-}, 2000);
-
-// get a rule
+// get saver rules for a user
+async function getSaverRules(userId) {
+    try {
+        const rules = await SaverRuleModel.find({ userId: userId });
+        return rules;
+    } catch (e) {
+        console.log("ERROR GETTING RULES");
+        return false;
+    }
+}
 
 // create a rule 
 async function createSaverRule(userId, dId, status) {
     try {
-        const url = "http://localhost:8085/api/v4/rules";
+        const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules`
 
         const topic = userId + "/" + dId + "/+/sdata";
 
@@ -174,18 +184,72 @@ async function createSaverRule(userId, dId, status) {
             description: "SAVER-RULE",
             enabled: status
         };
-
-        //save rule in emqx - grabamos la regla en emqx
         const res = await axios.post(url, newRule, auth);
+        //save rule in emqx - grabamos la regla en emqx
 
         if (res.status === 200 && res.data.data) {
-            console.log(res.data.data);
+            
 
+            await SaverRuleModel.create({
+                userId: userId,
+                dId: dId,
+                emqxRuleId: res.data.data.id,
+                status: status
+            });
+
+            return true;
+
+        } else {
+            return false;
         }
-    } catch (e) {
-        
-    } 
+
+    } catch (error) {
+        console.log("Error creating saver rule")
+        console.log(error);
+        return false;
+    }
 }
+
 //update a rule
 
+async function updateSaverRule(ruleId, status) {
+try {
+        const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${ruleId}`;
+        const newRule = {
+            enabled:status
+        };
+    
+        const res = await axios.put(url, newRule, auth);
+        if (res.status === 200 && res.data.data) {
+            await SaverRuleModel.updateOne({ emqxRuleId: ruleId }, { status: status });
+            console.log("Saver rule updated success".green);
+            return {
+                status: 'success',
+                action: 'updated'
+            };
+        }
+} catch (e) {
+    console.log('error update rule')
+    return false;
+}
+}
+
 // delete a rule
+
+async function deleteSaverRule(dId) {
+    
+try {
+        const mongoRule = await SaverRuleModel.findOne({ dId: dId });
+        const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${mongoRule.emqxRuleId}`
+        
+        await axios.delete(url, auth);
+        await SaverRuleModel.deleteOne({ dId: dId });
+    
+        return true;
+} catch (e) {
+    console.log("error deleting saver rule")
+    return false;
+    
+}
+    
+}

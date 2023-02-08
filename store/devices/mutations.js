@@ -7,8 +7,6 @@ export default {
         console.log(index);
         state.devices.splice(index, 1);
         
-    },
-    pushDevice(state,device) {
-        state.devices.push(device)
     }
+
 }

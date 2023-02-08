@@ -32,12 +32,8 @@ const actions = {
                 }
             };
 
-            const response = await this.$axios.post('/device', toSend,axiosHeader);
-            if (response.data.status == 'success') {
-
-                const newDevice = response.data.data;
-                context.commit('pushDevice', newDevice);
-            }
+            const response = await this.$axios.post('/device', toSend, axiosHeader);
+            //get devices on page
         } catch (e) {
             const error = new Error('Falied to create device')
             throw error;

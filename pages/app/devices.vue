@@ -155,9 +155,9 @@
           <base-button type="info" @click="deleteDevice(deviceToDelete)">YES</base-button>
         </template>
       </modal>
-
+<!-- 
     <json :value="$store.getters['devices/getDevices']"></json>
-    <json :value="templates"></json>
+    <json :value="templates"></json> -->
   </div>
 </template>
 
@@ -269,6 +269,7 @@ export default {
           templateName: templateSelected.name
         };
         await this.$store.dispatch("devices/newDevice", newDevice);
+        this.getDevices();
         this.$notify({
           type: "success",
           icon: "tim-icons icon-check-2",
