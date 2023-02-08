@@ -10,7 +10,7 @@
         <div class="row">
           <div class="col-4">
             <base-input
-            v-model="deviceName"
+              v-model="deviceName"
               label="Device Name"
               type="text"
               placeholder="Ex: Home, Office..."
@@ -20,7 +20,7 @@
 
           <div class="col-4">
             <base-input
-            v-model="deviceId"
+              v-model="deviceId"
               label="Device Id"
               type="text"
               placeholder="Ex: 7777-8888"
@@ -35,26 +35,17 @@
 
             <el-select
               value="1"
+              v-model="templateSelectedIndex"
               placeholder="Select Template"
               class="select-primary"
               style="width:100%"
             >
               <el-option
+                v-for="(template, index) in templates"
+                :key="template._id"
                 class="text-dark"
-                value="Template 1"
-                label="Template 1"
-              ></el-option>
-
-              <el-option
-                class="text-dark"
-                value="Template 2"
-                label="Template 2"
-              ></el-option>
-
-              <el-option
-                class="text-dark"
-                value="Template 3"
-                label="Template 3"
+                :value="index"
+                :label="template.name"
               ></el-option>
             </el-select>
           </div>
@@ -62,7 +53,13 @@
 
         <div class="row pull-right">
           <div class="col-12">
-            <base-button type="primary" class="mb-3" size="lg">Add</base-button>
+            <base-button
+              type="primary"
+              @click="newDevice()"
+              class="mb-3"
+              size="lg"
+              >Add</base-button
+            >
           </div>
         </div>
       </card>
@@ -94,9 +91,17 @@
 
           <el-table-column label="Actions">
             <div slot-scope="{ row, $index }">
-
-                <el-tooltip content="Saver Status Indicator" style="margin-right:10px">
-                <i class="fas fa-database " :class="{'text-success' : row.saverRule, 'text-dark' : !row.saverRule}" ></i>
+              <el-tooltip
+                content="Saver Status Indicator"
+                style="margin-right:10px"
+              >
+                <i
+                  class="fas fa-database "
+                  :class="{
+                    'text-success': row.saverRule,
+                    'text-dark': !row.saverRule
+                  }"
+                ></i>
               </el-tooltip>
 
               <el-tooltip
@@ -106,7 +111,7 @@
                 placement="top"
               >
                 <base-switch
-                @click="updateSaverRuleStatus($index)"
+                  @click="updateSaverRuleStatus($index)"
                   type="primary"
                   style="background:rgba(253,93,147,0.4)"
                   :value="row.saverRule"
@@ -115,7 +120,7 @@
                 >
                 </base-switch>
               </el-tooltip>
-             
+
               <el-tooltip
                 content="Delete"
                 effect="light"
@@ -138,12 +143,14 @@
       </card>
     </div>
     <json :value="$store.getters['devices/getDevices']"></json>
+    <json :value="templates"></json>
   </div>
 </template>
 
 <script>
 export default {
-  components: { BaseSwitch, LoadingPanel },};
+  components: { BaseSwitch, LoadingPanel }
+};
 </script>
 
 <style></style>
@@ -151,10 +158,10 @@ export default {
 <script>
 import { Table, TableColumn } from "element-ui";
 import { Select, Option } from "element-ui";
-import BaseSwitch from '../../components/BaseSwitch.vue';
-import LoadingPanel from '../../components/LoadingPanel.vue';
+import BaseSwitch from "../../components/BaseSwitch.vue";
+import LoadingPanel from "../../components/LoadingPanel.vue";
 export default {
-  middleware:'authtenticated',
+  middleware: "authtenticated",
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
@@ -163,71 +170,128 @@ export default {
   },
   data() {
     return {
-      deviceName:null,
-      deviceId:null,
-      templateId:null,
-      isLoading:false
-
+      deviceName: null,
+      deviceId: null,
+      templateSelectedIndex: null,
+      templates: [],
+      isLoading: false
     };
   },
-  computed:{
-    devices(){
-      return this.$store.getters['devices/getDevices'];
+  computed: {
+    devices() {
+      return this.$store.getters["devices/getDevices"];
     }
   },
   methods: {
-    async getDevices(){
+    async getDevices() {
       try {
-      await this.$store.dispatch('devices/fetchDevices')
-
-    } catch (e) {
-      this.$notify({
-          type: "danger",
-          icon:'tim-icons icon-alert-circle-exc',
-          message:e
-      });
-    }
-      
-    },
-
-    async newDevice(){
-
-      try {
-        await this.$store.dispatch('devices/newDevice')
+        await this.$store.dispatch("devices/fetchDevices");
       } catch (e) {
         this.$notify({
           type: "danger",
-          icon:'tim-icons icon-alert-circle-exc',
-          message:e
-        })
+          icon: "tim-icons icon-alert-circle-exc",
+          message: e
+        });
+      }
+    },
+
+    async getTemplates() {
+      try {
+        const token = this.$store.state.auth.auth.token;
+        const axiosHeaders = {
+          headers: {
+            "x-auth-token": token
+          }
+        };
+
+        const res = await this.$axios.get("/template", axiosHeaders);
+        if (res.data.status == "success") {
+          this.templates = res.data.data;
+          console.log("get tempalte OK");
+        }
+      } catch (e) {
+        console.log(e);
+        this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: "Fail to load templates"
+        });
+      }
+    },
+
+    async newDevice() {
+      if (!this.deviceName) {
+        this.$notify({
+          type: "warning",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: " Device Name is Empty"
+        });
+        return;
+      }
+      if (!this.deviceId) {
+        this.$notify({
+          type: "warning",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: " Device ID is Empty"
+        });
+        return;
+      }
+      if (this.templateSelectedIndex===null) {
+        this.$notify({
+          type: "warning",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: " Please, Select a Template"
+        });
+        return;
+      }
+      try {
+        const templateSelected = this.templates[this.templateSelectedIndex];
+        const newDevice = {
+          name: this.deviceName,
+          dId: this.deviceId,
+          templateId: templateSelected._id,
+          templateName: templateSelected.name
+        };
+        await this.$store.dispatch("devices/newDevice", newDevice);
+        this.$notify({
+          type: "success",
+          icon: "tim-icons icon-check-2",
+          message: `Device "${this.deviceName.toUpperCase()}" created!`
+        });
+      } catch (e) {
+        console.log(e);
+        this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: e
+        });
       }
     },
     async deleteDevice(device) {
       try {
-        await this.$store.dispatch('devices/deleteDevice', device);
-          this.$notify({
+        await this.$store.dispatch("devices/deleteDevice", device);
+        this.$notify({
           type: "success",
           icon: "tim-icons icon-check-2",
-          message: ` "${device.name.toUpperCase()}" deleted!`
+          message: `Device "${device.name.toUpperCase()}" deleted!`
         });
-        
       } catch (e) {
         this.$notify({
           type: "danger",
-          icon:'tim-icons icon-alert-circle-exc',
-          message:e
-      });
+          icon: "tim-icons icon-alert-circle-exc",
+          message: e
+        });
       }
     },
-    updateSaverRuleStatus(index){
-        this.devices[index].saverRule=!this.devices[index].saverRule;
+    updateSaverRuleStatus(index) {
+      this.devices[index].saverRule = !this.devices[index].saverRule;
     }
   },
-  mounted(){
-    this.isLoading=true;
+  mounted() {
+    this.isLoading = true;
     this.getDevices();
-    this.isLoading=false;
+    this.getTemplates();
+    this.isLoading = false;
   }
-  
 };
 </script>

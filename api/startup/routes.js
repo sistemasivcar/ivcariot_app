@@ -6,5 +6,6 @@ module.exports = function (app) {
     app.use('/api/device', routes.devices);
     app.use('/api/user', routes.users);
     app.use('/api/template', routes.templates);
+    app.use('/api/webhook',routes.webhooks)
     app.use(error);
 }

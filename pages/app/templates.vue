@@ -416,8 +416,6 @@
                   label="col-12"
                 ></el-option>
               </el-select>
-
-      
             </div>
 
             <!-- FORM INDICATOR TYPE -->
@@ -645,7 +643,7 @@
               type="primary"
               class="mb-3 pull-right"
               size="lg"
-              @click="saveTemplate()"
+              @click="newTemplate()"
             >
               Save Template
             </base-button>
@@ -693,7 +691,7 @@
                   placement="top"
                 >
                   <base-button
-                    @click="deleteTemplate(row)"
+                    @click="deleteTemplate(row,$index)"
                     type="danger"
                     icon
                     size="sm"
@@ -803,6 +801,95 @@ export default {
     };
   },
   methods: {
+    async newTemplate() {
+      try {
+        const token = this.$store.state.auth.auth.token;
+        const axiosHeaders = {
+          headers: {
+            "x-auth-token": token
+          }
+        };
+
+        const toSend = {
+          template: {
+            name: this.templateName,
+            description: this.templateDescription,
+            widgets: this.widgets
+          }
+        };
+        const res = await this.$axios.post("/template", toSend, axiosHeaders);
+
+        if (res.data.status == "success") {
+          this.templates.push(res.data.data);
+          this.$notify({
+            type: "success",
+            icon: "tim-icons icon-check-2",
+            message: `Template "${this.templateName.toUpperCase()}" created!`
+          });
+        }
+      } catch (e) {
+        console.log(e);
+        this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: "Error creating template"
+        });
+      }
+    },
+
+    async getTemplates() {
+      try {
+        const token = this.$store.state.auth.auth.token;
+        const axiosHeaders = {
+          headers: {
+            "x-auth-token": token
+          }
+        };
+
+        const res = await this.$axios.get("/template", axiosHeaders);
+        if (res.data.status == "success") {
+          this.templates = res.data.data;
+          console.log("get tempalte OK");
+        }
+      } catch (e) {
+        console.log(e);
+        this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: "Fail to load templates"
+        });
+      }
+    },
+
+    async deleteTemplate(template,index) {
+      try {
+        const token = this.$store.state.auth.auth.token;
+        const axiosHeaders = {
+          headers: {
+            "x-auth-token": token
+          },
+          params:{
+            _id:template._id
+          }
+        };
+        const res = await this.$axios.delete("/template", axiosHeaders);
+        if (res.data.status == "success") {
+            this.templates.splice(index,1)
+            this.$notify({
+            type: "success",
+            icon: "tim-icons icon-check-2",
+            message: `Template "${template.name.toUpperCase()}" deleted!`
+        });
+
+        }
+      } catch (e) {
+          this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: "Error deleting template"
+        });
+      }
+    },
     addNewWidget() {
       switch (this.selectedWidgetName) {
         case "button":
@@ -844,6 +931,9 @@ export default {
       }
       return result;
     }
+  },
+  mounted() {
+    this.getTemplates();
   }
 };
 </script>

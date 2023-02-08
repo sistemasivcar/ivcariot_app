@@ -23,19 +23,20 @@ const actions = {
     async newDevice(context, device) {
         try {
             const token = context.rootGetters['auth/getToken'];
-
+            const toSend = {
+                newDevice: device
+            };
             const axiosHeader = {
                 headers: {
                     'x-auth-token': token
                 }
             };
 
-
-            const response = await this.$axios.get('/device', axiosHeader);
+            const response = await this.$axios.post('/device', toSend,axiosHeader);
             if (response.data.status == 'success') {
 
-                const devices = response.data.data;
-                context.commit('setDevices', devices);
+                const newDevice = response.data.data;
+                context.commit('pushDevice', newDevice);
             }
         } catch (e) {
             const error = new Error('Falied to create device')

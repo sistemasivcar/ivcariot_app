@@ -24,17 +24,48 @@ import templateModel from '../models/template.js';
 const router = Router();
 
 router.get('/', checAuth, asyncMiddleware(async (req, res) => {
+    const userId = req.userData._id;
 
+    const templates = await templateModel.find({ userId: userId });
+    const toSend = {
+        status: 'success',
+        data:templates
+    }
+
+    res.status(200).json(toSend);
 }))
 
 router.post('/', checAuth, asyncMiddleware(async (req, res) => {
     const userId = req.userData._id;
-    
-    const template = await templateModel.create({ ...req.body.data, userId });
-    console.log(template);
+    const createdTime = Date.now();
+
+    const template = await templateModel.create({ ...req.body.template, userId,createdTime });
+    const toSend = {
+        status: 'success',
+        data: template,
+    };
+    res.status(200).json(toSend);
+
 }))
 
 router.delete('/', checAuth, asyncMiddleware(async (req, res) => {
+    const templateId = req.query._id;
+    const result = await templateModel.deleteOne({ _id: templateId });
+
+    if (result.n == 0) {
+        const toSend = {
+            status: "error",
+            data: "Template not found"
+        };
+
+        return res.status(404).json(toSend);
+    }
+
+    const toSend = {
+        status: "success",
+    };
+    console.log('success')
+    return res.status(200).json(toSend);
 
 }))
-export default router;
+module.exports= router;
