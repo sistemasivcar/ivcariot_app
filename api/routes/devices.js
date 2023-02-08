@@ -1,7 +1,7 @@
 const express = require('express');
 import checAuth from '../middleware/auth.js';
 import asyncMiddleware from '../middleware/async';
-
+import axios from 'axios'
 
 /*
  ___  ______________ _____ _      _____ 
@@ -13,7 +13,13 @@ import asyncMiddleware from '../middleware/async';
 */
 
 import DeviceModel from '../models/device';
-
+import SaverRuleModel from '../models/emqx_saver_rule';
+const auth = {
+    auth: {
+        username: 'admin',
+        password: process.env.EMQX_MANAGMENT_PASSWORD
+    }
+};
 
 const router = express.Router();
 
@@ -139,10 +145,47 @@ async function selectDevice(userId, dId) {
 SAVER RULES FUNCTIONS
 */
 
+setTimeout(() => {
+    createSaverRule("121212", "11111", false);
+}, 2000);
+
 // get a rule
 
 // create a rule 
+async function createSaverRule(userId, dId, status) {
+    try {
+        const url = "http://localhost:8085/api/v4/rules";
 
+        const topic = userId + "/" + dId + "/+/sdata";
+
+        const rawsql = "SELECT topic, payload FROM \"" + topic + "\" WHERE payload.save = 1";
+
+        var newRule = {
+            rawsql: rawsql,
+            actions: [
+                {
+                    name: "data_to_webserver",
+                    params: {
+                        $resource: global.saverResource.id,
+                        payload_tmpl: '{"payload":${payload},"topic":"${topic}"}'
+                    }
+                }
+            ],
+            description: "SAVER-RULE",
+            enabled: status
+        };
+
+        //save rule in emqx - grabamos la regla en emqx
+        const res = await axios.post(url, newRule, auth);
+
+        if (res.status === 200 && res.data.data) {
+            console.log(res.data.data);
+
+        }
+    } catch (e) {
+        
+    } 
+}
 //update a rule
 
 // delete a rule
