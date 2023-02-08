@@ -1,8 +1,9 @@
 // requires
+require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
-const colors = require('colors');
+require('colors');
 
 // instances
 const app = express();
@@ -20,8 +21,10 @@ require('./startup/routes.js')(app);
 
 // config db
 require('./startup/db.js')()
+
+
 // start the server for requests
-const port = process.env.PORT || 3001;
+const port = process.env.NODE_PORT || 3003;
 app.listen(port, () => console.log(`\nListening on port ${port}...`.bgGreen));
 
 

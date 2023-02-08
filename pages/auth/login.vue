@@ -3,7 +3,7 @@
     <div class="col-lg-4 col-md-6 ml-auto mr-auto">
       <card class="card-login card-white">
         <template slot="header">
-          <img src="/img//card-primary.png" alt="" />
+          <img src="/img//card-info.png" alt="" />
           <h1 class="card-title">IvcarIoT</h1>
         </template>
 
@@ -29,7 +29,7 @@
         <div slot="footer">
           <base-button
             native-type="submit"
-            type="primary"
+            type="info"
             class="mb-3"
             size="lg"
             @click="login()"
@@ -39,14 +39,14 @@
           </base-button>
           <div class="pull-left">
             <h6>
-              <nuxt-link class="link footer-link" to="/auth/register">
+              <nuxt-link class="link footer-link text-info" to="/auth/register">
                 Create Account
               </nuxt-link>
             </h6>
           </div>
 
           <div class="pull-right">
-            <h6><a href="#help!!!" class="link footer-link">Need Help?</a></h6>
+            <h6><a href="#help!!!" class="link footer-link text-info">Need Help?</a></h6>
           </div>
         </div>
       </card>

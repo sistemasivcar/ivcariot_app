@@ -560,7 +560,7 @@
             <base-button
               :disabled="!selectedWidgetName"
               native-type="submit"
-              type="primary"
+              type="info"
               class="mb-3 mr-3 pull-right"
               size="lg"
               @click="addNewWidget()"
@@ -640,7 +640,7 @@
             <base-button
               :disabled="!widgets.length"
               native-type="submit"
-              type="primary"
+              type="info"
               class="mb-3 pull-right"
               size="lg"
               @click="newTemplate()"
@@ -691,7 +691,7 @@
                   placement="top"
                 >
                   <base-button
-                    @click="deleteTemplate(row,$index)"
+                    @click="showModalDeleteTemplate(row,$index)"
                     type="danger"
                     icon
                     size="sm"
@@ -705,6 +705,24 @@
           </el-table>
         </div>
       </card>
+
+
+      <modal :show="templateToDelete!= null" v-if="templateToDelete">
+        <template slot="header">
+          <h5 class="modal-title" id="exampleModalLabel">Atention!</h5>
+        </template>
+        <div>
+          Are you sure you wanna DELETE "{{templateToDelete.name.toUpperCase()}}" template?
+        </div>
+        <template slot="footer">
+          <base-button type="secondary"
+          @click="closeModalTemplate()"
+            >NO</base-button
+          >
+          <base-button type="info" @click="deleteTemplate(templateToDelete,index)">YES</base-button>
+        </template>
+      </modal>
+
     </div>
 
     <!-- JSONS -->
@@ -797,7 +815,9 @@ export default {
         icon: "fa-bath",
         column: "col-6"
       },
-      value: false
+      value: false,
+      templateToDelete:null,
+      indexToDelete:null,
     };
   },
   methods: {
@@ -880,6 +900,7 @@ export default {
             icon: "tim-icons icon-check-2",
             message: `Template "${template.name.toUpperCase()}" deleted!`
         });
+        this.templateToDelete=null;
 
         }
       } catch (e) {
@@ -918,6 +939,13 @@ export default {
     },
     deleteWidget(index) {
       this.widgets.splice(index, 1);
+    },
+    closeModalTemplate(){
+      this.templateToDelete=null;
+    },
+    showModalDeleteTemplate(template, index){
+      this.templateToDelete=template;
+      this.indexToDelete=index;
     },
     makeid(length) {
       var result = "";

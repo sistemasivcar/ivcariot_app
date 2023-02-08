@@ -1,12 +1,12 @@
 // MongoDB connection
-const colors = require('colors');
+require('colors');
 const mongoose = require('mongoose');
 
-const mongoUsername = 'devuser';
-const mongoPassword = 'devpassword';
-const mongoHost = 'localhost';
-const mongoPort = '27017';
-const mongoDatabase = 'ivcariot';
+const mongoUsername = process.env.MONGO_USERNAME;
+const mongoPassword = process.env.MONGO_PASSWORD;
+const mongoHost = process.env.MONGO_HOST;
+const mongoPort = process.env.MONGO_PORT;
+const mongoDatabase = process.env.MONGO_DATABASE;
 
 const uri = `mongodb://${mongoUsername}:${mongoPassword}@${mongoHost}:${mongoPort}/${mongoDatabase}`;
 

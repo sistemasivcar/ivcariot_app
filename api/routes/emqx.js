@@ -1,14 +1,15 @@
 import { Router } from "express";
 const router = Router();
 const axios = require('axios');
-const colors = require('colors');
+require('colors');
 
 const auth = {
     auth: {
         username: 'admin',
-        password: 'emqxsecret'
+        password: process.env.EMQX_MANAGMENT_PASSWORD
     }
 };
+
 
 global.saverResource = null;
 global.alarmResource = null;

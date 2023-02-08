@@ -10,7 +10,7 @@
         <div class="row">
           <div class="col-4">
             <base-input
-              v-model="deviceName"
+              v-model.trim="deviceName"
               label="Device Name"
               type="text"
               placeholder="Ex: Home, Office..."
@@ -20,7 +20,7 @@
 
           <div class="col-4">
             <base-input
-              v-model="deviceId"
+              v-model.trim="deviceId"
               label="Device Id"
               type="text"
               placeholder="Ex: 7777-8888"
@@ -53,11 +53,7 @@
 
         <div class="row pull-right">
           <div class="col-12">
-            <base-button
-              type="primary"
-              @click="newDevice()"
-              class="mb-3"
-              size="lg"
+            <base-button type="info" @click="newDevice()" class="mb-3" size="lg"
               >Add</base-button
             >
           </div>
@@ -132,7 +128,7 @@
                   icon
                   size="sm"
                   class="btn-link"
-                  @click="deleteDevice(row)"
+                  @click="showModalDeleteDevice(row)"
                 >
                   <i class="tim-icons icon-simple-remove "></i>
                 </base-button>
@@ -142,6 +138,24 @@
         </el-table>
       </card>
     </div>
+
+
+      <modal :show="deviceToDelete!= null" v-if="deviceToDelete">
+        <template slot="header">
+          <h5 class="modal-title" id="exampleModalLabel">Atention!</h5>
+        </template>
+        <div>
+          Are you sure you wanna DELETE "{{deviceToDelete.name.toUpperCase()}}" device?
+        </div>
+        <template slot="footer">
+          <base-button type="secondary"
+          @click="closeModalDevice"
+            >NO</base-button
+          >
+          <base-button type="info" @click="deleteDevice(deviceToDelete)">YES</base-button>
+        </template>
+      </modal>
+
     <json :value="$store.getters['devices/getDevices']"></json>
     <json :value="templates"></json>
   </div>
@@ -149,7 +163,7 @@
 
 <script>
 export default {
-  components: { BaseSwitch, LoadingPanel }
+  components: { BaseSwitch, LoadingPanel, Modal }
 };
 </script>
 
@@ -160,6 +174,7 @@ import { Table, TableColumn } from "element-ui";
 import { Select, Option } from "element-ui";
 import BaseSwitch from "../../components/BaseSwitch.vue";
 import LoadingPanel from "../../components/LoadingPanel.vue";
+import Modal from "../../components/Modal.vue";
 export default {
   middleware: "authtenticated",
   components: {
@@ -174,7 +189,8 @@ export default {
       deviceId: null,
       templateSelectedIndex: null,
       templates: [],
-      isLoading: false
+      isLoading: false,
+      deviceToDelete:null
     };
   },
   computed: {
@@ -236,7 +252,7 @@ export default {
         });
         return;
       }
-      if (this.templateSelectedIndex===null) {
+      if (this.templateSelectedIndex === null) {
         this.$notify({
           type: "warning",
           icon: "tim-icons icon-alert-circle-exc",
@@ -275,6 +291,7 @@ export default {
           icon: "tim-icons icon-check-2",
           message: `Device "${device.name.toUpperCase()}" deleted!`
         });
+        this.deviceToDelete=null;
       } catch (e) {
         this.$notify({
           type: "danger",
@@ -285,6 +302,12 @@ export default {
     },
     updateSaverRuleStatus(index) {
       this.devices[index].saverRule = !this.devices[index].saverRule;
+    },
+    closeModalDevice(){
+      this.deviceToDelete=null;
+    },
+    showModalDeleteDevice(device){
+      this.deviceToDelete=device;
     }
   },
   mounted() {

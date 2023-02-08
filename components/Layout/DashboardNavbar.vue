@@ -84,10 +84,6 @@
           <a @click="logout()" class="nav-item dropdown-item">Log out</a>
         </li>
 
-        <li class="nav-link">
-          <base-button @click="logout()" class="nav-item dropdown-item">Log out</base-button>
-        </li>
-
       </base-dropdown>
     </ul>
   </base-nav>
