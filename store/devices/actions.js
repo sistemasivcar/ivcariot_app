@@ -33,10 +33,18 @@ const actions = {
             };
 
             const response = await this.$axios.post('/device', toSend, axiosHeader);
-            //get devices on page
+            if (response.data.status === 'success') { 
+                context.dispatch('fetchDevices');
+                return true;
+            }
         } catch (e) {
-            const error = new Error('Falied to create device')
-            throw error;
+            if (e.response.data.err.errors.dId.kind == 'unique') {
+                throw new Error('Device aleady exists')
+            } else {
+                console.log(e)
+                throw new Error('Falied to create device')
+
+            }
         }
     },
 
@@ -49,7 +57,7 @@ const actions = {
                     'x-auth-token': token
                 },
                 params: {
-                    dId:device.dId
+                    dId: device.dId,
                 }
             };
 
@@ -57,12 +65,35 @@ const actions = {
             
             if (response.data.status == 'success' && response.data.data.n === 1) {
                 context.commit('deleteDevice', device)
-            }
+            } 
         }catch (e) {
             const error = new Error('Falied to delete device')
             throw error;
         }
         
+    },
+
+    async updateSaverRule(context, payload) {
+        try {
+            
+            const token = context.rootGetters['auth/getToken'];
+
+            const axiosHeader = {
+                headers: {
+                    'x-auth-token': token
+                },
+            };
+
+            const toSend = {
+                status: payload.status,
+                emqxRuleId: payload.emqxRuleId,
+            }
+            await this.$axios.put('/device/saver-rule',toSend, axiosHeader);
+        } catch (e) {
+            console.log(e)
+            const error = new Error('Fail updating saver rule')
+            throw error;
+        }
     }
         
 };

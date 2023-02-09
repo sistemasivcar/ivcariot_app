@@ -94,8 +94,8 @@
                 <i
                   class="fas fa-database "
                   :class="{
-                    'text-success': row.saverRule,
-                    'text-dark': !row.saverRule
+                    'text-success': row.saverRule.status,
+                    'text-dark': !row.saverRule.status
                   }"
                 ></i>
               </el-tooltip>
@@ -107,10 +107,10 @@
                 placement="top"
               >
                 <base-switch
-                  @click="updateSaverRuleStatus($index)"
+                  @click="updateSaverRuleStatus(row)"
                   type="primary"
-                  style="background:rgba(253,93,147,0.4)"
-                  :value="row.saverRule"
+                  style="background:rgba(0, 228, 106, 0.8)"
+                  :value="row.saverRule.status"
                   onText="On"
                   offText="Off"
                 >
@@ -139,25 +139,24 @@
       </card>
     </div>
 
+    <modal :show="deviceToDelete != null" v-if="deviceToDelete">
+      <template slot="header">
+        <h5 class="modal-title" id="exampleModalLabel">Atention!</h5>
+      </template>
+      <div>
+        Are you sure you wanna DELETE "{{ deviceToDelete.name.toUpperCase() }}"
+        device?
+      </div>
+      <template slot="footer">
+        <base-button type="secondary" @click="closeModalDevice">NO</base-button>
+        <base-button type="info" @click="deleteDevice(deviceToDelete)"
+          >YES</base-button
+        >
+      </template>
+    </modal>
 
-      <modal :show="deviceToDelete!= null" v-if="deviceToDelete">
-        <template slot="header">
-          <h5 class="modal-title" id="exampleModalLabel">Atention!</h5>
-        </template>
-        <div>
-          Are you sure you wanna DELETE "{{deviceToDelete.name.toUpperCase()}}" device?
-        </div>
-        <template slot="footer">
-          <base-button type="secondary"
-          @click="closeModalDevice"
-            >NO</base-button
-          >
-          <base-button type="info" @click="deleteDevice(deviceToDelete)">YES</base-button>
-        </template>
-      </modal>
-<!-- 
     <json :value="$store.getters['devices/getDevices']"></json>
-    <json :value="templates"></json> -->
+    <json :value="templates"></json>
   </div>
 </template>
 
@@ -190,7 +189,7 @@ export default {
       templateSelectedIndex: null,
       templates: [],
       isLoading: false,
-      deviceToDelete:null
+      deviceToDelete: null
     };
   },
   computed: {
@@ -269,7 +268,7 @@ export default {
           templateName: templateSelected.name
         };
         await this.$store.dispatch("devices/newDevice", newDevice);
-        this.getDevices();
+        // this.getDevices();
         this.$notify({
           type: "success",
           icon: "tim-icons icon-check-2",
@@ -292,7 +291,7 @@ export default {
           icon: "tim-icons icon-check-2",
           message: `Device "${device.name.toUpperCase()}" deleted!`
         });
-        this.deviceToDelete=null;
+        this.deviceToDelete = null;
       } catch (e) {
         this.$notify({
           type: "danger",
@@ -301,14 +300,33 @@ export default {
         });
       }
     },
-    updateSaverRuleStatus(index) {
-      this.devices[index].saverRule = !this.devices[index].saverRule;
+    async updateSaverRuleStatus(device) {
+
+      try {
+        await this.$store.dispatch("devices/updateSaverRule", {
+          status: !device.saverRule.status,
+          emqxRuleId:device.saverRule.emqxRuleId
+        });
+        await this.getDevices();
+        this.$notify({
+          type: "success",
+          icon: "tim-icons icon-check-2",
+          message: `Saver rule ${device.saverRule.status? 'OFF' : 'ON'}`
+        });
+      } catch (e) {
+        
+        this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-check-2",
+          message: e
+        });
+      }
     },
-    closeModalDevice(){
-      this.deviceToDelete=null;
+    closeModalDevice() {
+      this.deviceToDelete = null;
     },
-    showModalDeleteDevice(device){
-      this.deviceToDelete=device;
+    showModalDeleteDevice(device) {
+      this.deviceToDelete = device;
     }
   },
   mounted() {

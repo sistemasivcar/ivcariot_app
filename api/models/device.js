@@ -8,7 +8,8 @@ const deviceSchema = new Schema({
     selected: { type: Boolean, required: [true], default: false },
     templateId: { type: String, required: [true] },
     templateName: { type: String, required: [true] },
-    createdTime: { type: Number }
+    createdTime: { type: Number },
+    saverRule: { type: Schema.Types.ObjectId, ref: 'SaverRule'}
 });
 
 deviceSchema.plugin(mongooseUniqueValidator, { message: 'Error, device already exists.' });

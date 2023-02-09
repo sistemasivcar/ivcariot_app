@@ -32,10 +32,11 @@ const router = express.Router();
 \_| |_/\_|    \___/ 
 */
 
+
 router.get('/', checAuth, asyncMiddleware(async (req, res) => {
     const userId = req.userData._id;
 
-    const devices = await DeviceModel.find({ userId: userId });
+    const devices = await DeviceModel.find({ userId: userId }).populate('saverRule', 'emqxRuleId status');
     const toSend = {
         status: 'success',
         data: devices,
@@ -47,56 +48,67 @@ router.get('/', checAuth, asyncMiddleware(async (req, res) => {
 router.post('/', checAuth, asyncMiddleware(async (req, res) => {
 
     const userId = req.userData._id;
-    let newDevice = req.body.newDevice;
+    const newDevice = req.body.newDevice;
 
-    newDevice.userId = userId;
-    newDevice.createdTime = Date.now()
-
-    const device = await DeviceModel.create(newDevice);
+    const createdTime = Date.now()
+    const device = await DeviceModel.create({ ...newDevice, userId, createdTime});
+    const saverRuleBack = await createSaverRule(userId, newDevice.dId, true)
+    const saverRule = saverRuleBack._id
+    await DeviceModel.updateOne({ dId: newDevice.dId }, { saverRule: saverRule });
 
     await selectDevice(userId, newDevice.dId);
-    await createSaverRule(userId,newDevice.dId,true)
-   
     const toSend = {
         status: "success",
         data: device
     }
-        
+
     return res.status(200).json(toSend);
-    
+
 }));
 
-router.put('/', checAuth, asyncMiddleware( async(req, res) => {
+router.put('/', checAuth, asyncMiddleware(async (req, res) => {
 
     const userId = req.userData._id;
     const dId = req.body.dId;
-    
-    console.log(dId);
+
     const result = await selectDevice(userId, dId);
-    
+
     if (result) {
         const toSend = {
             status: "success"
         };
 
         return res.json(toSend);
-    } 
-    
+    }
+
     const toSend = {
         status: "error"
     }
-    
+
     return res.json(toSend);
 
 
 }));
 
+router.put('/saver-rule', asyncMiddleware(async (req, res) => {
+    const status = req.body.status;
+    const emqxRuleId = req.body.emqxRuleId;
+    // await SaverRuleModel.updateOne({ dId: dId }, { status: status });
+    const resp = await updateSaverRule(emqxRuleId, status);
+
+    const toSend = {
+        status: 'success',
+    };
+    return res.status(200).json(toSend);
+
+}))
+
 router.delete('/', checAuth, asyncMiddleware(async (req, res) => {
 
-
     const dId = req.query.dId;
-    const result = await DeviceModel.deleteOne({ dId: dId });
 
+    await deleteSaverRule(dId);
+    const result = await DeviceModel.deleteOne({ dId: dId });
     if (result.n == 0) {
         const toSend = {
             status: "error",
@@ -110,10 +122,11 @@ router.delete('/', checAuth, asyncMiddleware(async (req, res) => {
         status: "success",
         data: result
     };
-    console.log('success')
+
     return res.status(200).json(toSend);
 
 }));
+
 module.exports = router;
 
 /* 
@@ -133,7 +146,7 @@ async function selectDevice(userId, dId) {
         );
 
         await DeviceModel.updateOne(
-            { dId: dId},
+            { dId: dId },
             { selected: true }
         );
 
@@ -150,7 +163,7 @@ async function selectDevice(userId, dId) {
 SAVER RULES FUNCTIONS
 */
 
-// get saver rules for a user
+// get saver rules for a user (deprecated)
 async function getSaverRules(userId) {
     try {
         const rules = await SaverRuleModel.find({ userId: userId });
@@ -164,8 +177,7 @@ async function getSaverRules(userId) {
 // create a rule 
 async function createSaverRule(userId, dId, status) {
     try {
-        const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules`
-
+        const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules`;
         const topic = userId + "/" + dId + "/+/sdata";
 
         const rawsql = "SELECT topic, payload FROM \"" + topic + "\" WHERE payload.save = 1";
@@ -185,19 +197,16 @@ async function createSaverRule(userId, dId, status) {
             enabled: status
         };
         const res = await axios.post(url, newRule, auth);
-        //save rule in emqx - grabamos la regla en emqx
-
+       
         if (res.status === 200 && res.data.data) {
-            
 
-            await SaverRuleModel.create({
-                userId: userId,
+            const saverRule = await SaverRuleModel.create({
                 dId: dId,
                 emqxRuleId: res.data.data.id,
                 status: status
             });
 
-            return true;
+            return saverRule;
 
         } else {
             return false;
@@ -212,44 +221,44 @@ async function createSaverRule(userId, dId, status) {
 
 //update a rule
 
-async function updateSaverRule(ruleId, status) {
-try {
-        const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${ruleId}`;
+async function updateSaverRule(emqxRuleId, status) {
+    try {
+        const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
         const newRule = {
-            enabled:status
+            enabled: status
         };
-    
+
         const res = await axios.put(url, newRule, auth);
         if (res.status === 200 && res.data.data) {
-            await SaverRuleModel.updateOne({ emqxRuleId: ruleId }, { status: status });
+            await SaverRuleModel.updateOne({ emqxRuleId: emqxRuleId }, { status: status });
             console.log("Saver rule updated success".green);
-            return {
-                status: 'success',
-                action: 'updated'
-            };
+
+            return true;
         }
-} catch (e) {
-    console.log('error update rule')
-    return false;
-}
+    } catch (e) {
+        console.log('error update rule')
+        return false;
+    }
 }
 
 // delete a rule
 
 async function deleteSaverRule(dId) {
-    
-try {
+
+    try {
         const mongoRule = await SaverRuleModel.findOne({ dId: dId });
+
         const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${mongoRule.emqxRuleId}`
-        
-        await axios.delete(url, auth);
+
         await SaverRuleModel.deleteOne({ dId: dId });
-    
+        await axios.delete(url, auth);
+
         return true;
-} catch (e) {
-    console.log("error deleting saver rule")
-    return false;
-    
-}
-    
+    } catch (e) {
+        console.log(e)
+        console.log("error deleting saver rule")
+        return false;
+
+    }
+
 }
