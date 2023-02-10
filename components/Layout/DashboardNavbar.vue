@@ -151,9 +151,10 @@ export default {
       }
     },
     async getSelectedDevice(){
-      if (this.$store.getters['devices/getIndexSelectedDevice'] >= 0) {
-        
-        this.selectedDeviceIndex;
+      if (this.$store.getters['devices/hasDevices']) {
+        this.selectedDeviceIndex=this.$store.getters['devices/getIndexSelectedDevice']
+      }else{
+        this.selectedDeviceIndex=null;
       }
 
 
