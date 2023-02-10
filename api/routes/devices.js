@@ -36,7 +36,7 @@ const router = express.Router();
 router.get('/', checAuth, asyncMiddleware(async (req, res) => {
     const userId = req.userData._id;
 
-    const devices = await DeviceModel.find({ userId: userId }).populate('saverRule', 'emqxRuleId status');
+    const devices = await DeviceModel.find({ userId: userId }).populate('saverRule', 'emqxRuleId status').populate('templateId','widgets');
     const toSend = {
         status: 'success',
         data: devices,
@@ -51,8 +51,9 @@ router.post('/', checAuth, asyncMiddleware(async (req, res) => {
     const newDevice = req.body.newDevice;
 
     const createdTime = Date.now()
-    const device = await DeviceModel.create({ ...newDevice, userId, createdTime});
-    const saverRuleBack = await createSaverRule(userId, newDevice.dId, true)
+    const device = await DeviceModel.create({ ...newDevice, userId, createdTime });
+    
+    const saverRuleBack = await createSaverRule(userId, newDevice.dId, true);
     const saverRule = saverRuleBack._id
     await DeviceModel.updateOne({ dId: newDevice.dId }, { saverRule: saverRule });
 

@@ -155,8 +155,9 @@
       </template>
     </modal>
 
+  <!-- <json :value="$store.state.devices.selectedDevice"></json> -->
     <json :value="$store.getters['devices/getDevices']"></json>
-    <json :value="templates"></json>
+    <!-- <json :value="templates"></json> -->
   </div>
 </template>
 
@@ -268,7 +269,8 @@ export default {
           templateName: templateSelected.name
         };
         await this.$store.dispatch("devices/newDevice", newDevice);
-        // this.getDevices();
+        await this.$store.dispatch("devices/fetchDevices");
+        await this.$store.commit('devices/setSelectedDevice');
         this.$notify({
           type: "success",
           icon: "tim-icons icon-check-2",
@@ -331,7 +333,6 @@ export default {
   },
   mounted() {
     this.isLoading = true;
-    this.getDevices();
     this.getTemplates();
     this.isLoading = false;
   }

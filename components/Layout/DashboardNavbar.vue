@@ -20,23 +20,21 @@
     </div>
 
     <ul class="navbar-nav" :class="$rtl.isRTL ? 'mr-auto' : 'ml-auto'">
-    
-      <modal
-        :show.sync="searchModalVisible"
-        class="modal-search"
-        id="searchModal"
-        :centered="false"
-        :show-close="true"
+      <el-select
+        class="select-info"
+        placeholder="Select Device"
+        @change="selectDevice()"
+        v-model="selectedDeviceIndex"
       >
-        <input
-          slot="header"
-          v-model="searchQuery"
-          type="text"
-          class="form-control"
-          id="inlineFormInputGroup"
-          placeholder="SEARCH"
-        />
-      </modal>
+        <el-option
+          v-for="(device, index) in devices"
+          :value="index"
+          :label="device.name.toUpperCase()"
+          :key="device._id"
+        >
+        </el-option>
+      </el-select>
+
       <base-dropdown
         tag="li"
         :menu-on-right="!$rtl.isRTL"
@@ -44,9 +42,7 @@
         title-classes="nav-link"
         class="nav-item"
       >
-        <template
-          slot="title"
-        >
+        <template slot="title">
           <div class="notification d-none d-lg-block d-xl-block"></div>
           <i class="tim-icons icon-sound-wave"></i>
           <p class="d-lg-none">New Notifications</p>
@@ -56,8 +52,8 @@
             >Mike John responded to your email</a
           >
         </li>
-
       </base-dropdown>
+
       <base-dropdown
         tag="li"
         :menu-on-right="!$rtl.isRTL"
@@ -66,15 +62,15 @@
         title-classes="nav-link"
         menu-classes="dropdown-navbar"
       >
-        <template
-          slot="title"
-        >
+        <template slot="title">
           <div class="photo"><img src="/img/mike.jpg" /></div>
           <b class="caret d-none d-lg-block d-xl-block"></b>
           <p class="d-lg-none">Log out</p>
         </template>
         <li class="nav-link">
-          <nuxt-link class="nav-item dropdown-item" to="/app/profile">Profile</nuxt-link>
+          <nuxt-link class="nav-item dropdown-item" to="/app/profile"
+            >Profile</nuxt-link
+          >
         </li>
         <li class="nav-link">
           <a href="#" class="nav-item dropdown-item">Settings</a>
@@ -83,50 +79,92 @@
         <li class="nav-link">
           <a @click="logout()" class="nav-item dropdown-item">Log out</a>
         </li>
-
       </base-dropdown>
     </ul>
   </base-nav>
 </template>
 <script>
-import { CollapseTransition } from 'vue2-transitions';
-import { BaseNav, Modal } from '@/components';
-
+import { CollapseTransition } from "vue2-transitions";
+import { BaseNav } from "@/components";
+import { Select, Option } from "element-ui";
 export default {
   components: {
     CollapseTransition,
     BaseNav,
-    Modal
+    [Select.name]: Select,
+    [Option.name]: Option
+  },
+    data() {
+      return {
+        activeNotifications: false,
+        showMenu: false,
+        searchModalVisible: false,
+        searchQuery: "",
+        selectedDeviceIndex: null,
+  
+      };
+    },
+  async mounted() {
+    await this.getDevices();
+    this.$store.commit('devices/setSelectedDevice')
+    this.getSelectedDevice();
   },
   computed: {
+    devices() {
+      return this.$store.getters["devices/getDevices"];
+    },
     routeName() {
       const { path } = this.$route;
-      let parts = path.split('/')
-      if(parts == ','){
-        return 'Dashboard';
+      let parts = path.split("/");
+      if (parts == ",") {
+        return "Dashboard";
       }
-      return parts.map(p => this.capitalizeFirstLetter(p)).join(' ');
+      return parts.map(p => this.capitalizeFirstLetter(p)).join(" ");
     },
     isRTL() {
       return this.$rtl.isRTL;
     }
   },
-  data() {
-    return {
-      activeNotifications: false,
-      showMenu: false,
-      searchModalVisible: false,
-      searchQuery: ''
-    };
-  },
+
   methods: {
-    logout(){
-      console.log('logout')
-      this.$store.dispatch('logout');
+    async getDevices() {
+      try {
+        await this.$store.dispatch("devices/fetchDevices");
+      } catch (e) {
+        this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: e
+        });
+      }
+    },
+    async selectDevice() {
+      try {
+        const devices = this.$store.getters['devices/getDevices'];
+        const deviceSelected = devices[this.selectedDeviceIndex];
+        await this.$store.dispatch('devices/updateSelected', deviceSelected);
+        await this.$store.dispatch('devices/fetchDevices');
+        await this.$store.commit('devices/setSelectedDevice');
+
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async getSelectedDevice(){
+      if (this.$store.getters['devices/getIndexSelectedDevice'] >= 0) {
+        
+        this.selectedDeviceIndex;
+      }
+
+
+    },
+    logout() {
+      console.log("logout");
+      this.$store.dispatch("logout");
     },
     capitalizeFirstLetter(string) {
-      if (!string || typeof string !== 'string') {
-        return ''
+      if (!string || typeof string !== "string") {
+        return "";
       }
       return string.charAt(0).toUpperCase() + string.slice(1);
     },

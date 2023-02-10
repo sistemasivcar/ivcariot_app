@@ -6,7 +6,7 @@ const deviceSchema = new Schema({
     dId: { type: String, unique: true, required: [true, '"name" is required'] },
     name: { type: String, required: [true, '"name" is required'] },
     selected: { type: Boolean, required: [true], default: false },
-    templateId: { type: String, required: [true] },
+    templateId: { type: Schema.Types.ObjectId, required: [true], ref:'Template' },
     templateName: { type: String, required: [true] },
     createdTime: { type: Number },
     saverRule: { type: Schema.Types.ObjectId, ref: 'SaverRule'}
