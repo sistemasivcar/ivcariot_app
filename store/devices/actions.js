@@ -11,6 +11,21 @@ const actions = {
             const response = await this.$axios.get('/device', axiosHeader);
             if (response.data.status == 'success') {
                 const devices = response.data.data;
+
+                devices.forEach((device, index) => {
+                    if (device.selected) {
+                        context.commit("setSelectedDevice", device);
+                        $nuxt.$emit('selectedDeviceIndex', index);
+                    }
+                });
+
+                if (devices.length == 0) {
+                    context.commit("setSelectedDevice", {});
+                    $nuxt.$emit('selectedDeviceIndex', null);
+                }
+
+
+
                 context.commit('setDevices', devices);
             }
         } catch (e) {
@@ -116,7 +131,30 @@ const actions = {
             throw new Error('Falied to load devices')
 
         }
-}
+    },
+    async crateAlarmRule(context, rule) {
+        try {
+            const token = context.rootGetters['auth/getToken'];
+            const toSend = {
+                newRule: rule
+            };
+            const axiosHeader = {
+                headers: {
+                    'x-auth-token': token
+                }
+            };
+
+            const response = await this.$axios.post('/alarm', toSend, axiosHeader);
+            if (response.data.status === 'success') {
+                return true;
+            }
+
+        } catch (e) {
+            throw new Error('Error creating alarm rule')
+        }
+    },
+
+ 
         
 };
 

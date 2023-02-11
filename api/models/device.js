@@ -1,4 +1,4 @@
-import { Schema, model, ObjectId } from "mongoose";
+import { Schema, model } from "mongoose";
 import mongooseUniqueValidator from "mongoose-unique-validator";
 
 const deviceSchema = new Schema({
@@ -9,7 +9,8 @@ const deviceSchema = new Schema({
     templateId: { type: Schema.Types.ObjectId, required: [true], ref:'Template' },
     templateName: { type: String, required: [true] },
     createdTime: { type: Number },
-    saverRule: { type: Schema.Types.ObjectId, ref: 'SaverRule'}
+    saverRule: { type: Schema.Types.ObjectId, ref: 'SaverRule' },
+    alarmRules: [{ type: Schema.Types.ObjectId, ref:'AlarmRule'}]
 });
 
 deviceSchema.plugin(mongooseUniqueValidator, { message: 'Error, device already exists.' });

@@ -36,7 +36,7 @@ const router = express.Router();
 router.get('/', checAuth, asyncMiddleware(async (req, res) => {
     const userId = req.userData._id;
 
-    const devices = await DeviceModel.find({ userId: userId }).populate('saverRule', 'emqxRuleId status').populate('templateId','widgets');
+    const devices = await DeviceModel.find({ userId: userId }).populate('saverRule', 'emqxRuleId status').populate('templateId','widgets').populate('alarmRules');
     const toSend = {
         status: 'success',
         data: devices,

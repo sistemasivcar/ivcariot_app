@@ -1,6 +1,6 @@
 const state = () => ({
     devices: [],
-    selectedDevice:{},
+    selectedDevice:null,
 })
 
 export default state;

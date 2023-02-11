@@ -105,9 +105,8 @@ export default {
       };
     },
   async mounted() {
-    await this.getDevices();
-    this.$store.commit('devices/setSelectedDevice')
-    this.getSelectedDevice();
+    this.$nuxt.$on('selectedDeviceIndex',this.setSelectedDeviceIndex)
+    this.getDevices();
   },
   computed: {
     devices() {
@@ -144,21 +143,15 @@ export default {
         const deviceSelected = devices[this.selectedDeviceIndex];
         await this.$store.dispatch('devices/updateSelected', deviceSelected);
         await this.$store.dispatch('devices/fetchDevices');
-        await this.$store.commit('devices/setSelectedDevice');
 
       } catch (e) {
         console.log(e)
       }
     },
-    async getSelectedDevice(){
-      if (this.$store.getters['devices/hasDevices']) {
-        this.selectedDeviceIndex=this.$store.getters['devices/getIndexSelectedDevice']
-      }else{
-        this.selectedDeviceIndex=null;
-      }
-
-
+    setSelectedDeviceIndex(device){
+        this.selectedDeviceIndex=device;
     },
+
     logout() {
       console.log("logout");
       this.$store.dispatch("logout");
@@ -178,6 +171,9 @@ export default {
     toggleMenu() {
       this.showMenu = !this.showMenu;
     }
+  },
+  beforeDestroy(){
+    this.$nuxt.$off('selectedDeviceIndex')
   }
 };
 </script>

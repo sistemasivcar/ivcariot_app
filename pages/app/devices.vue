@@ -154,10 +154,10 @@
         >
       </template>
     </modal>
-
-  <!-- <json :value="$store.state.devices.selectedDevice"></json> -->
-    <json :value="$store.getters['devices/getDevices']"></json>
-    <!-- <json :value="templates"></json> -->
+<!-- 
+  <json :value="$store.state.devices.selectedDevice"></json> -->
+    <!-- <json :value="$store.getters['devices/getDevices']"></json>
+    <json :value="templates"></json> -->
   </div>
 </template>
 
@@ -176,7 +176,7 @@ import BaseSwitch from "../../components/BaseSwitch.vue";
 import LoadingPanel from "../../components/LoadingPanel.vue";
 import Modal from "../../components/Modal.vue";
 export default {
-  middleware: "authtenticated",
+    middleware:'authtenticated',
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
@@ -270,7 +270,6 @@ export default {
         };
         await this.$store.dispatch("devices/newDevice", newDevice);
         await this.$store.dispatch("devices/fetchDevices");
-        await this.$store.commit('devices/setSelectedDevice');
         this.$notify({
           type: "success",
           icon: "tim-icons icon-check-2",

@@ -740,6 +740,7 @@ import IotIndicator from "../../components/Widgets/IotIndicator.vue";
 import GraficoRealtime from "../../components/Widgets/GraficoRealtime.vue";
 
 export default {
+  middleware:'authtenticated',
   components: {
     IotSwitch,
     IotIndicator,
@@ -858,8 +859,8 @@ export default {
     },
 
     async getTemplates() {
-      try {
-        const token = this.$store.state.auth.auth.token;
+        try {
+        const token = this.$store.getters['auth/getToken'];
         const axiosHeaders = {
           headers: {
             "x-auth-token": token
@@ -869,7 +870,6 @@ export default {
         const res = await this.$axios.get("/template", axiosHeaders);
         if (res.data.status == "success") {
           this.templates = res.data.data;
-          console.log("get tempalte OK");
         }
       } catch (e) {
         console.log(e);
@@ -960,8 +960,8 @@ export default {
       return result;
     }
   },
-  mounted() {
-    this.getTemplates();
+  async mounted() {
+    await this.getTemplates();
   }
 };
 </script>

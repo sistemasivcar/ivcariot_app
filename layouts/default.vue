@@ -115,6 +115,17 @@ export default {
     }
   },
   methods: {
+        async getDevices() {
+      try {
+        await this.$store.dispatch("devices/fetchDevices");
+      } catch (e) {
+        this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: e
+        });
+      }
+    },
     toggleSidebar() {
       if (this.$sidebar.showSidebar) {
         this.$sidebar.displaySidebar(false);
@@ -135,8 +146,9 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     this.initScrollbar();
+
   }
 };
 </script>
