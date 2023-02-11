@@ -8,6 +8,7 @@ module.exports = function (app) {
     app.use('/api/template', routes.templates);
     app.use('/api/webhook', routes.webhooks);
     app.use('/api/emqx', routes.emqx);
-    app.use('/api/alarm',routes.alarms)
+    app.use('/api/alarm', routes.alarms)
+    app.use('/api/notification',routes.notifications)
     app.use(error);
 }

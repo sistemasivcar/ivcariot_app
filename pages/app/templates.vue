@@ -1,6 +1,7 @@
 <template>
   <div>
     <!-- WIDGET CONFIGURATOR -->
+    
     <div class="row">
       <card>
         <div slot="header">

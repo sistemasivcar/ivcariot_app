@@ -43,15 +43,23 @@
         class="nav-item"
       >
         <template slot="title">
-          <div class="notification d-none d-lg-block d-xl-block"></div>
+          <div class="notification d-none d-lg-block d-xl-block" v-if="notifs.length>0"></div>
           <i class="tim-icons icon-sound-wave"></i>
           <p class="d-lg-none">New Notifications</p>
         </template>
-        <li class="nav-link">
+        <li @click="setReaded(notif)" class="nav-link" v-for="notif,index in notifs" :key="notif._id">
           <a href="#" class="nav-item dropdown-item"
-            >Mike John responded to your email</a
+            > <b style="color:orangered">{{ unixToDate(notif.createdTime)}}</b>
+              <div style="margin-left:50px">
+                <b>Device: </b> {{getNameDevice(notif.dId).toUpperCase()}} <br>
+                <b>Variable: </b> {{notif.variableFullName.toUpperCase()}} <br>
+                <b>Condition: </b> {{notif.condition}} {{notif.value}}<br>
+                <b>Value: </b> {{notif.payload.value}}
+              </div>  
+             </a
           >
         </li>
+
       </base-dropdown>
 
       <base-dropdown
@@ -107,11 +115,17 @@ export default {
   async mounted() {
     this.$nuxt.$on('selectedDeviceIndex',this.setSelectedDeviceIndex)
     this.getDevices();
+    this.getNotifications();
+  
   },
   computed: {
+    notifs(){
+      return this.$store.getters['notif/getNotifications']
+    },
     devices() {
       return this.$store.getters["devices/getDevices"];
     },
+
     routeName() {
       const { path } = this.$route;
       let parts = path.split("/");
@@ -126,6 +140,37 @@ export default {
   },
 
   methods: {
+      getNameDevice(dId){
+      const device = this.devices.find(d=>d.dId = dId);
+      return device.name
+    },
+
+    
+    async getNotifications(){
+      try {
+        await this.$store.dispatch('notif/fetchNotifications');
+        
+      } catch (e) {
+          this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: e
+        });
+      }
+    },
+    async setReaded(notif){
+      try {
+        await this.$store.dispatch('notif/setReaded',notif);
+        this.getNotifications();
+
+      } catch (e) {
+                this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: e
+        });
+      }
+    },
     async getDevices() {
       try {
         await this.$store.dispatch("devices/fetchDevices");
@@ -170,7 +215,30 @@ export default {
     },
     toggleMenu() {
       this.showMenu = !this.showMenu;
-    }
+    },
+    unixToDate(ms) {
+        var d = new Date(parseInt(ms)), 
+          yyyy = d.getFullYear(),
+          mm = ('0' + (d.getMonth() + 1)).slice(-2), // Months are zero based. Add leading 0.
+          dd = ('0' + d.getDate()).slice(-2), // Add leading 0.
+          hh = d.getHours(),
+          h = hh,
+          min = ('0' + d.getMinutes()).slice(-2), // Add leading 0.
+          ampm = 'AM',
+          time;
+        if (hh > 12) {
+          h = hh - 12;
+          ampm = 'PM';
+        } else if (hh === 12) {
+          h = 12;
+          ampm = 'PM';
+        } else if (hh == 0) {
+          h = 12;
+        }
+        // ie: 2013-02-18, 8:35 AM	
+        time = dd + '/' + mm + '/' + yyyy + ', ' + h + ':' + min + ' ' + ampm;
+        return time;
+      },
   },
   beforeDestroy(){
     this.$nuxt.$off('selectedDeviceIndex')
