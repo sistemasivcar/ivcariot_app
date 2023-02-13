@@ -62,6 +62,7 @@
     </div>
 
     <!-- DEVICES TABLE -->
+
     <LoadingMainPanel v-if="isLoading"></LoadingMainPanel>
     <div v-else-if="devices.length > 0" class="row">
       <card>
@@ -69,7 +70,8 @@
           <h4 class="card-title">My Devices</h4>
         </template>
 
-        <el-table :data="devices">
+        <el-table :data="devices"
+        >
           <el-table-column label="#" min-width="50" align="center">
             <div slot-scope="{ row, $index }">
               {{ $index + 1 }}
@@ -79,6 +81,8 @@
           <el-table-column prop="name" label="Name"></el-table-column>
 
           <el-table-column prop="dId" label="Device Id"></el-table-column>
+
+          <el-table-column prop="alarmRules.length" label="Alarm Rules"></el-table-column>
 
           <el-table-column
             prop="templateName"
@@ -108,11 +112,11 @@
               >
                 <base-switch
                   @click="updateSaverRuleStatus(row)"
-                  type="primary"
-                  style="background:rgba(0, 228, 106, 0.8)"
+                  type="info"
+                  style=""
                   :value="row.saverRule.status"
-                  onText="On"
-                  offText="Off"
+                  onText="ON"
+                  offText="OFF"
                 >
                 </base-switch>
               </el-tooltip>
@@ -144,8 +148,8 @@
         <h5 class="modal-title" id="exampleModalLabel">Atention!</h5>
       </template>
       <div>
-        Are you sure you wanna DELETE "{{ deviceToDelete.name.toUpperCase() }}"
-        device?
+        Are you sure to <a class="text-danger"> DELETE "{{ deviceToDelete.name.toUpperCase() }}"</a> device? 
+      <div v-if="hasAlarmRules">The <a class="text-danger">ALARM-RULES</a> associates will be deleted</div>
       </div>
       <template slot="footer">
         <base-button type="secondary" @click="closeModalDevice">NO</base-button>
@@ -154,10 +158,10 @@
         >
       </template>
     </modal>
-<!-- 
-  <json :value="$store.state.devices.selectedDevice"></json> -->
-    <!-- <json :value="$store.getters['devices/getDevices']"></json>
-    <json :value="templates"></json> -->
+
+  <json :value="$store.state.devices.selectedDevice"></json> 
+ <!-- <json :value="$store.getters['devices/getDevices']"></json> -->
+    <json :value="templates"></json>
   </div>
 </template>
 
@@ -190,7 +194,8 @@ export default {
       templateSelectedIndex: null,
       templates: [],
       isLoading: false,
-      deviceToDelete: null
+      deviceToDelete: null,
+      hasAlarmRules:false,
     };
   },
   computed: {
@@ -199,6 +204,11 @@ export default {
     }
   },
   methods: {
+    clearInputs(){
+      this.deviceName='';
+      this.deviceId='';
+      this.templateSelectedIndex=null;
+    },
     async getDevices() {
       try {
         await this.$store.dispatch("devices/fetchDevices");
@@ -270,10 +280,11 @@ export default {
         };
         await this.$store.dispatch("devices/newDevice", newDevice);
         await this.$store.dispatch("devices/fetchDevices");
+        this.clearInputs();
         this.$notify({
           type: "success",
           icon: "tim-icons icon-check-2",
-          message: `Device "${this.deviceName.toUpperCase()}" created!`
+          message: `Device "${newDevice.name.toUpperCase()}" created!`
         });
       } catch (e) {
         console.log(e);
@@ -287,6 +298,7 @@ export default {
     async deleteDevice(device) {
       try {
         await this.$store.dispatch("devices/deleteDevice", device);
+        await this.$store.dispatch("devices/fetchDevices");
         this.$notify({
           type: "success",
           icon: "tim-icons icon-check-2",
@@ -327,7 +339,14 @@ export default {
       this.deviceToDelete = null;
     },
     showModalDeleteDevice(device) {
-      this.deviceToDelete = device;
+      
+      if(device.alarmRules.length > 0){
+        this.deviceToDelete = device;
+        this.hasAlarmRules=true;
+      }else{
+        this.deviceToDelete = device;
+        this.hasAlarmRules=false;
+      }
     }
   },
   mounted() {

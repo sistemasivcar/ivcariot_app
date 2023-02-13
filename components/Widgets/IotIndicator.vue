@@ -27,8 +27,8 @@ export default {
   },
   methods:{
     porcessRecivedData(data){
+        console.log('----------recived---------------', data)
         this.value=data.value;
-        console.log('recived')
     }
   },
 
@@ -37,15 +37,17 @@ export default {
         return this.value ? this.config.color : 'text-dark'
     },
   },
+  
   mounted(){
     
     // topic format for reading data ->>  userId / dId / uniquevariablename / sdata
-    const topic = `${this.config.userId}/${this.config.selectedDevice.dId}/${this.config.selectedDevice.variable}/sdata`
+    const topic = `${this.config.userId}/${this.config.selectedDevice.dId}/${this.config.variable}/sdata`
+    console.log(topic)
     this.$nuxt.$on(topic, this.porcessRecivedData);
   
   },
   beforeDestroy(){
-    const topic = `${this.config.userId}/${this.config.selectedDevice.dId}/${this.config.selectedDevice.variable}/sdata`
+    const topic = `${this.config.userId}/${this.config.selectedDevice.dId}/${this.config.variable}/sdata`
     this.$nuxt.$off(topic)
   },
   

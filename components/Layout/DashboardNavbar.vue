@@ -43,23 +43,30 @@
         class="nav-item"
       >
         <template slot="title">
-          <div class="notification d-none d-lg-block d-xl-block" v-if="notifs.length>0"></div>
-          <i class="tim-icons icon-sound-wave"></i>
+          <div
+            class="notification d-none d-lg-block d-xl-block"
+            v-if="notifs.length > 0"
+          ></div>
+          <i class="tim-icons icon-bell-55"></i>
           <p class="d-lg-none">New Notifications</p>
         </template>
-        <li @click="setReaded(notif)" class="nav-link" v-for="notif,index in notifs" :key="notif._id">
-          <a href="#" class="nav-item dropdown-item"
-            > <b style="color:orangered">{{ unixToDate(notif.createdTime)}}</b>
-              <div style="margin-left:50px">
-                <b>Device: </b> {{getNameDevice(notif.dId).toUpperCase()}} <br>
-                <b>Variable: </b> {{notif.variableFullName.toUpperCase()}} <br>
-                <b>Condition: </b> {{notif.condition}} {{notif.value}}<br>
-                <b>Value: </b> {{notif.payload.value}}
-              </div>  
-             </a
+        <div v-if="notifs.length > 0">
+          <notification-item
+            v-for="notif in notifs"
+            :key="notif._id"
+            :condition="notif.condition"
+            :dId="notif.dId"
+            :time="notif.createdTime"
+            :idNotif="notif._id"
+            :value="notif.value"
+            :varName="notif.variableFullName"
+            @setNotifReaded="setReaded"
           >
+          </notification-item>
+        </div>
+        <li v-else>
+          <a href="#" class="nav-item dropdown-item"> No New Notifications</a>
         </li>
-
       </base-dropdown>
 
       <base-dropdown
@@ -71,7 +78,7 @@
         menu-classes="dropdown-navbar"
       >
         <template slot="title">
-          <div class="photo"><img src="/img/mike.jpg" /></div>
+          <i class="tim-icons icon-single-02"></i>
           <b class="caret d-none d-lg-block d-xl-block"></b>
           <p class="d-lg-none">Log out</p>
         </template>
@@ -95,32 +102,31 @@
 import { CollapseTransition } from "vue2-transitions";
 import { BaseNav } from "@/components";
 import { Select, Option } from "element-ui";
+import NotificationItem from "../Navbar/NotificationItem.vue";
 export default {
   components: {
     CollapseTransition,
     BaseNav,
+    NotificationItem,
     [Select.name]: Select,
     [Option.name]: Option
   },
-    data() {
-      return {
-        activeNotifications: false,
-        showMenu: false,
-        searchModalVisible: false,
-        searchQuery: "",
-        selectedDeviceIndex: null,
-  
-      };
-    },
+  data() {
+    return {
+      activeNotifications: false,
+      showMenu: false,
+      searchModalVisible: false,
+      searchQuery: "",
+      selectedDeviceIndex: null
+    };
+  },
   async mounted() {
-    this.$nuxt.$on('selectedDeviceIndex',this.setSelectedDeviceIndex)
+    this.$nuxt.$on("selectedDeviceIndex", this.setSelectedDeviceIndex);
     this.getDevices();
-    this.getNotifications();
-  
   },
   computed: {
-    notifs(){
-      return this.$store.getters['notif/getNotifications']
+    notifs() {
+      return this.$store.getters["notif/getNotifications"];
     },
     devices() {
       return this.$store.getters["devices/getDevices"];
@@ -140,31 +146,12 @@ export default {
   },
 
   methods: {
-      getNameDevice(dId){
-      const device = this.devices.find(d=>d.dId = dId);
-      return device.name
-    },
-
-    
-    async getNotifications(){
+    async setReaded(notifId) {
       try {
-        await this.$store.dispatch('notif/fetchNotifications');
-        
-      } catch (e) {
-          this.$notify({
-          type: "danger",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: e
-        });
-      }
-    },
-    async setReaded(notif){
-      try {
-        await this.$store.dispatch('notif/setReaded',notif);
+        await this.$store.dispatch("notif/setReaded", notifId);
         this.getNotifications();
-
       } catch (e) {
-                this.$notify({
+        this.$notify({
           type: "danger",
           icon: "tim-icons icon-alert-circle-exc",
           message: e
@@ -184,17 +171,16 @@ export default {
     },
     async selectDevice() {
       try {
-        const devices = this.$store.getters['devices/getDevices'];
+        const devices = this.$store.getters["devices/getDevices"];
         const deviceSelected = devices[this.selectedDeviceIndex];
-        await this.$store.dispatch('devices/updateSelected', deviceSelected);
-        await this.$store.dispatch('devices/fetchDevices');
-
+        await this.$store.dispatch("devices/updateSelected", deviceSelected);
+        await this.$store.dispatch("devices/fetchDevices");
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     },
-    setSelectedDeviceIndex(device){
-        this.selectedDeviceIndex=device;
+    setSelectedDeviceIndex(device) {
+      this.selectedDeviceIndex = device;
     },
 
     logout() {
@@ -215,33 +201,10 @@ export default {
     },
     toggleMenu() {
       this.showMenu = !this.showMenu;
-    },
-    unixToDate(ms) {
-        var d = new Date(parseInt(ms)), 
-          yyyy = d.getFullYear(),
-          mm = ('0' + (d.getMonth() + 1)).slice(-2), // Months are zero based. Add leading 0.
-          dd = ('0' + d.getDate()).slice(-2), // Add leading 0.
-          hh = d.getHours(),
-          h = hh,
-          min = ('0' + d.getMinutes()).slice(-2), // Add leading 0.
-          ampm = 'AM',
-          time;
-        if (hh > 12) {
-          h = hh - 12;
-          ampm = 'PM';
-        } else if (hh === 12) {
-          h = 12;
-          ampm = 'PM';
-        } else if (hh == 0) {
-          h = 12;
-        }
-        // ie: 2013-02-18, 8:35 AM	
-        time = dd + '/' + mm + '/' + yyyy + ', ' + h + ':' + min + ' ' + ampm;
-        return time;
-      },
+    }
   },
-  beforeDestroy(){
-    this.$nuxt.$off('selectedDeviceIndex')
+  beforeDestroy() {
+    this.$nuxt.$off("selectedDeviceIndex");
   }
 };
 </script>

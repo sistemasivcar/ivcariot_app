@@ -18,11 +18,11 @@ const actions = {
             throw error;
         }
     },
-    async setReaded(context, notif) {
+    async setReaded(context, notifId) {
         try{
         const token = context.rootGetters['auth/getToken'];
         const toSend = {
-            notifId:notif._id
+            notifId: notifId
         }
         const axiosHeader = {
             headers: {

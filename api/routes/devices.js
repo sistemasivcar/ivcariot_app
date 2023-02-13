@@ -2,9 +2,8 @@ const express = require('express');
 import checAuth from '../middleware/auth.js';
 import asyncMiddleware from '../middleware/async';
 import axios from 'axios'
-
 /*
- ___  ______________ _____ _      _____ 
+___  ______________ _____ _      _____ 
 |  \/  |  _  |  _  \  ___| |    /  ___|
 | .  . | | | | | | | |__ | |    \ `--. 
 | |\/| | | | | | | |  __|| |     `--. \
@@ -14,6 +13,8 @@ import axios from 'axios'
 
 import DeviceModel from '../models/device';
 import SaverRuleModel from '../models/emqx_saver_rule';
+import AlarmRuleModel from '../models/emqx_alarm_rule.js';
+
 const auth = {
     auth: {
         username: 'admin',
@@ -36,7 +37,11 @@ const router = express.Router();
 router.get('/', checAuth, asyncMiddleware(async (req, res) => {
     const userId = req.userData._id;
 
-    const devices = await DeviceModel.find({ userId: userId }).populate('saverRule', 'emqxRuleId status').populate('templateId','widgets').populate('alarmRules');
+    const devices = await DeviceModel.find({ userId: userId })
+        .populate('saverRule', 'emqxRuleId status')
+        .populate('templateId', 'widgets')
+        .populate('alarmRules');    
+    
     const toSend = {
         status: 'success',
         data: devices,
@@ -91,7 +96,7 @@ router.put('/', checAuth, asyncMiddleware(async (req, res) => {
 
 }));
 
-router.put('/saver-rule', asyncMiddleware(async (req, res) => {
+router.put('/saver-rule', checAuth, asyncMiddleware(async (req, res) => {
     const status = req.body.status;
     const emqxRuleId = req.body.emqxRuleId;
     // await SaverRuleModel.updateOne({ dId: dId }, { status: status });
@@ -104,10 +109,17 @@ router.put('/saver-rule', asyncMiddleware(async (req, res) => {
 
 }))
 
-router.delete('/', checAuth, asyncMiddleware(async (req, res) => {
+router.delete('/',checAuth, asyncMiddleware(async (req, res) => {
 
     const dId = req.query.dId;
-
+    const idAlarmRules = req.query.idAlarmRules;
+    
+    console.log(dId, idAlarmRules)
+    if (idAlarmRules && idAlarmRules.length > 0) {
+        idAlarmRules.forEach(ruleId => {
+            deleteAlarmRule(ruleId)
+        });
+    }
     await deleteSaverRule(dId);
     const result = await DeviceModel.deleteOne({ dId: dId });
     if (result.n == 0) {
@@ -262,4 +274,22 @@ async function deleteSaverRule(dId) {
 
     }
 
+}
+
+ function deleteAlarmRule(emqxRuleId) {
+    try {
+
+        const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
+
+        axios.delete(url, auth);
+
+        AlarmRuleModel.deleteOne({ emqxRuleId: emqxRuleId });
+
+        return true;
+
+    } catch (error) {
+        console.log(error);
+        return false;
+
+    }
 }

@@ -11,6 +11,7 @@ export default {
     },
     setSelectedDevice(state, device) {
         state.selectedDevice = device;
-    }
+    },
+
 
 }

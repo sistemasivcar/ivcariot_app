@@ -1,11 +1,18 @@
 <template>
   <div>
     <!-- WIDGET CONFIGURATOR -->
-    
+
     <div class="row">
       <card>
         <div slot="header">
-          <h4 class="card-title">Widgets</h4>
+          <div class="row">
+            <div class="col-6">
+              <h4 class="card-title">Widgets Configurations</h4>
+            </div>
+            <div class="col-6">
+              <h4 class="card-title">Widget Preview</h4>
+            </div>
+          </div>
         </div>
 
         <div class="row">
@@ -14,7 +21,7 @@
             <!-- WIDGETS SELECTOR -->
             <el-select
               v-model="selectedWidgetName"
-              class="select-success"
+              class="select-info"
               placeholder="Select Widget"
               style="width: 100%;"
             >
@@ -87,7 +94,7 @@
 
               <el-select
                 v-model="ncConfig.class"
-                class="select-success"
+                class="select-info"
                 placeholder="Select Class"
                 style="width: 100%;"
               >
@@ -117,7 +124,7 @@
 
               <el-select
                 v-model="ncConfig.column"
-                class="select-success"
+                class="select-info"
                 placeholder="Select Column Width"
                 style="width: 100%;"
               >
@@ -188,14 +195,43 @@
               <label for="icon">Icon</label>
               <el-select
                 v-model="iotSwitchConfig.icon"
-                class="select-success"
+                class="select-info"
                 placeholder="Select Icon"
                 style="width: 100%;"
               >
-                <el-option value="fa-sun" class="text-success" label="Sun">
+                <el-option value="fa-sun" class="text-info" label="Sun">
                 </el-option>
 
-                <el-option value="fa-bath" class="text-success" label="Bath">
+                <el-option value="fa-bath" class="text-info" label="Bath">
+                </el-option>
+                <el-option value="fa-male" class="text-info" label="Male">
+                </el-option>
+
+                <el-option value="fa-home" class="text-info" label="Home">
+                </el-option>
+                <el-option
+                  value="fa-lightbulb"
+                  class="text-info"
+                  label="Lightbulb"
+                >
+                </el-option>
+                <el-option value="fa-key" class="text-info" label="Key">
+                </el-option>
+                <el-option value="fa-tint" class="text-info" label="Tint">
+                </el-option>
+                <el-option
+                  value="fa-bullhorn"
+                  class="text-info"
+                  label="Bullhorn"
+                >
+                </el-option>
+                <el-option value="fa-bell" class="text-info" label="Bell">
+                </el-option>
+                <el-option value="fa-unlock" class="text-info" label="Unlock">
+                </el-option>
+                <el-option value="fa-lock" class="text-info" label="Lock">
+                </el-option>
+                <el-option value="fa-bolt" class="text-info" label="Bolt">
                 </el-option>
               </el-select>
 
@@ -204,37 +240,25 @@
               <label for="color">Color</label>
               <el-select
                 v-model="iotSwitchConfig.class"
-                class="select-success"
+                class="select-info"
                 placeholder="Select Class"
                 style="width: 100%;"
               >
-                <el-option
-                  class="text-success"
-                  value="success"
-                  label="Success"
-                ></el-option>
-                <el-option
-                  class="text-primary"
-                  value="primary"
-                  label="Primary"
-                ></el-option>
-                <el-option
-                  class="text-warning"
-                  value="warning"
-                  label="Warning"
-                ></el-option>
-                <el-option
-                  class="text-danger"
-                  value="danger"
-                  label="Danger"
-                ></el-option>
+                <el-option value="info" label="Azul" ></el-option>
+                <el-option value="success" label="Celeste"></el-option>
+                <el-option value="danger" label="Rojo"></el-option>
+                <el-option value="green" label="Verde"></el-option>
+                <el-option value="warning" label="Naranja"></el-option>
+                <el-option value="primary" label="Fuxia"></el-option>
+                <el-option value="violet" label="Violeta"></el-option>
+
               </el-select>
 
               <br /><br />
               <label for="color">Columns</label>
               <el-select
                 v-model="iotSwitchConfig.column"
-                class="select-success"
+                class="select-info"
                 placeholder="Select Column Width"
                 style="width: 100%;"
               >
@@ -317,7 +341,7 @@
               <label for="icon">Icon</label>
               <el-select
                 v-model="iotButtonConfig.icon"
-                class="select-success"
+                class="select-info"
                 placeholder="Select Icon"
                 style="width: 100%;"
               >
@@ -332,37 +356,25 @@
               <label for="color">Color</label>
               <el-select
                 v-model="iotButtonConfig.colorButton"
-                class="select-success"
+                class="select-info"
                 placeholder="Select Class"
                 style="width: 100%;"
               >
-                <el-option
-                  class="text-success"
-                  value="success"
-                  label="Success"
-                ></el-option>
-                <el-option
-                  class="text-primary"
-                  value="primary"
-                  label="Primary"
-                ></el-option>
-                <el-option
-                  class="text-warning"
-                  value="warning"
-                  label="Warning"
-                ></el-option>
-                <el-option
-                  class="text-danger"
-                  value="danger"
-                  label="Danger"
-                ></el-option>
+                 <el-option value="info" label="Azul" ></el-option>
+                <el-option value="danger" label="Rojo"></el-option>
+                <el-option value="green" label="Verde"></el-option>
+                <el-option value="success" label="Celeste"></el-option>
+                <el-option value="warning" label="Naranja"></el-option>
+                <el-option value="primary" label="Fuxia"></el-option>
+                <el-option value="violet" label="Violeta"></el-option>
+
               </el-select>
 
               <br />
               <label for="cols">Columns</label>
               <el-select
                 v-model="iotButtonConfig.column"
-                class="select-success"
+                class="select-info"
                 placeholder="Select Column Width"
                 style="width: 100%;"
               >
@@ -431,7 +443,7 @@
               <label for="icon">Icon</label>
               <el-select
                 v-model="iotIndicatorConfig.icon"
-                class="select-success"
+                class="select-info"
                 placeholder="Select Icon"
                 style="width: 100%;"
               >
@@ -446,7 +458,7 @@
               <label for="color">Color</label>
               <el-select
                 v-model="iotIndicatorConfig.color"
-                class="select-success"
+                class="select-info"
                 placeholder="Select Class"
                 style="width: 100%;"
               >
@@ -476,7 +488,7 @@
               <label for="cols">Columns</label>
               <el-select
                 v-model="iotIndicatorConfig.column"
-                class="select-success"
+                class="select-info"
                 placeholder="Select Column Width"
                 style="width: 100%;"
               >
@@ -574,7 +586,10 @@
     </div>
 
     <!-- DASHBOARD PREVIEW -->
-    <div class="row">
+    <div class="row" v-if="widgets.length > 0">
+      <div class="col-sm-12">
+        <h4 class="card-title">Dashboard Preview</h4>
+      </div>
       <div
         v-for="(widget, index) in widgets"
         :key="widget.variable"
@@ -610,7 +625,7 @@
     </div>
 
     <!-- SAVE TEMPLATE-->
-    <div class="row">
+    <div class="row" v-if="widgets.length > 0">
       <card>
         <div slot="header">
           <h4 class="card-title">Save Template</h4>
@@ -657,7 +672,7 @@
     <div class="row">
       <card>
         <div slot="header">
-          <h4 class="card-title">Templates</h4>
+          <p class="card-title">My Templates</p>
         </div>
 
         <div class="row">
@@ -692,7 +707,7 @@
                   placement="top"
                 >
                   <base-button
-                    @click="showModalDeleteTemplate(row,$index)"
+                    @click="showModalDeleteTemplate(row, $index)"
                     type="danger"
                     icon
                     size="sm"
@@ -707,23 +722,44 @@
         </div>
       </card>
 
-
-      <modal :show="templateToDelete!= null" v-if="templateToDelete">
+      <modal :show="templateToDelete != null" v-if="templateToDelete">
         <template slot="header">
           <h5 class="modal-title" id="exampleModalLabel">Atention!</h5>
         </template>
-        <div>
-          Are you sure you wanna DELETE "{{templateToDelete.name.toUpperCase()}}" template?
+        <div v-if="!templateInUse">
+          Are you sure you wanna
+          <a class="text-danger"
+            >DELETE "{{ templateToDelete.name.toUpperCase() }}"</a
+          >
+          template?
         </div>
-        <template slot="footer">
-          <base-button type="secondary"
-          @click="closeModalTemplate()"
+        <div v-else>
+          <a class="text-danger"
+            >YOU CAN NOT DELETE "{{ templateToDelete.name.toUpperCase() }}" </a
+          >TEMPLATE BECAUSE IT IS BEING USED BY OTHER DEVICES
+        </div>
+
+        <template slot="footer" v-if="!templateInUse">
+          <base-button type="secondary" @click="closeModalTemplate()"
             >NO</base-button
           >
-          <base-button type="info" @click="deleteTemplate(templateToDelete,index)">YES</base-button>
+          <base-button
+            type="info"
+            @click="deleteTemplate(templateToDelete, indexToDelete)"
+            >YES</base-button
+          >
+        </template>
+
+        <template slot="footer" v-else>
+          <base-button type="secondary" @click="closeModalTemplate()"
+            >OK</base-button
+          >
+
+          <base-button type="info" @click="$router.push('/app/devices')"
+            >GO TO DEVICES</base-button
+          >
         </template>
       </modal>
-
     </div>
 
     <!-- JSONS -->
@@ -739,14 +775,16 @@ import IotSwitch from "../../components/Widgets/IotSwitch.vue";
 import IotButton from "../../components/Widgets/IotButton.vue";
 import IotIndicator from "../../components/Widgets/IotIndicator.vue";
 import GraficoRealtime from "../../components/Widgets/GraficoRealtime.vue";
+import Card from "../../components/Cards/Card.vue";
 
 export default {
-  middleware:'authtenticated',
+  middleware: "authtenticated",
   components: {
     IotSwitch,
     IotIndicator,
     IotButton,
     GraficoRealtime,
+    Card,
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     [Option.name]: Option,
@@ -756,17 +794,16 @@ export default {
     return {
       widgets: [],
       templates: [],
+      templateInUse: false,
       selectedWidgetName: "",
       templateName: "",
       templateDescription: "",
       ncConfig: {
-        userId: "sampleuserid",
         selectedDevice: {
           name: "Home",
-          dId: "8888"
+          dId: "dummy-device-id"
         },
         variableFullName: "temperature",
-        variable: "varname",
         unit: "Watts",
         class: "success",
         column: "col-12",
@@ -777,50 +814,45 @@ export default {
         demo: true
       },
       iotSwitchConfig: {
-        userId: "userid",
         selectedDevice: {
           name: "Home",
-          dId: "8888"
+          dId: "dummy-device-id"
         },
         variableFullName: "Luz",
-        variable: "varname",
         class: "danger",
         widgetName: "switch",
         icon: "fa-bath",
         column: "col-6"
       },
       iotButtonConfig: {
-        userId: "userid",
         selectedDevice: {
           name: "Home",
-          dId: "8888"
+          dId: "dummy-device-id"
         },
         variableFullName: "temperature",
         text: "send",
         message: "testing123",
-        variable: "varname",
         widgetName: "button",
         colorButton: "primary",
         icon: "fa-bath",
         column: "col-6"
       },
       iotIndicatorConfig: {
-        userId: "userid",
         selectedDevice: {
           name: "Home",
-          dId: "8888"
+          dId: "dummy-device-id"
         },
         variableFullName: "temperature",
-        variable: "varname",
         color: "success",
         widgetName: "indicator",
         icon: "fa-bath",
         column: "col-6"
       },
       value: false,
-      templateToDelete:null,
-      indexToDelete:null,
+      templateToDelete: null,
+      indexToDelete: null
     };
+
   },
   methods: {
     async newTemplate() {
@@ -837,12 +869,19 @@ export default {
             name: this.templateName,
             description: this.templateDescription,
             widgets: this.widgets
-          }
+          } 
         };
+
+        console.log(toSend.template.widgets);
+        console.log(this.userId);;
         const res = await this.$axios.post("/template", toSend, axiosHeaders);
 
         if (res.data.status == "success") {
           this.templates.push(res.data.data);
+          this.templateName = "";
+          this.templateDescription = "";
+          this.selectedWidgetName = "";
+          this.widgets = [];
           this.$notify({
             type: "success",
             icon: "tim-icons icon-check-2",
@@ -860,8 +899,8 @@ export default {
     },
 
     async getTemplates() {
-        try {
-        const token = this.$store.getters['auth/getToken'];
+      try {
+        const token = this.$store.getters["auth/getToken"];
         const axiosHeaders = {
           headers: {
             "x-auth-token": token
@@ -882,30 +921,30 @@ export default {
       }
     },
 
-    async deleteTemplate(template,index) {
+    async deleteTemplate(template, index) {
       try {
-        const token = this.$store.state.auth.auth.token;
+        const token = this.$store.getters["auth/getToken"];
         const axiosHeaders = {
           headers: {
             "x-auth-token": token
           },
-          params:{
-            _id:template._id
+          params: {
+            _id: template._id
           }
         };
+
         const res = await this.$axios.delete("/template", axiosHeaders);
         if (res.data.status == "success") {
-            this.templates.splice(index,1)
-            this.$notify({
+          this.templates.splice(index, 1);
+          this.$notify({
             type: "success",
             icon: "tim-icons icon-check-2",
             message: `Template "${template.name.toUpperCase()}" deleted!`
-        });
-        this.templateToDelete=null;
-
+          });
+          this.templateToDelete = null;
         }
       } catch (e) {
-          this.$notify({
+        this.$notify({
           type: "danger",
           icon: "tim-icons icon-alert-circle-exc",
           message: "Error deleting template"
@@ -916,19 +955,23 @@ export default {
       switch (this.selectedWidgetName) {
         case "button":
           this.iotButtonConfig.variable = this.makeid(10);
+          this.iotButtonConfig.userId=this.$store.getters['auth/getUserId'];
           this.widgets.push(JSON.parse(JSON.stringify(this.iotButtonConfig)));
           break;
         case "numberchart":
+          this.ncConfig.userId=this.$store.getters['auth/getUserId'];
           this.ncConfig.variable = this.makeid(10);
           this.widgets.push(JSON.parse(JSON.stringify(this.ncConfig)));
           break;
         case "indicator":
+          this.iotIndicatorConfig.userId=this.$store.getters['auth/getUserId'];
           this.iotIndicatorConfig.variable = this.makeid(10);
           this.widgets.push(
             JSON.parse(JSON.stringify(this.iotIndicatorConfig))
           );
           break;
         case "switch":
+          this.iotSwitchConfig.userId=this.$store.getters['auth/getUserId'];
           this.iotSwitchConfig.variable = this.makeid(10);
           this.widgets.push(JSON.parse(JSON.stringify(this.iotSwitchConfig)));
 
@@ -941,12 +984,23 @@ export default {
     deleteWidget(index) {
       this.widgets.splice(index, 1);
     },
-    closeModalTemplate(){
-      this.templateToDelete=null;
+    closeModalTemplate() {
+      this.templateToDelete = null;
     },
-    showModalDeleteTemplate(template, index){
-      this.templateToDelete=template;
-      this.indexToDelete=index;
+    showModalDeleteTemplate(template, index) {
+      const devices = this.$store.getters["devices/getDevices"];
+      const isTemplateInUse = devices.some(
+        d => d.templateId._id == template._id
+      );
+      if (isTemplateInUse) {
+        this.templateInUse = true;
+        this.templateToDelete = template;
+        this.indexToDelete = index;
+      } else {
+        this.templateInUse = false;
+        this.templateToDelete = template;
+        this.indexToDelete = index;
+      }
     },
     makeid(length) {
       var result = "";
@@ -961,8 +1015,15 @@ export default {
       return result;
     }
   },
+
+  computed:{
+    userId(){
+      return this.$store.getters['auth/getUserId']
+    }
+  },
   async mounted() {
     await this.getTemplates();
   }
 };
 </script>
+

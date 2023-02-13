@@ -11,21 +11,21 @@ const actions = {
             const response = await this.$axios.get('/device', axiosHeader);
             if (response.data.status == 'success') {
                 const devices = response.data.data;
-
+                
+                if (devices.length == 0) {
+                    context.commit("setSelectedDevice", {});
+                    $nuxt.$emit('selectedDeviceIndex', null);
+                }
+                // SELECTOR DEVICE COMPONENT
                 devices.forEach((device, index) => {
                     if (device.selected) {
                         context.commit("setSelectedDevice", device);
                         $nuxt.$emit('selectedDeviceIndex', index);
                     }
                 });
-
-                if (devices.length == 0) {
-                    context.commit("setSelectedDevice", {});
-                    $nuxt.$emit('selectedDeviceIndex', null);
-                }
-
-
-
+                
+                // FIX THE WIDGETS
+    
                 context.commit('setDevices', devices);
             }
         } catch (e) {
@@ -65,22 +65,28 @@ const actions = {
     async deleteDevice(context, device) {
         try {
             const token = context.rootGetters['auth/getToken'];
-
+            const idAlarmRules = [];
+            for (let i = 0; i < device.alarmRules.length; i++) {
+                const idAlarmRule = device.alarmRules[i].emqxRuleId;
+                idAlarmRule && idAlarmRules.push(idAlarmRule);
+            }
             const axiosHeader = {
                 headers: {
                     'x-auth-token': token
                 },
                 params: {
                     dId: device.dId,
+                    idAlarmRules: idAlarmRules,
                 }
-            };
 
+            };
             const response = await this.$axios.delete('/device', axiosHeader);
 
             if (response.data.status == 'success' && response.data.data.n === 1) {
                 context.commit('deleteDevice', device)
             }
         } catch (e) {
+            console.log(e)
             const error = new Error('Falied to delete device')
             throw error;
         }

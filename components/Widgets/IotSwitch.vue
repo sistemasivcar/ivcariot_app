@@ -19,7 +19,6 @@
           "
           :value="value"
           type="primary"
-          
           on-text="ON"
           off-text="OFF"
           :style="'margin-top: 10px; ' + setColorSwitch"
@@ -51,16 +50,26 @@ export default {
 
   mounted() {},
   beforeDestroy() {},
-  computed:{
-    setColorSwitch(){
-        if(this.config.class === 'success') return 'background: rgba(123, 255, 200, 0.7);'
-        else if(this.config.class==='primary')return 'background: rgba(237, 0, 200, 0.7);'
-        else if(this.config.class==='warning') return 'background: rgba(255, 135, 101, 0.7);'
-        else if(this.config.class==='danger') return 'background: rgba(255, 23, 139, 0.7);'        
+  computed: {
+    setColorSwitch() {
+      if (this.config.class === "green")
+        return "background: rgba(0, 193, 118, 0.7);";
+      else if (this.config.class === "warning")
+        return "background: rgba(255, 135, 101, 0.7);";
+        else if (this.config.class === "success")
+        return "background: rgba(0, 240, 205, 0.7)";
+      else if (this.config.class === "danger")
+        return "background: rgba(248, 0, 20, 0.7);";
+      else if (this.config.class === "info")
+        return "background: rgba(40, 150, 252, 0.7);";
+      else if (this.config.class === "violet")
+        return "background:  rgba(237, 0, 200, 0.7);";
+      else if (this.config.class === "primary")
+        return "background:rgba(255, 23, 139, 0.7);";
     },
-    getIconColor(){
-        return this.value ? 'text-'+this.config.class : 'text-dark'
-    },
+    getIconColor() {
+      return this.value ? "icon-" + this.config.class : "text-dark";
+    }
   },
   methods: {
     sendValue() {
@@ -82,4 +91,33 @@ export default {
   }
 };
 </script>
-<style></style>
+
+<style scoped>
+.icon-green {
+  color: rgba(0, 193, 118, 0.7);
+}
+
+.icon-success{
+  color: rgba(0, 240, 205, 0.7)
+}
+
+.icon-danger {
+  color: rgba(248, 0, 20, 0.7);
+}
+
+.icon-warning {
+  color: rgba(255, 135, 101, 0.7);
+}
+
+.icon-info {
+  color: rgba(40, 150, 252, 0.7);
+}
+
+.icon-primary {
+  color: rgba(255, 23, 139, 0.7);
+}
+
+.icon-violet {
+  color: rgba(237, 0, 200, 0.7);
+}
+</style>

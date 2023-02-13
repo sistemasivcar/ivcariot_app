@@ -35,19 +35,14 @@
         >
         </sidebar-item>
 
-
         <sidebar-item
-        :link="{
-          name: 'Templates',
-          icon: 'tim-icons icon-chart-pie-36',
-          path: '/app/templates'
-        }"
-      >
-      </sidebar-item>
-
-
-
-
+          :link="{
+            name: 'Templates',
+            icon: 'tim-icons icon-chart-pie-36',
+            path: '/app/templates'
+          }"
+        >
+        </sidebar-item>
       </template>
     </side-bar>
 
@@ -92,7 +87,8 @@ import DashboardNavbar from "@/components/Layout/DashboardNavbar.vue";
 import ContentFooter from "@/components/Layout/ContentFooter.vue";
 import DashboardContent from "@/components/Layout/Content.vue";
 import { SlideYDownTransition, ZoomCenterTransition } from "vue2-transitions";
-import SideBar from '../components/SidebarPlugin/SideBar.vue';
+import SideBar from "../components/SidebarPlugin/SideBar.vue";
+import mqtt from "mqtt";
 
 export default {
   components: {
@@ -106,7 +102,8 @@ export default {
   },
   data() {
     return {
-      sidebarBackground: "blue" //vue|blue|orange|green|red|primary
+      sidebarBackground: "blue", //vue|blue|orange|green|red|primary
+      client: null
     };
   },
   computed: {
@@ -115,9 +112,87 @@ export default {
     }
   },
   methods: {
-        async getDevices() {
+    startMqttClient() {
+      const userName = this.$store.getters["auth/getUserName"];
+      const userId = this.$store.getters["auth/getUserId"];
+
+      const options = {
+        host: "localhost",
+        port: 8083,
+        endpoint: "/mqtt",
+        clean: true,
+        connectTimeout: 5000,
+        reconnectPeriod: 5000,
+        // crendentials info
+        clientId: `web_${userName}_${Math.floor(Math.random() * 1000000 + 1)}`,
+        username: "superuser",
+        password: "superuser"
+      };
+
+      const deviceSubscribeTopic = `${userId}/+/+/sdata`;
+      const notifSubscribeTopic = `${userId}/+/+/notif`;
+      // ex. topic: "userId/dId/variableid/sdata"
+      const connectUrl = `ws://${options.host}:${options.port}${options.endpoint}`;
+      console.log(connectUrl);
+
       try {
-        await this.$store.dispatch("devices/fetchDevices");
+        this.client = mqtt.connect(connectUrl, options);
+      } catch (e) {
+        console.log(e);
+      }
+
+      this.client.on("connect", () => {
+        console.log("MQTT CONNECTION SUCCESS!");
+
+        this.client.subscribe(deviceSubscribeTopic, { qos: 0 }, err => {
+          if (err) return err;
+          console.log("Devicesubscription success!");
+          console.log(deviceSubscribeTopic);
+        });
+
+        this.client.subscribe(notifSubscribeTopic, { qos: 0 }, err => {
+          if (err) return err;
+          console.log("Notifsubscription success!");
+          console.log(notifSubscribeTopic);
+        });
+      });
+
+      this.client.on("error", err => {
+        console.log("connection failed");
+      });
+
+      this.client.on("reconnect", err => {
+        console.log("reconnectig...", err);
+      });
+
+      this.client.on("message", (topic, message) => {
+        console.log("Message MQTT from topic -> ", topic);
+        console.log("message: ", message.toString());
+
+        const splittedTopic = topic.split("/");
+        const msgType = splittedTopic[3]; // sdata, notif
+
+        if (msgType == "notif") {
+          this.$notify({
+            type: "danger",
+            icon: "tim-icons icon-bell-55",
+            message: message.toString()
+          });
+          this.getNotifications();
+        } else if (msgType == "sdata") {
+          this.$nuxt.$emit(topic, JSON.parse(message.toString()));
+        }
+      });
+
+      this.$nuxt.$on("mqtt-sender", toSend => {
+        this.client.publish(toSend.topic, JSON.stringify(toSend.msg));
+      });
+
+
+    },
+    async getNotifications() {
+      try {
+        await this.$store.dispatch("notif/fetchNotifications");
       } catch (e) {
         this.$notify({
           type: "danger",
@@ -148,7 +223,11 @@ export default {
   },
   async mounted() {
     this.initScrollbar();
-
+    this.startMqttClient();
+    this.getNotifications();
+  },
+  beforeDestroy(){
+    this.$nuxt.$off('mqtt-sender')
   }
 };
 </script>
