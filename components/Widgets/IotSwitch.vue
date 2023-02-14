@@ -18,7 +18,6 @@
             sendValue();
           "
           :value="value"
-          type="primary"
           on-text="ON"
           off-text="OFF"
           :style="'margin-top: 10px; ' + setColorSwitch"

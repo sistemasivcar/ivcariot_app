@@ -27,14 +27,14 @@ export default {
   },
   methods:{
     porcessRecivedData(data){
-        console.log('----------recived---------------', data)
+        
         this.value=data.value;
     }
   },
 
   computed:{
     getColorIcon(){
-        return this.value ? this.config.color : 'text-dark'
+        return this.value ? 'text-'+this.config.color : 'text-dark'
     },
   },
   

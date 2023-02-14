@@ -28,159 +28,67 @@
               <el-option
                 class="text-dark"
                 value="numberchart"
-                label="Number Chart INPUT <-"
+                label="Realtime number chart"
               >
               </el-option>
               <el-option
                 class="text-dark"
                 value="indicator"
-                label="Boolean Indicator INPUT <-"
+                label="Boolean Indicator"
               >
               </el-option>
-              <el-option
+              <!--               <el-option
                 class="text-dark"
                 value="map"
                 label="Map INPUT <-"
-              ></el-option>
+              ></el-option> -->
               <el-option
                 class="text-dark"
                 value="switch"
-                label="Switch OUTPUT ->"
+                label="Switch "
               ></el-option>
               <el-option
                 class="text-dark"
                 value="button"
-                label="Button OUTPUT ->"
+                label="Button "
               ></el-option>
             </el-select>
-
-            <br />
-            <br />
+            <hr />
 
             <!-- FORMS NUMBER CHART TYPE -->
             <div v-if="selectedWidgetName == 'numberchart'">
-              <base-input
-                v-model="ncConfig.variableFullName"
-                label="Var Name"
-                type="text"
-              >
-              </base-input>
+              <div class="row">
+                <div class="col-6">
+                  <base-input
+                    v-model="ncConfig.variableFullName"
+                    label="Var Name"
+                    type="text"
+                  >
+                  </base-input>
+                </div>
+                <div class="col-6">
+                  <base-input
+                    v-model.number="ncConfig.chartTimeAgo"
+                    label="Chart Back Time (mins)"
+                    type="number"
+                  ></base-input>
+                </div>
+              </div>
 
-              <base-input v-model="ncConfig.unit" label="Unit" type="text">
-              </base-input>
-
-              <base-input
-                v-model.number="ncConfig.decimalPlaces"
-                label="Decimal Places"
-                type="number"
-              >
-              </base-input>
-
-              <base-input
-                v-model="ncConfig.icon"
-                label="Icon"
-                type="text"
-              ></base-input>
-
-              <br />
-
-              <base-input
-                v-model.number="ncConfig.chartTimeAgo"
-                label="Chart Back Time (mins)"
-                type="number"
-              ></base-input>
-
-              <br />
-
-              <el-select
-                v-model="ncConfig.class"
-                class="select-info"
-                placeholder="Select Class"
-                style="width: 100%;"
-              >
-                <el-option
-                  class="text-success"
-                  value="success"
-                  label="Success"
-                ></el-option>
-                <el-option
-                  class="text-primary"
-                  value="primary"
-                  label="Primary"
-                ></el-option>
-                <el-option
-                  class="text-warning"
-                  value="warning"
-                  label="Warning"
-                ></el-option>
-                <el-option
-                  class="text-danger"
-                  value="danger"
-                  label="Danger"
-                ></el-option>
-              </el-select>
-
-              <br /><br /><br />
-
-              <el-select
-                v-model="ncConfig.column"
-                class="select-info"
-                placeholder="Select Column Width"
-                style="width: 100%;"
-              >
-                <el-option
-                  class="text-dark"
-                  value="col-3"
-                  label="col-3"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-4"
-                  label="col-4"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-5"
-                  label="col-5"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-6"
-                  label="col-6"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-7"
-                  label="col-7"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-8"
-                  label="col-8"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-9"
-                  label="col-9"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-10"
-                  label="col-10"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-11"
-                  label="col-11"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-12"
-                  label="col-12"
-                ></el-option>
-              </el-select>
-
-              <br /><br />
+              <div class="row">
+                <div class="col-6">
+                  <base-input v-model="ncConfig.unit" label="Unit" type="text">
+                  </base-input>
+                </div>
+                <div class="col-6">
+                  <base-input
+                    v-model.number="ncConfig.decimalPlaces"
+                    label="Decimal Places"
+                    type="number"
+                  >
+                  </base-input>
+                </div>
+              </div>
             </div>
 
             <!-- FORM SWITCH TYPE -->
@@ -191,128 +99,6 @@
                 type="text"
               >
               </base-input>
-
-              <label for="icon">Icon</label>
-              <el-select
-                v-model="iotSwitchConfig.icon"
-                class="select-info"
-                placeholder="Select Icon"
-                style="width: 100%;"
-              >
-                <el-option value="fa-sun" class="text-info" label="Sun">
-                </el-option>
-
-                <el-option value="fa-bath" class="text-info" label="Bath">
-                </el-option>
-                <el-option value="fa-male" class="text-info" label="Male">
-                </el-option>
-
-                <el-option value="fa-home" class="text-info" label="Home">
-                </el-option>
-                <el-option
-                  value="fa-lightbulb"
-                  class="text-info"
-                  label="Lightbulb"
-                >
-                </el-option>
-                <el-option value="fa-key" class="text-info" label="Key">
-                </el-option>
-                <el-option value="fa-tint" class="text-info" label="Tint">
-                </el-option>
-                <el-option
-                  value="fa-bullhorn"
-                  class="text-info"
-                  label="Bullhorn"
-                >
-                </el-option>
-                <el-option value="fa-bell" class="text-info" label="Bell">
-                </el-option>
-                <el-option value="fa-unlock" class="text-info" label="Unlock">
-                </el-option>
-                <el-option value="fa-lock" class="text-info" label="Lock">
-                </el-option>
-                <el-option value="fa-bolt" class="text-info" label="Bolt">
-                </el-option>
-              </el-select>
-
-              <br />
-
-              <label for="color">Color</label>
-              <el-select
-                v-model="iotSwitchConfig.class"
-                class="select-info"
-                placeholder="Select Class"
-                style="width: 100%;"
-              >
-                <el-option value="info" label="Azul" ></el-option>
-                <el-option value="success" label="Celeste"></el-option>
-                <el-option value="danger" label="Rojo"></el-option>
-                <el-option value="green" label="Verde"></el-option>
-                <el-option value="warning" label="Naranja"></el-option>
-                <el-option value="primary" label="Fuxia"></el-option>
-                <el-option value="violet" label="Violeta"></el-option>
-
-              </el-select>
-
-              <br /><br />
-              <label for="color">Columns</label>
-              <el-select
-                v-model="iotSwitchConfig.column"
-                class="select-info"
-                placeholder="Select Column Width"
-                style="width: 100%;"
-              >
-                <el-option
-                  class="text-dark"
-                  value="col-3"
-                  label="col-3"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-4"
-                  label="col-4"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-5"
-                  label="col-5"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-6"
-                  label="col-6"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-7"
-                  label="col-7"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-8"
-                  label="col-8"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-9"
-                  label="col-9"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-10"
-                  label="col-10"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-11"
-                  label="col-11"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-12"
-                  label="col-12"
-                ></el-option>
-              </el-select>
             </div>
 
             <!-- FORM BUTTON TYPE -->
@@ -324,13 +110,8 @@
               >
               </base-input>
 
-              <base-input
-                v-model="iotButtonConfig.message"
-                label="Message to send"
-                type="text"
-              >
-              </base-input>
-
+              <div class="row">
+                <div class="col-6">
               <base-input
                 v-model="iotButtonConfig.text"
                 label="Button Text"
@@ -338,97 +119,18 @@
               >
               </base-input>
 
-              <label for="icon">Icon</label>
-              <el-select
-                v-model="iotButtonConfig.icon"
-                class="select-info"
-                placeholder="Select Icon"
-                style="width: 100%;"
+                </div>
+                <div class="col-6">
+              <base-input
+                v-model="iotButtonConfig.message"
+                label="Message to send"
+                type="text"
               >
-                <el-option value="fa-sun" class="text-success" label="Sun">
-                </el-option>
+              </base-input>
 
-                <el-option value="fa-bath" class="text-success" label="Bath">
-                </el-option>
-              </el-select>
+                </div>
+              </div>
 
-              <br />
-              <label for="color">Color</label>
-              <el-select
-                v-model="iotButtonConfig.colorButton"
-                class="select-info"
-                placeholder="Select Class"
-                style="width: 100%;"
-              >
-                 <el-option value="info" label="Azul" ></el-option>
-                <el-option value="danger" label="Rojo"></el-option>
-                <el-option value="green" label="Verde"></el-option>
-                <el-option value="success" label="Celeste"></el-option>
-                <el-option value="warning" label="Naranja"></el-option>
-                <el-option value="primary" label="Fuxia"></el-option>
-                <el-option value="violet" label="Violeta"></el-option>
-
-              </el-select>
-
-              <br />
-              <label for="cols">Columns</label>
-              <el-select
-                v-model="iotButtonConfig.column"
-                class="select-info"
-                placeholder="Select Column Width"
-                style="width: 100%;"
-              >
-                <el-option
-                  class="text-dark"
-                  value="col-3"
-                  label="col-3"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-4"
-                  label="col-4"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-5"
-                  label="col-5"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-6"
-                  label="col-6"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-7"
-                  label="col-7"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-8"
-                  label="col-8"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-9"
-                  label="col-9"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-10"
-                  label="col-10"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-11"
-                  label="col-11"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-12"
-                  label="col-12"
-                ></el-option>
-              </el-select>
             </div>
 
             <!-- FORM INDICATOR TYPE -->
@@ -439,110 +141,26 @@
                 type="text"
               >
               </base-input>
+            </div>
+            <hr />
 
-              <label for="icon">Icon</label>
-              <el-select
-                v-model="iotIndicatorConfig.icon"
-                class="select-info"
-                placeholder="Select Icon"
-                style="width: 100%;"
-              >
-                <el-option value="fa-sun" class="text-success" label="Sun">
-                </el-option>
+            <div v-if="selectedWidgetName">
 
-                <el-option value="fa-bath" class="text-success" label="Bath">
-                </el-option>
-              </el-select>
-
-              <br />
+              <div class="row">
+                <div class="col-6">
               <label for="color">Color</label>
-              <el-select
-                v-model="iotIndicatorConfig.color"
-                class="select-info"
-                placeholder="Select Class"
-                style="width: 100%;"
-              >
-                <el-option
-                  class="text-success"
-                  value="success"
-                  label="Success"
-                ></el-option>
-                <el-option
-                  class="text-primary"
-                  value="primary"
-                  label="Primary"
-                ></el-option>
-                <el-option
-                  class="text-warning"
-                  value="warning"
-                  label="Warning"
-                ></el-option>
-                <el-option
-                  class="text-danger"
-                  value="danger"
-                  label="Danger"
-                ></el-option>
-              </el-select>
+              <color-config @color="getColor"></color-config>
 
-              <br /><br />
-              <label for="cols">Columns</label>
-              <el-select
-                v-model="iotIndicatorConfig.column"
-                class="select-info"
-                placeholder="Select Column Width"
-                style="width: 100%;"
-              >
-                <el-option
-                  class="text-dark"
-                  value="col-3"
-                  label="col-3"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-4"
-                  label="col-4"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-5"
-                  label="col-5"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-6"
-                  label="col-6"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-7"
-                  label="col-7"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-8"
-                  label="col-8"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-9"
-                  label="col-9"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-10"
-                  label="col-10"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-11"
-                  label="col-11"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-12"
-                  label="col-12"
-                ></el-option>
-              </el-select>
+                </div>
+                <div class="col-6">
+
+              <label for="color">Icon</label>
+              <config-icon @icon="getIcon"></config-icon>
+
+                </div>
+              </div>
+              <label for="color">Ancho</label>
+              <config-cols @cols="getCols"></config-cols>
             </div>
           </div>
 
@@ -776,10 +394,16 @@ import IotButton from "../../components/Widgets/IotButton.vue";
 import IotIndicator from "../../components/Widgets/IotIndicator.vue";
 import GraficoRealtime from "../../components/Widgets/GraficoRealtime.vue";
 import Card from "../../components/Cards/Card.vue";
+import ColorConfig from "../../components/Widgets/Configs/ColorConfig.vue";
+import ConfigCols from "../../components/Widgets/Configs/ConfigCols.vue";
+import ConfigIcon from "../../components/Widgets/Configs/ConfigIcon.vue";
 
 export default {
   middleware: "authtenticated",
   components: {
+    ColorConfig,
+    ConfigIcon,
+    ConfigCols,
     IotSwitch,
     IotIndicator,
     IotButton,
@@ -852,9 +476,63 @@ export default {
       templateToDelete: null,
       indexToDelete: null
     };
-
   },
   methods: {
+    getColor(color) {
+      switch (this.selectedWidgetName) {
+        case "button":
+          this.iotButtonConfig.colorButton = color;
+          break;
+        case "numberchart":
+          this.ncConfig.class = color;
+          break;
+        case "indicator":
+          this.iotIndicatorConfig.color = color;
+          break;
+        case "switch":
+          this.iotSwitchConfig.class = color;
+          break;
+        default:
+          break;
+      }
+    },
+
+    getCols(cols) {
+      switch (this.selectedWidgetName) {
+        case "button":
+          this.iotButtonConfig.column = cols;
+          break;
+        case "numberchart":
+          this.ncConfig.column = icon;
+          break;
+        case "indicator":
+          this.iotIndicatorConfig.column = cols;
+          break;
+        case "switch":
+          this.iotSwitchConfig.column = cols;
+          break;
+        default:
+          break;
+      }
+    },
+    getIcon(icon) {
+      switch (this.selectedWidgetName) {
+        case "button":
+          this.iotButtonConfig.icon = icon;
+          break;
+        case "numberchart":
+          this.ncConfig.icon = icon;
+          break;
+        case "indicator":
+          this.iotIndicatorConfig.icon = icon;
+          break;
+        case "switch":
+          this.iotSwitchConfig.icon = icon;
+          break;
+        default:
+          break;
+      }
+    },
     async newTemplate() {
       try {
         const token = this.$store.state.auth.auth.token;
@@ -869,11 +547,11 @@ export default {
             name: this.templateName,
             description: this.templateDescription,
             widgets: this.widgets
-          } 
+          }
         };
 
         console.log(toSend.template.widgets);
-        console.log(this.userId);;
+        console.log(this.userId);
         const res = await this.$axios.post("/template", toSend, axiosHeaders);
 
         if (res.data.status == "success") {
@@ -955,23 +633,25 @@ export default {
       switch (this.selectedWidgetName) {
         case "button":
           this.iotButtonConfig.variable = this.makeid(10);
-          this.iotButtonConfig.userId=this.$store.getters['auth/getUserId'];
+          this.iotButtonConfig.userId = this.$store.getters["auth/getUserId"];
           this.widgets.push(JSON.parse(JSON.stringify(this.iotButtonConfig)));
           break;
         case "numberchart":
-          this.ncConfig.userId=this.$store.getters['auth/getUserId'];
+          this.ncConfig.userId = this.$store.getters["auth/getUserId"];
           this.ncConfig.variable = this.makeid(10);
           this.widgets.push(JSON.parse(JSON.stringify(this.ncConfig)));
           break;
         case "indicator":
-          this.iotIndicatorConfig.userId=this.$store.getters['auth/getUserId'];
+          this.iotIndicatorConfig.userId = this.$store.getters[
+            "auth/getUserId"
+          ];
           this.iotIndicatorConfig.variable = this.makeid(10);
           this.widgets.push(
             JSON.parse(JSON.stringify(this.iotIndicatorConfig))
           );
           break;
         case "switch":
-          this.iotSwitchConfig.userId=this.$store.getters['auth/getUserId'];
+          this.iotSwitchConfig.userId = this.$store.getters["auth/getUserId"];
           this.iotSwitchConfig.variable = this.makeid(10);
           this.widgets.push(JSON.parse(JSON.stringify(this.iotSwitchConfig)));
 
@@ -1016,9 +696,9 @@ export default {
     }
   },
 
-  computed:{
-    userId(){
-      return this.$store.getters['auth/getUserId']
+  computed: {
+    userId() {
+      return this.$store.getters["auth/getUserId"];
     }
   },
   async mounted() {
@@ -1026,4 +706,3 @@ export default {
   }
 };
 </script>
-

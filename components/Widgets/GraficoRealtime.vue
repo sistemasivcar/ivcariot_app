@@ -171,6 +171,9 @@ export default {
       if (c == "danger") {
         this.chartOptions.series[0].color = "#fd5d93";
       }
+      if (c == "info") {
+        this.chartOptions.series[0].color = "rgba(40, 150, 252, 0.7)";
+      }
 
       this.chartOptions.series[0].name =
         this.config.variableFullName + " " + this.config.unit;
@@ -238,6 +241,9 @@ export default {
       }
       if (this.config.class == "danger") {
         return "text-danger";
+      }
+      if (this.config.class == "info") {
+        return "text-info";
       }
     },
 
