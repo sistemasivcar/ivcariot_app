@@ -503,7 +503,7 @@ export default {
           this.iotButtonConfig.column = cols;
           break;
         case "numberchart":
-          this.ncConfig.column = icon;
+          this.ncConfig.column = cols;
           break;
         case "indicator":
           this.iotIndicatorConfig.column = cols;
@@ -550,8 +550,6 @@ export default {
           }
         };
 
-        console.log(toSend.template.widgets);
-        console.log(this.userId);
         const res = await this.$axios.post("/template", toSend, axiosHeaders);
 
         if (res.data.status == "success") {

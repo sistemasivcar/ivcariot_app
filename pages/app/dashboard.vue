@@ -46,6 +46,7 @@ export default {
         const widgetCopy = JSON.parse(JSON.stringify(widget));
         widgetCopy.selectedDevice.name = this.$store.state.devices.selectedDevice.name;
         widgetCopy.selectedDevice.dId = this.$store.state.devices.selectedDevice.dId;
+        widgetCopy.demo = false;
         
         return widgetCopy;
       }

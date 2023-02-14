@@ -6,6 +6,9 @@
 
 <script>
 export default {
-    layout:'home'
+    middleware:'authtenticated',
+    mounted(){
+        this.$router.replace('/app/dashboard');
+    }
 }
 </script>

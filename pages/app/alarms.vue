@@ -22,8 +22,8 @@
             <div class="col-3">
               <el-select
                 required
-                class="select-success"
-                placeholder="Variable"
+                class="select-info"
+                placeholder="Select Variable"
                 v-model="selectedWidgetIndex"
                 style="margin-top: 25px;"
               >
@@ -41,7 +41,7 @@
               <el-select
                 required
                 class="select-warning"
-                placeholder="Condition"
+                placeholder="Select Condition"
                 v-model="newRule.condition"
                 style="margin-top: 25px;"
               >
@@ -64,7 +64,7 @@
 
             <div class="col-3">
               <base-input
-                label="Trigger Time"
+                label="Trigger Time (minutes)"
                 v-model="newRule.triggerTime"
                 type="number"
               ></base-input>
@@ -329,6 +329,13 @@ export default {
           type: "warning",
           icon: "tim-icons icon-alert-circle-exc",
           message: " Trigger Time is empty"
+        });
+        return;
+      }if( this.newRule.triggerTime<=5){
+          this.$notify({
+          type: "warning",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: " Trigger Time must be >= than 5"
         });
         return;
       }

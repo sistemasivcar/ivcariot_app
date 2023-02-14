@@ -229,11 +229,9 @@ export default {
             "x-auth-token": token
           }
         };
-
         const res = await this.$axios.get("/template", axiosHeaders);
         if (res.data.status == "success") {
           this.templates = res.data.data;
-          console.log("get tempalte OK");
         }
       } catch (e) {
         console.log(e);

@@ -103,7 +103,21 @@ export default {
   data() {
     return {
       sidebarBackground: "blue", //vue|blue|orange|green|red|primary
-      client: null
+      client: null,
+      options: {
+        host: "localhost",
+        port: 8083,
+        endpoint: "/mqtt",
+        clean: true,
+        connectTimeout: 5000,
+        reconnectPeriod: 5000,
+        // crendentials info
+        clientId: `web_${this.$store.getters["auth/getUserName"]}_${Math.floor(
+          Math.random() * 1000000 + 1
+        )}`,
+        username: null,
+        password: null
+      }
     };
   },
   computed: {
@@ -112,31 +126,19 @@ export default {
     }
   },
   methods: {
-    startMqttClient() {
-      const userName = this.$store.getters["auth/getUserName"];
-      const userId = this.$store.getters["auth/getUserId"];
+    async startMqttClient() {
+      await this.getMqttCredentials();
 
-      const options = {
-        host: "localhost",
-        port: 8083,
-        endpoint: "/mqtt",
-        clean: true,
-        connectTimeout: 5000,
-        reconnectPeriod: 5000,
-        // crendentials info
-        clientId: `web_${userName}_${Math.floor(Math.random() * 1000000 + 1)}`,
-        username: "superuser",
-        password: "superuser"
-      };
+      const userId = this.$store.getters["auth/getUserId"];
 
       const deviceSubscribeTopic = `${userId}/+/+/sdata`;
       const notifSubscribeTopic = `${userId}/+/+/notif`;
       // ex. topic: "userId/dId/variableid/sdata"
-      const connectUrl = `ws://${options.host}:${options.port}${options.endpoint}`;
+      const connectUrl = `ws://${this.options.host}:${this.options.port}${this.options.endpoint}`;
       console.log(connectUrl);
 
       try {
-        this.client = mqtt.connect(connectUrl, options);
+        this.client = mqtt.connect(connectUrl, this.options);
       } catch (e) {
         console.log(e);
       }
@@ -146,14 +148,14 @@ export default {
 
         this.client.subscribe(deviceSubscribeTopic, { qos: 0 }, err => {
           if (err) return err;
-          console.log("Devicesubscription success!");
-          console.log(deviceSubscribeTopic);
+          // console.log("Devicesubscription success!");
+          // console.log(deviceSubscribeTopic);
         });
 
         this.client.subscribe(notifSubscribeTopic, { qos: 0 }, err => {
           if (err) return err;
-          console.log("Notifsubscription success!");
-          console.log(notifSubscribeTopic);
+          // console.log("Notifsubscription success!");
+          // console.log(notifSubscribeTopic);
         });
       });
 
@@ -163,6 +165,8 @@ export default {
 
       this.client.on("reconnect", err => {
         console.log("reconnectig...", err);
+        this.getMqttCredentialsForReconnection();
+
       });
 
       this.client.on("message", (topic, message) => {
@@ -187,8 +191,58 @@ export default {
       this.$nuxt.$on("mqtt-sender", toSend => {
         this.client.publish(toSend.topic, JSON.stringify(toSend.msg));
       });
+    },
 
-
+    async getMqttCredentials() {
+      try {
+        const token = this.$store.getters["auth/getToken"];
+        const axiosHeader = {
+          headers: {
+            "x-auth-token": token
+          }
+        };
+        const credentials = await this.$axios.post(
+          "/user/getmqttcredentials",
+          null,
+          axiosHeader
+        );
+        
+        this.options.username = credentials.data.username;
+        this.options.password = credentials.data.password;
+      } catch (e) {
+        console.log(e);
+        this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: e
+        });
+      }
+    },
+    async getMqttCredentialsForReconnection(){
+      try {
+        const token = this.$store.getters["auth/getToken"];
+        const axiosHeader = {
+          headers: {
+            "x-auth-token": token
+          }
+        };
+    
+        const credentials = await this.$axios.post(
+          "/user/getmqttcredentialsforreconnection",
+          null,
+          axiosHeader
+        );
+        this.client.options.username = credentials.data.username;
+        this.client.options.password = credentials.data.password;
+        console.log('credentials updated')
+      } catch (e) {
+        console.log(e);
+        this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: e
+        });
+      }
     },
     async getNotifications() {
       try {
@@ -219,15 +273,20 @@ export default {
       } else {
         docClasses.add("perfect-scrollbar-off");
       }
+    },
+    hola(){
+      console.log('HOLAAA')
     }
   },
   async mounted() {
     this.initScrollbar();
-    this.startMqttClient();
+    setTimeout(() => {
+      this.startMqttClient();
+    }, 2000);
     this.getNotifications();
   },
-  beforeDestroy(){
-    this.$nuxt.$off('mqtt-sender')
+  beforeDestroy() {
+    this.$nuxt.$off("mqtt-sender");
   }
 };
 </script>

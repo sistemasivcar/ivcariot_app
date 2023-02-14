@@ -5,6 +5,7 @@ const webhooks = require('./webhooks');
 const emqx = require('./emqx');
 const alarms = require('./alarms');
 const notifications = require('./notifications');
+const datas = require('./data_provider')
 
 
 const routes = {
@@ -14,7 +15,8 @@ const routes = {
     webhooks,
     emqx,
     alarms,
-    notifications
+    notifications,
+    datas
 
     
 }

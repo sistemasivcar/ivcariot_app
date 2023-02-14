@@ -47,6 +47,8 @@ export default {
           enabled: false
         },
         chart: {
+          zoomType:'x',
+          timezone:'America/Argentina/Buenos_Aires',
           renderTo: "container",
           defaultSeriesType: "line",
           backgroundColor: "rgba(0,0,0,0)"
@@ -56,13 +58,16 @@ export default {
         },
         xAxis: {
           type: "datetime",
+          zoomEnabled:true,
           labels: {
             style: {
               color: "#d4d2d2"
             }
           }
         },
+        
         yAxis: {
+          zoomEnabled:true,
           title: {
             text: ""
           },
@@ -193,7 +198,7 @@ export default {
 
       const axiosHeaders = {
         headers: {
-          token: $nuxt.$store.state.auth.accessToken
+          'x-auth-token': this.$store.getters['auth/getToken']
         },
         params: {
           dId: this.config.selectedDevice.dId,
@@ -203,20 +208,20 @@ export default {
       };
 
       this.$axios
-        .get("/get-small-charts-data", axiosHeaders)
+        .get("data/get-data-chart", axiosHeaders)
         .then(res => {
           const data = res.data.data;
           console.log(res.data);
 
-          data.forEach(element => {
-            var aux = [];
+          data.forEach(dato => {
+            var point = [];
 
-            aux.push(
-              element.time + new Date().getTimezoneOffset() * 60 * 1000 * -1
+            point.push(
+              dato.time + new Date().getTimezoneOffset() * 60 * 1000 * -1
             );
-            aux.push(element.value);
+            point.push(dato.value);
 
-            this.chartOptions.series[0].data.push(aux);
+            this.chartOptions.series[0].data.push(point);
           });
 
           this.isMounted = true;
@@ -250,6 +255,11 @@ export default {
     procesReceivedData(data) {
       this.time = Date.now();
       this.value = data.value;
+      if(data.save){
+        //pusheo al array
+        const point = [Date.now()-(new Date().getTimezoneOffset() * 60 * 1000),data.value]
+        this.chartOptions.series[0].data.push(point)
+      }
     },
 
     getNow() {
