@@ -55,8 +55,9 @@ router.post('/', checAuth, asyncMiddleware(async (req, res) => {
     const userId = req.userData._id;
     const newDevice = req.body.newDevice;
 
-    const createdTime = Date.now()
-    const device = await DeviceModel.create({ ...newDevice, userId, createdTime });
+    const createdTime = Date.now();
+    const whpassword = makeid(10);
+    const device = await DeviceModel.create({ ...newDevice, userId, whpassword, createdTime });
     
     const saverRuleBack = await createSaverRule(userId, newDevice.dId, true);
     const saverRule = saverRuleBack._id
@@ -292,4 +293,15 @@ async function deleteSaverRule(dId) {
         return false;
 
     }
+ }
+
+function makeid(length) {
+    var result = "";
+    var characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }

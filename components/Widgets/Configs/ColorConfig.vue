@@ -22,7 +22,7 @@ export default {
   },
   data() {
     return {
-      color: null
+      color: 'success'
     };
   },
   watch: {

@@ -5,7 +5,24 @@
                 placeholder="Select Column Width"
                 style="width: 100%;"
               >
+
+               <el-option
+                  class="text-dark"
+                  value="col-4"
+                  label="Small"
+                ></el-option>
                 <el-option
+                  class="text-dark"
+                  value="col-6"
+                  label="Medium"
+                ></el-option>
+                <el-option
+                  class="text-dark"
+                  value="col-12"
+                  label="Big"
+                ></el-option>
+    </el-select>
+<!--                 <el-option
                   class="text-dark"
                   value="col-3"
                   label="col-3"
@@ -55,19 +72,20 @@
                   value="col-12"
                   label="col-12"
                 ></el-option>
-              </el-select>
+              </el-select> -->
 </template>
 
 <script>
 import { Select, Option } from "element-ui";
 export default {
+
   components: {
     [Option.name]: Option,
     [Select.name]: Select
   },
   data() {
     return {
-      column: null
+      column: 'col-6'
     };
   },
   watch: {

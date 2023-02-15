@@ -20,6 +20,7 @@
           <div class="col-6">
             <!-- WIDGETS SELECTOR -->
             <el-select
+              
               v-model="selectedWidgetName"
               class="select-info"
               placeholder="Select Widget"
@@ -69,7 +70,7 @@
                 <div class="col-6">
                   <base-input
                     v-model.number="ncConfig.chartTimeAgo"
-                    label="Chart Back Time (mins)"
+                    label="Chart Back Time (minutes)"
                     type="number"
                   ></base-input>
                 </div>
@@ -141,6 +142,17 @@
                 type="text"
               >
               </base-input>
+            </div>
+            <div v-if="selectedWidgetName && inputTypeWidget">
+              <div class="row">
+              <div class="col-sm-12">
+                <base-input
+                v-model.trim="sendFrequency"
+                label="Device Send Frequency (minutes)"
+                type="number"
+                ></base-input>
+              </div>
+            </div>
             </div>
             <hr />
 
@@ -422,18 +434,21 @@ export default {
       selectedWidgetName: "",
       templateName: "",
       templateDescription: "",
+      sendFrequency:5,
       ncConfig: {
         selectedDevice: {
           name: "Home",
           dId: "dummy-device-id"
         },
         variableFullName: "temperature",
+        variableType:'input',
+        variableSendFreq:"30",
         unit: "Watts",
         class: "success",
-        column: "col-12",
+        column: "col-6",
         decimalPlaces: 2,
         widgetName: "numberchart",
-        icon: "fa-bath",
+        icon: "fa-home",
         chartTimeAgo: 1566,
         demo: true
       },
@@ -443,9 +458,10 @@ export default {
           dId: "dummy-device-id"
         },
         variableFullName: "Luz",
-        class: "danger",
+        class: "success",
+        variableType:'output',
         widgetName: "switch",
-        icon: "fa-bath",
+        icon: "fa-home",
         column: "col-6"
       },
       iotButtonConfig: {
@@ -454,11 +470,12 @@ export default {
           dId: "dummy-device-id"
         },
         variableFullName: "temperature",
+        variableType:'output',
         text: "send",
         message: "testing123",
         widgetName: "button",
-        colorButton: "primary",
-        icon: "fa-bath",
+        colorButton: "success",
+        icon: "fa-home",
         column: "col-6"
       },
       iotIndicatorConfig: {
@@ -468,8 +485,10 @@ export default {
         },
         variableFullName: "temperature",
         color: "success",
+        variableType:'input',
+        variableSendFreq:'30',
         widgetName: "indicator",
-        icon: "fa-bath",
+        icon: "fa-home",
         column: "col-6"
       },
       value: false,
@@ -637,13 +656,13 @@ export default {
         case "numberchart":
           this.ncConfig.userId = this.$store.getters["auth/getUserId"];
           this.ncConfig.variable = this.makeid(10);
+          this.ncConfig.variableSendFreq=this.sendFrequency;
           this.widgets.push(JSON.parse(JSON.stringify(this.ncConfig)));
           break;
         case "indicator":
-          this.iotIndicatorConfig.userId = this.$store.getters[
-            "auth/getUserId"
-          ];
+          this.iotIndicatorConfig.userId = this.$store.getters["auth/getUserId"];
           this.iotIndicatorConfig.variable = this.makeid(10);
+          this.iotIndicatorConfig.variableSendFreq=this.sendFrequency;
           this.widgets.push(
             JSON.parse(JSON.stringify(this.iotIndicatorConfig))
           );
@@ -697,6 +716,9 @@ export default {
   computed: {
     userId() {
       return this.$store.getters["auth/getUserId"];
+    },
+    inputTypeWidget(){
+      return this.selectedWidgetName == 'indicator' || this.selectedWidgetName == 'numberchart'
     }
   },
   async mounted() {

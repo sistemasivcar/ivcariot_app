@@ -82,6 +82,9 @@
 
           <el-table-column prop="dId" label="Device Id"></el-table-column>
 
+          <el-table-column prop="whpassword" label="Password"></el-table-column>
+
+
           <el-table-column prop="alarmRules.length" label="Alarm Rules"></el-table-column>
 
           <el-table-column

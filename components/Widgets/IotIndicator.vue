@@ -8,7 +8,7 @@
     </template>
 
     <!-- body-card -->
-    <template #default>
+    <template #default >
       <i class="fa " :class="[config.icon, getColorIcon]" style="font-size:35px"></i>
     </template>
 

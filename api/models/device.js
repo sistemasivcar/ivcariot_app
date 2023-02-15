@@ -8,6 +8,7 @@ const deviceSchema = new Schema({
     selected: { type: Boolean, required: [true], default: false },
     templateId: { type: Schema.Types.ObjectId, required: [true], ref:'Template' },
     templateName: { type: String, required: [true] },
+    whpassword: { type: String, required: [true] },
     createdTime: { type: Number },
     saverRule: { type: Schema.Types.ObjectId, ref: 'SaverRule' },
     alarmRules: [{ type: Schema.Types.ObjectId, ref:'AlarmRule'}]

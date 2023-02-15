@@ -14,8 +14,7 @@
         :class="[config.icon, getColorIcon]"
         style="font-size:35px"
       ></i>
-      <button v-if="config.colorButton=='green'" class="button mb-3 ml-3 btn-lg pull-right">{{config.text}}</button>
-      <base-button v-else @click="sendValue" :type="config.colorButton" size="lg" class="mb-3 ml-3 pull-right">{{
+      <base-button @click="sendValue" :type="config.colorButton" size="lg" class="pull-right">{{
         config.text
       }}</base-button>
 
@@ -37,7 +36,7 @@ export default {
   data() {
     return {
       sneding: false,
-      colorIndicator: "icon-",
+      colorIndicator: "text-",
       };
   },
   methods: {
