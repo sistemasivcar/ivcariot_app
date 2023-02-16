@@ -22,7 +22,7 @@
           </div>
 
           <div class="row">
-            <div class="col-3">
+            <div class="col-4">
               <el-select
                 required
                 class="select-info"
@@ -40,7 +40,7 @@
               </el-select>
             </div>
 
-            <div class="col-3">
+            <div class="col-4">
               <el-select
                 required
                 class="select-warning"
@@ -57,19 +57,29 @@
               </el-select>
             </div>
 
-            <div class="col-3">
+            <div class="col-4">
               <base-input
                 label="Value"
                 v-model="newRule.value"
                 type="number"
               ></base-input>
             </div>
+          </div>
 
-            <div class="col-3">
+          <div class="row">
+            <div class="col-4">
               <base-input
                 label="Trigger Time (minutes)"
                 v-model="newRule.triggerTime"
                 type="number"
+              ></base-input>
+            </div>
+
+            <div class="col-8">
+              <base-input
+                label="Message to Send"
+                v-model="newRule.message"
+                type="text"
               ></base-input>
             </div>
           </div>
@@ -106,7 +116,7 @@
               label="Var Name"
             ></el-table-column>
 
-            <el-table-column prop="variable" label="Variable"></el-table-column>
+            <el-table-column prop="message" label="Message"></el-table-column>
 
             <el-table-column
               prop="condition"
@@ -201,6 +211,7 @@ export default {
         variableFullName: null,
         variable: null,
         value: null,
+        message: null,
         condition: null,
         triggerTime: null
       },
@@ -220,7 +231,7 @@ export default {
 
     widgets() {
       const widgets = this.$store.getters["devices/getWidgetsSelectedDevice"];
-      return widgets.filter(w => w.variableType == 'input')
+      return widgets.filter(w => w.variableType == "input");
     },
     hasSelectedDevice() {
       //retorna el objeto device seleccionado
@@ -341,6 +352,14 @@ export default {
           type: "warning",
           icon: "tim-icons icon-alert-circle-exc",
           message: " Trigger Time is empty"
+        });
+        return;
+      }
+      if (this.newRule.message == null) {
+        this.$notify({
+          type: "warning",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: " Message is empty"
         });
         return;
       }

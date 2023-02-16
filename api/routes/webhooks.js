@@ -205,8 +205,8 @@ function startMqttClient() {
 function sendMqttNotif(notif) {
     try {
         const topic = notif.userId + '/dummy-did/dummy-var/notif';
-        console.log(topic)
-        const msg = 'The rule: when the ' + notif.variableFullName + ' is ' + notif.condition + ' than ' + notif.value;
+        console.log(notif)
+        const msg = notif.message;
         client.publish(topic, msg);
     } catch (error) {
         console.log(error)

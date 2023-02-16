@@ -24,9 +24,13 @@ export default {
         this.$emit('setNotifReaded',this.idNotif)
     },
     getNameDevice(dId) {
-      const devices = this.$store.getters["devices/getDevices"];
-      const device = devices.find(d => (d.dId == dId));
-      return device.name;
+      try {
+        const devices = this.$store.getters["devices/getDevices"];
+        const device = devices.find(d => (d.dId == dId));
+        return device.name;
+      } catch (e) {
+        console.log(e)
+      }
     },
     unixToDate(ms) {
       var d = new Date(parseInt(ms)),

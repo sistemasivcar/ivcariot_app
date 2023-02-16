@@ -98,7 +98,7 @@ ______ _   _ _   _ _____ _____ _____ _____ _   _  _____
 
 
 
-async function createAlarmRule({ userId, dId, variable, value, condition, status, triggerTime, variableFullName }) {
+async function createAlarmRule({ userId, dId, variable, value, condition, status, triggerTime, variableFullName ,message}) {
 
     try {
         const url_post = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules`;
@@ -130,6 +130,7 @@ async function createAlarmRule({ userId, dId, variable, value, condition, status
                 value,
                 condition,
                 status,
+                message,
                 triggerTime,
                 variableFullName,
                 emqxRuleId,
@@ -145,13 +146,12 @@ async function createAlarmRule({ userId, dId, variable, value, condition, status
             // actualizo la regla eqmx
 
             const url_put = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
-            const payload_templ = '{"userId":"' + userId + '","dId":"' + dId + '","payload":${payload},"topic":"${topic}","emqxRuleId":"' + emqxRuleId + '","value":' + value + ',"condition":"' + condition + '","variable":"' + variable + '","variableFullName":"' + variableFullName + '","triggerTime":' + triggerTime + '}';
+            const payload_templ = '{"userId":"' + userId + '","dId":"' + dId + '","payload":${payload},"topic":"${topic}","emqxRuleId":"' + emqxRuleId + '","value":' + value + ',"condition":"' + condition + '","message":"' + message + '","variable":"' + variable + '","variableFullName":"' + variableFullName + '","triggerTime":' + triggerTime + '}';
             console.log(payload_templ)
             newRule.actions[0].params.payload_tmpl = payload_templ;
 
             // actualizo la regla
             const rest = await axios.put(url_put, newRule, auth);
-            console.log("New Alarm Rule Created...".green);
 
             return true;
         } else {
