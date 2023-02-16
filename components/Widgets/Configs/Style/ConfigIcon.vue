@@ -20,6 +20,7 @@
     <el-option value="fa-unlock" class="text-info" label="Unlock"> </el-option>
     <el-option value="fa-lock" class="text-info" label="Lock"> </el-option>
     <el-option value="fa-bolt" class="text-info" label="Bolt"> </el-option>
+   
   </el-select>
 </template>
 
@@ -35,10 +36,21 @@ export default {
       icon: "home"
     };
   },
+  methods:{
+    setIcon(icon){
+      this.icon=icon;
+    }
+  },
   watch: {
     icon(value) {
       this.$emit("icon", value);
     }
+  },
+  mounted(){
+    this.$nuxt.$on('set-icon', this.setIcon);
+  },
+  beforeDestroy(){
+    this.$nuxt.$off('set-icon');
   }
 };
 </script>

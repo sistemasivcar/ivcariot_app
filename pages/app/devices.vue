@@ -49,6 +49,7 @@
               ></el-option>
             </el-select>
           </div>
+          
         </div>
 
         <div class="row pull-right">
@@ -57,6 +58,9 @@
               >Add</base-button
             >
           </div>
+        </div>
+        <div v-if="!hasTemplates">
+        You need first create a Template to create a Device <base-button :link="true"  @click="$router.push('/app/templates')" type="info">Create new Template</base-button>
         </div>
       </card>
     </div>
@@ -82,7 +86,25 @@
 
           <el-table-column prop="dId" label="Device Id"></el-table-column>
 
-          <el-table-column prop="whpassword" label="Password"></el-table-column>
+          <el-table-column label="Password">
+          
+              <template slot-scope="{row}">
+                
+                <el-tooltip
+                content="A secret for your device to conect to the broker MQTT"
+                :open-delay="300"
+                placement="top"
+                ><i class="fas fa-info" style="margin-right:5px"></i>
+                </el-tooltip>
+                
+                {{row.whpassword}}
+
+
+
+              </template>
+
+          </el-table-column>
+          
 
 
           <el-table-column prop="alarmRules.length" label="Alarm Rules"></el-table-column>
@@ -162,9 +184,9 @@
       </template>
     </modal>
 
-  <json :value="$store.state.devices.selectedDevice"></json> 
- <!-- <json :value="$store.getters['devices/getDevices']"></json> -->
-    <json :value="templates"></json>
+<!--   <json :value="$store.state.devices.selectedDevice"></json> 
+ <json :value="$store.getters['devices/getDevices']"></json>
+    <json :value="templates"></json> -->
   </div>
 </template>
 
@@ -204,6 +226,9 @@ export default {
   computed: {
     devices() {
       return this.$store.getters["devices/getDevices"];
+    },
+    hasTemplates(){
+      return this.templates.length>0
     }
   },
   methods: {

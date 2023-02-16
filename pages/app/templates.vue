@@ -1,4 +1,5 @@
 <template>
+<keep-alive>
   <div>
     <!-- WIDGET CONFIGURATOR -->
 
@@ -7,10 +8,11 @@
         <div slot="header">
           <div class="row">
             <div class="col-6">
-              <h4 class="card-title">Widgets Configurations</h4>
+              <h4 class="card-title" v-if="!selectedWidgetName">Select Widget</h4>
+              <h4 class="card-title" v-else>Configure Widget Parameters</h4>
             </div>
             <div class="col-6">
-              <h4 class="card-title">Widget Preview</h4>
+              <h4 class="card-title" v-if="selectedWidgetName">Widget Preview</h4>
             </div>
           </div>
         </div>
@@ -19,9 +21,10 @@
           <!-- WIDGET SELECTOR AND FORMS -->
           <div class="col-6">
             <!-- WIDGETS SELECTOR -->
+
             <el-select
-              
               v-model="selectedWidgetName"
+              @change="defaultValues"
               class="select-info"
               placeholder="Select Widget"
               style="width: 100%;"
@@ -54,121 +57,63 @@
                 label="Button "
               ></el-option>
             </el-select>
-            <hr />
+            <div class="row"  v-if="selectedWidgetName">
+              <div class="col-4"><hr></div>
+              <div class="col-4">Behavior</div>
+              <div class="col-4"><hr></div>
+            </div>
 
-            <!-- FORMS NUMBER CHART TYPE -->
+           
             <div v-if="selectedWidgetName == 'numberchart'">
-              <div class="row">
-                <div class="col-6">
-                  <base-input
-                    v-model="ncConfig.variableFullName"
-                    label="Var Name"
-                    type="text"
-                  >
-                  </base-input>
-                </div>
-                <div class="col-6">
-                  <base-input
-                    v-model.number="ncConfig.chartTimeAgo"
-                    label="Chart Back Time (minutes)"
-                    type="number"
-                  ></base-input>
-                </div>
-              </div>
 
-              <div class="row">
-                <div class="col-6">
-                  <base-input v-model="ncConfig.unit" label="Unit" type="text">
-                  </base-input>
-                </div>
-                <div class="col-6">
-                  <base-input
-                    v-model.number="ncConfig.decimalPlaces"
-                    label="Decimal Places"
-                    type="number"
-                  >
-                  </base-input>
-                </div>
-              </div>
+             <from-grafico-realtime
+             @decimal-places="decimalPlaces"
+             @chart-time-ago="chartTimeAgo"
+             @send-freq="sendFreq"
+             @var-full-name="variableFullName"
+             @unit="unit"
+             ></from-grafico-realtime>
             </div>
 
-            <!-- FORM SWITCH TYPE -->
+           
             <div v-if="selectedWidgetName == 'switch'">
-              <base-input
-                v-model="iotSwitchConfig.variableFullName"
-                label="Var Name"
-                type="text"
-              >
-              </base-input>
+              <from-switch
+              @var-full-name="variableFullName"
+              ></from-switch>
+              
             </div>
 
-            <!-- FORM BUTTON TYPE -->
+           
             <div v-if="selectedWidgetName == 'button'">
-              <base-input
-                v-model="iotButtonConfig.variableFullName"
-                label="Var Name"
-                type="text"
-              >
-              </base-input>
-
-              <div class="row">
-                <div class="col-6">
-              <base-input
-                v-model="iotButtonConfig.text"
-                label="Button Text"
-                type="text"
-              >
-              </base-input>
-
-                </div>
-                <div class="col-6">
-              <base-input
-                v-model="iotButtonConfig.message"
-                label="Message to send"
-                type="text"
-              >
-              </base-input>
-
-                </div>
-              </div>
-
+              <form-button
+              @var-full-name="variableFullName"
+              @message="message"
+              @text="text"></form-button>
+              
             </div>
 
-            <!-- FORM INDICATOR TYPE -->
+            
             <div v-if="selectedWidgetName == 'indicator'">
-              <base-input
-                v-model="iotIndicatorConfig.variableFullName"
-                label="Var Name"
-                type="text"
-              >
-              </base-input>
+              <from-indicator
+              @var-full-name="variableFullName"></from-indicator>
             </div>
-            <div v-if="selectedWidgetName && inputTypeWidget">
-              <div class="row">
-              <div class="col-sm-12">
-                <base-input
-                v-model.trim="sendFrequency"
-                label="Device Send Frequency (minutes)"
-                type="number"
-                ></base-input>
-              </div>
+  
+
+            <div class="row"  v-if="selectedWidgetName">
+              <div class="col-4"><hr></div>
+              <div class="col-4">Styles</div>
+              <div class="col-4"><hr></div>
             </div>
-            </div>
-            <hr />
 
             <div v-if="selectedWidgetName">
-
               <div class="row">
                 <div class="col-6">
-              <label for="color">Color</label>
-              <color-config @color="getColor"></color-config>
-
+                  <label for="color">Color</label>
+                  <color-config @color="getColor"></color-config>
                 </div>
                 <div class="col-6">
-
-              <label for="color">Icon</label>
-              <config-icon @icon="getIcon"></config-icon>
-
+                  <label for="color">Icon</label>
+                  <config-icon @icon="getIcon"></config-icon>
                 </div>
               </div>
               <label for="color">Ancho</label>
@@ -273,7 +218,7 @@
           <base-input
             class="col-8"
             v-model="templateDescription"
-            label="Template Description"
+            label="Template Description (optional)"
             type="text"
           >
           </base-input>
@@ -393,8 +338,9 @@
     </div>
 
     <!-- JSONS -->
-    <Json :value="widgets"></Json>
+    <!-- <Json :value="widgets"></Json> -->
   </div>
+  </keep-alive>
 </template>
 
 <script>
@@ -406,9 +352,11 @@ import IotButton from "../../components/Widgets/IotButton.vue";
 import IotIndicator from "../../components/Widgets/IotIndicator.vue";
 import GraficoRealtime from "../../components/Widgets/GraficoRealtime.vue";
 import Card from "../../components/Cards/Card.vue";
-import ColorConfig from "../../components/Widgets/Configs/ColorConfig.vue";
-import ConfigCols from "../../components/Widgets/Configs/ConfigCols.vue";
-import ConfigIcon from "../../components/Widgets/Configs/ConfigIcon.vue";
+import ColorConfig from "../../components/Widgets/Configs/Style/ColorConfig.vue";
+import ConfigCols from "../../components/Widgets/Configs/Style/ConfigCols.vue";
+import ConfigIcon from "../../components/Widgets/Configs/Style/ConfigIcon.vue";
+import FromGraficoRealtime from '../../components/Widgets/Configs/Behaivor/FromGraficoRealtime.vue';
+import FromIndicator from '../../components/Widgets/Configs/Behaivor/FromIndicator.vue';
 
 export default {
   middleware: "authtenticated",
@@ -421,6 +369,8 @@ export default {
     IotButton,
     GraficoRealtime,
     Card,
+    FromGraficoRealtime,
+    FromIndicator,
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     [Option.name]: Option,
@@ -434,22 +384,22 @@ export default {
       selectedWidgetName: "",
       templateName: "",
       templateDescription: "",
-      sendFrequency:5,
+      sendFrequency: 5,
       ncConfig: {
         selectedDevice: {
           name: "Home",
           dId: "dummy-device-id"
         },
         variableFullName: "temperature",
-        variableType:'input',
-        variableSendFreq:"30",
-        unit: "Watts",
+        variableType: "input",
+        variableSendFreq: "5",
+        unit: "ºC",
         class: "success",
         column: "col-6",
         decimalPlaces: 2,
         widgetName: "numberchart",
-        icon: "fa-home",
-        chartTimeAgo: 1566,
+        icon: "fa-thermometer",
+        chartTimeAgo: 120,
         demo: true
       },
       iotSwitchConfig: {
@@ -457,11 +407,11 @@ export default {
           name: "Home",
           dId: "dummy-device-id"
         },
-        variableFullName: "Luz",
+        variableFullName: "Engine",
         class: "success",
-        variableType:'output',
+        variableType: "output",
         widgetName: "switch",
-        icon: "fa-home",
+        icon: "fa-lightbulb",
         column: "col-6"
       },
       iotButtonConfig: {
@@ -469,10 +419,10 @@ export default {
           name: "Home",
           dId: "dummy-device-id"
         },
-        variableFullName: "temperature",
-        variableType:'output',
-        text: "send",
-        message: "testing123",
+        variableFullName: "Pump",
+        variableType: "output",
+        text: "ON",
+        message: "on",
         widgetName: "button",
         colorButton: "success",
         icon: "fa-home",
@@ -483,10 +433,10 @@ export default {
           name: "Home",
           dId: "dummy-device-id"
         },
-        variableFullName: "temperature",
+        variableFullName: "Alarm Status",
         color: "success",
-        variableType:'input',
-        variableSendFreq:'30',
+        variableType: "input",
+        variableSendFreq: "30",
         widgetName: "indicator",
         icon: "fa-home",
         column: "col-6"
@@ -498,56 +448,78 @@ export default {
   },
   methods: {
     getColor(color) {
-      switch (this.selectedWidgetName) {
-        case "button":
-          this.iotButtonConfig.colorButton = color;
-          break;
-        case "numberchart":
-          this.ncConfig.class = color;
-          break;
-        case "indicator":
-          this.iotIndicatorConfig.color = color;
-          break;
-        case "switch":
-          this.iotSwitchConfig.class = color;
-          break;
-        default:
-          break;
-      }
+      this.iotButtonConfig.colorButton = color;
+      this.ncConfig.class = color;
+      this.iotIndicatorConfig.color = color;
+      this.iotSwitchConfig.class = color;
     },
 
     getCols(cols) {
-      switch (this.selectedWidgetName) {
-        case "button":
-          this.iotButtonConfig.column = cols;
-          break;
-        case "numberchart":
-          this.ncConfig.column = cols;
-          break;
-        case "indicator":
-          this.iotIndicatorConfig.column = cols;
-          break;
-        case "switch":
-          this.iotSwitchConfig.column = cols;
-          break;
-        default:
-          break;
-      }
+      this.iotButtonConfig.column = cols;
+
+      this.ncConfig.column = cols;
+
+      this.iotIndicatorConfig.column = cols;
+
+      this.iotSwitchConfig.column = cols;
     },
     getIcon(icon) {
-      switch (this.selectedWidgetName) {
+      this.iotButtonConfig.icon = icon;
+      this.ncConfig.icon = icon;
+      this.iotIndicatorConfig.icon = icon;
+      this.iotSwitchConfig.icon = icon;
+    },
+    unit(value){
+      this.ncConfig.unit=value;
+    },
+    decimalPlaces(value){
+      this.ncConfig.decimalPlaces=value;
+    },
+    chartTimeAgo(value){
+      this.ncConfig.chartTimeAgo=value;
+    },
+    sendFreq(value){
+      this.ncConfig.variableSendFreq=value;
+    },
+    text(value){
+      this.iotButtonConfig.text=value;
+    },
+    message(value){
+      this.iotButtonConfig.message=value;
+    },
+    
+    variableFullName(value){
+      this.ncConfig.variableFullName=value;
+      this.iotIndicatorConfig.variableFullName=value;
+      this.iotButtonConfig.variableFullName=value;
+      this.iotSwitchConfig.variableFullName=value;
+    },
+    defaultValues(selectedWidgetName){
+      console.log('itchanger')
+      switch (selectedWidgetName) {
         case "button":
-          this.iotButtonConfig.icon = icon;
+          this.iotButtonConfig.variableFullName = 'Pump';
+          this.iotButtonConfig.icon = 'fa-bath';
+          this.$nuxt.$emit('set-icon',this.iotButtonConfig.icon);
           break;
         case "numberchart":
-          this.ncConfig.icon = icon;
+          this.ncConfig.icon="fa-thermometer"
+          this.ncConfig.variableFullName = 'Temperature';
+          this.$nuxt.$emit('set-icon',this.ncConfig.icon);
           break;
         case "indicator":
-          this.iotIndicatorConfig.icon = icon;
+          this.iotIndicatorConfig.icon="fa-home"
+          this.iotIndicatorConfig.variableFullName = 'Alarm Status';
+          this.$nuxt.$emit('set-icon',this.iotIndicatorConfig.icon);
+
           break;
         case "switch":
-          this.iotSwitchConfig.icon = icon;
+          this.iotSwitchConfig.variableFullName = 'Ligth';
+          this.iotSwitchConfig.icon="fa-lightbulb"
+          this.$nuxt.$emit('set-icon',this.iotSwitchConfig.icon);
+
           break;
+
         default:
           break;
       }
@@ -656,13 +628,15 @@ export default {
         case "numberchart":
           this.ncConfig.userId = this.$store.getters["auth/getUserId"];
           this.ncConfig.variable = this.makeid(10);
-          this.ncConfig.variableSendFreq=this.sendFrequency;
+          this.ncConfig.variableSendFreq = this.sendFrequency;
           this.widgets.push(JSON.parse(JSON.stringify(this.ncConfig)));
           break;
         case "indicator":
-          this.iotIndicatorConfig.userId = this.$store.getters["auth/getUserId"];
+          this.iotIndicatorConfig.userId = this.$store.getters[
+            "auth/getUserId"
+          ];
           this.iotIndicatorConfig.variable = this.makeid(10);
-          this.iotIndicatorConfig.variableSendFreq=this.sendFrequency;
+          this.iotIndicatorConfig.variableSendFreq = this.sendFrequency;
           this.widgets.push(
             JSON.parse(JSON.stringify(this.iotIndicatorConfig))
           );
@@ -717,12 +691,18 @@ export default {
     userId() {
       return this.$store.getters["auth/getUserId"];
     },
-    inputTypeWidget(){
-      return this.selectedWidgetName == 'indicator' || this.selectedWidgetName == 'numberchart'
+    inputTypeWidget() {
+      return (
+        this.selectedWidgetName == "indicator" ||
+        this.selectedWidgetName == "numberchart"
+      );
     }
   },
   async mounted() {
     await this.getTemplates();
+  },
+  watch:{
+
   }
 };
 </script>

@@ -15,15 +15,17 @@ const actions = {
 
     },
 
-    logout(context) {
-        localStorage.removeItem('token');
+    logout(context) {   
+        localStorage.clear();
         const auth = null;
         context.commit('setAuth', auth);
+        this.$router.replace('/')
     },
 
     async login(context, user) {
         try {
             const res = await this.$axios.post("/user/login", user);
+
             if (res.data.status == 'success') {
 
                 const token = res.data.token;
@@ -37,9 +39,12 @@ const actions = {
                 localStorage.setItem('auth', JSON.stringify(auth));
                 context.commit('setAuth', auth);
             }
+
         } catch (err) {
-            const error = new Error(err.message);
-            throw error;
+            if (err.response && err.response.data.status == "error" && err.response.data.message == 'Invalid credentials') {
+                throw new Error('Invalid credentials');
+            }
+            throw new Error('Something was wrong! Try later');
         }
     },
 }

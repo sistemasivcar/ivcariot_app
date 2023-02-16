@@ -1,10 +1,14 @@
 const actions = {
-    async fetchNotifications(context) {
+    async fetchNotifications(context, numberPage) {
         try {
+            console.log(numberPage)
             const token = context.rootGetters['auth/getToken'];
             const axiosHeader = {
                 headers: {
                     'x-auth-token': token
+                },
+                params: {
+                    numberPage: numberPage || 1
                 }
             };
 
@@ -14,6 +18,33 @@ const actions = {
                 context.commit('setNotifications', notifications);
             }
         } catch (e) {
+            console.log(e)
+            const error = new Error('Falied to load notifications')
+            throw error;
+        }
+    },
+    async fetchNotificationsForDevice(context, numberPage) {
+        try {
+            console.log(numberPage)
+            const token = context.rootGetters['auth/getToken'];
+            const device = context.rootGetters['devices/getSelDevice'];
+            const axiosHeader = {
+                headers: {
+                    'x-auth-token': token
+                },
+                params: {
+                    numberPage: numberPage || 1,
+                    dId: device.dId
+                }
+            };
+
+            const response = await this.$axios.get('/notification/fordevice', axiosHeader);
+            if (response.data.status == 'success') {
+                const notifications = response.data.data;
+                context.commit('setDeviceNotifications', notifications);
+            }
+        } catch (e) {
+            console.log(e)
             const error = new Error('Falied to load notifications')
             throw error;
         }

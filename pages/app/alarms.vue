@@ -2,13 +2,16 @@
   <div>
     <card v-if="!hasDevices">
       You need first create a device to create an Alarm
+      <base-button :link="true" @click="godevices" type="info"
+        >Create new Device</base-button
+      >
     </card>
 
     <card v-else-if="!hasSelectedDevice">
       You need to select a device to create an Alarm
     </card>
 
-    <div class="row" v-else>
+    <div class="row" v-else-if="hasDevices && hasSelectedDevice">
       <div class="col-sm-12">
         <card>
           <div slot="header">
@@ -162,7 +165,12 @@
             </el-table-column>
           </el-table>
 
-          <h4 v-else class="card-title">No Alarm Rules</h4>
+          <h4
+            v-else-if="!hasAlarmRules && hasDevices && hasSelectedDevice"
+            class="card-title"
+          >
+            No Alarm Rules
+          </h4>
         </card>
       </div>
     </div>
@@ -211,7 +219,8 @@ export default {
     },
 
     widgets() {
-      return this.$store.getters["devices/getWidgetsSelectedDevice"];
+      const widgets = this.$store.getters["devices/getWidgetsSelectedDevice"];
+      return widgets.filter(w => w.variableType == 'input')
     },
     hasSelectedDevice() {
       //retorna el objeto device seleccionado
@@ -222,6 +231,9 @@ export default {
     }
   },
   methods: {
+    godevices() {
+      this.$router.push("/app/devices");
+    },
     async getDevices() {
       try {
         await this.$store.dispatch("devices/fetchDevices");
@@ -294,7 +306,7 @@ export default {
         this.$notify({
           type: "danger",
           icon: "tim-icons icon-alert-circle-exc",
-          message: 'Fail deleting rule'
+          message: "Fail deleting rule"
         });
       }
     },
@@ -331,8 +343,9 @@ export default {
           message: " Trigger Time is empty"
         });
         return;
-      }if( this.newRule.triggerTime<=5){
-          this.$notify({
+      }
+      if (this.newRule.triggerTime <= 0) {
+        this.$notify({
           type: "warning",
           icon: "tim-icons icon-alert-circle-exc",
           message: " Trigger Time must be >= than 5"

@@ -1,5 +1,6 @@
 const state = () => ({
-    notifications:[]
+    notifications: [],
+    deviceNotifications: []
 })
 
 export default state;

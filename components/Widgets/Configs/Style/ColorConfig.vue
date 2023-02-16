@@ -25,10 +25,14 @@ export default {
       color: 'success'
     };
   },
+  methods:{
+
+  },
   watch: {
     color(value) {
       this.$emit("color", value);
     }
-  }
+  },
+
 };
 </script>

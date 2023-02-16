@@ -58,7 +58,8 @@
             :dId="notif.dId"
             :time="notif.createdTime"
             :idNotif="notif._id"
-            :value="notif.value"
+            :valueToMatch="notif.value"
+            :value="notif.payload.value"
             :varName="notif.variableFullName"
             @setNotifReaded="setReaded"
           >
@@ -80,7 +81,7 @@
         <template slot="title">
           <i class="tim-icons icon-single-02"></i>
           <b class="caret d-none d-lg-block d-xl-block"></b>
-          <p class="d-lg-none">Log out</p>
+          <p class="d-lg-none" @click="logout">Log out</p>
         </template>
         <li class="nav-link">
           <nuxt-link class="nav-item dropdown-item" to="/app/profile"
@@ -126,7 +127,7 @@ export default {
   },
   computed: {
     notifs() {
-      return this.$store.getters["notif/getNotifications"];
+      return this.$store.getters["notif/getUnrededNotifications"];
     },
     devices() {
       return this.$store.getters["devices/getDevices"];
@@ -149,7 +150,7 @@ export default {
     async setReaded(notifId) {
       try {
         await this.$store.dispatch("notif/setReaded", notifId);
-        this.getNotifications();
+        await this.$store.dispatch('notif/fetchNotifications');
       } catch (e) {
         this.$notify({
           type: "danger",
@@ -161,6 +162,7 @@ export default {
     async getDevices() {
       try {
         await this.$store.dispatch("devices/fetchDevices");
+        await this.$store.dispatch("notif/fetchNotificationsForDevice",1);
       } catch (e) {
         this.$notify({
           type: "danger",
@@ -175,6 +177,7 @@ export default {
         const deviceSelected = devices[this.selectedDeviceIndex];
         await this.$store.dispatch("devices/updateSelected", deviceSelected);
         await this.$store.dispatch("devices/fetchDevices");
+        await this.$store.dispatch("notif/fetchNotificationsForDevice",1);
       } catch (e) {
         console.log(e);
       }
@@ -184,8 +187,8 @@ export default {
     },
 
     logout() {
-      console.log("logout");
-      this.$store.dispatch("logout");
+      console.log("salir");
+      this.$store.dispatch("auth/logout");
     },
     capitalizeFirstLetter(string) {
       if (!string || typeof string !== "string") {

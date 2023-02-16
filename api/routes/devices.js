@@ -13,6 +13,7 @@ ___  ______________ _____ _      _____
 
 import DeviceModel from '../models/device';
 import SaverRuleModel from '../models/emqx_saver_rule';
+import EmqxAuthModel from '../models/emqx_auth';
 import AlarmRuleModel from '../models/emqx_alarm_rule.js';
 
 const auth = {
@@ -40,7 +41,9 @@ router.get('/', checAuth, asyncMiddleware(async (req, res) => {
     const devices = await DeviceModel.find({ userId: userId })
         .populate('saverRule', 'emqxRuleId status')
         .populate('templateId', 'widgets')
-        .populate('alarmRules');    
+        .populate('alarmRules');
+    
+    
     
     const toSend = {
         status: 'success',
@@ -113,15 +116,14 @@ router.put('/saver-rule', checAuth, asyncMiddleware(async (req, res) => {
 router.delete('/',checAuth, asyncMiddleware(async (req, res) => {
 
     const dId = req.query.dId;
-    const idAlarmRules = req.query.idAlarmRules;
-    
-    console.log(dId, idAlarmRules)
-    if (idAlarmRules && idAlarmRules.length > 0) {
-        idAlarmRules.forEach(ruleId => {
-            deleteAlarmRule(ruleId)
-        });
-    }
+    const userId = req.userData._id;
+
+    await deleteMqttDeviceCredentials(dId)
+
+    await deleteAllAlarmRules(userId, dId);
+
     await deleteSaverRule(dId);
+
     const result = await DeviceModel.deleteOne({ dId: dId });
     if (result.n == 0) {
         const toSend = {
@@ -131,6 +133,28 @@ router.delete('/',checAuth, asyncMiddleware(async (req, res) => {
 
         return res.status(404).json(toSend);
     }
+
+    const devices = await DeviceModel.find({ userId: userId });
+    
+    if (devices.length >= 1) {
+        //any selected?
+        var found = false;
+        devices.forEach(devices => {
+            if (devices.selected == true) {
+                found = true;
+            }
+        });
+    
+        if (!found) {
+            await DeviceModel.updateMany({ userId: userId }, { selected: false });
+            await DeviceModel.updateOne(
+                { userId: userId, dId: devices[0].dId },
+                { selected: true }
+            );
+        }
+    }
+
+    
 
     const toSend = {
         status: "success",
@@ -152,6 +176,32 @@ ______ _   _ _   _ _____ _____ _____ _____ _   _  _____
 \_|    \___/\_| \_/\____/ \_/  \___/ \___/\_| \_/\____/  
 */
 
+async function deleteMqttDeviceCredentials(dId) {
+    try {
+        await EmqxAuthModel.deleteMany({ dId: dId, type: "device" });
+        return true;
+    } catch (e) {
+        console.log(error);
+        
+    }
+    
+}
+
+async function deleteAllAlarmRules(userId, dId) {
+
+    try {
+        const rules = await AlarmRuleModel.find({ userId, dId });
+        console.log(rules)
+        if (rules.length > 0) {
+            asyncForEach(rules, async rule => {
+                await deleteAlarmRule(rule.emqxRuleId);
+            });
+        }
+    } catch (e) {
+        console.log(e);
+    }
+    
+}
 async function selectDevice(userId, dId) {
     try {
         await DeviceModel.updateMany(
@@ -176,17 +226,6 @@ async function selectDevice(userId, dId) {
 /* 
 SAVER RULES FUNCTIONS
 */
-
-// get saver rules for a user (deprecated)
-async function getSaverRules(userId) {
-    try {
-        const rules = await SaverRuleModel.find({ userId: userId });
-        return rules;
-    } catch (e) {
-        console.log("ERROR GETTING RULES");
-        return false;
-    }
-}
 
 // create a rule 
 async function createSaverRule(userId, dId, status) {
@@ -277,14 +316,14 @@ async function deleteSaverRule(dId) {
 
 }
 
- function deleteAlarmRule(emqxRuleId) {
+async function deleteAlarmRule(emqxRuleId) {
     try {
 
         const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
 
-        axios.delete(url, auth);
+        await axios.delete(url, auth);
 
-        AlarmRuleModel.deleteOne({ emqxRuleId: emqxRuleId });
+        await AlarmRuleModel.deleteOne({ emqxRuleId: emqxRuleId });
 
         return true;
 
@@ -294,6 +333,12 @@ async function deleteSaverRule(dId) {
 
     }
  }
+
+async function asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+        await callback(array[index], index, array);
+    }
+}
 
 function makeid(length) {
     var result = "";

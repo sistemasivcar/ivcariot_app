@@ -115,6 +115,9 @@ router.post('/getmqttcredentialsforreconnection', checkAuth,asyncMiddleware(asyn
     
 }))
 
+router.post('/logout', asyncMiddleware(async (req, res) => {
+    
+}))
 // mqtt credentials types: "user", "device", "superuser"
 
 async function getWebUserMqttCredentials(userId) {

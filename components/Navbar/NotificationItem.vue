@@ -4,10 +4,10 @@
     @click="setNotifReaded()">
       <b style="color:orangered">{{ unixToDate(time) }}</b>
       <div style="margin-left:50px">
-        <b>Device: </b> {{ getNameDevice(dId).toUpperCase() }} <br />
+        <b>Device: </b> {{ getNameDevice(dId) }} <br />
         <b>Variable: </b> {{ varName.toUpperCase() }} <br />
-        <b>Condition: </b> {{ condition }} {{ value }}<br />
-        <b>Value: </b> {{ value }}
+        <b>With: </b> {{ value }}
+        <b>Condition: </b> {{ condition }} {{ valueToMatch }}<br />
       </div>
     </a>
   </li>
@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  props: ["time", "varName", "condition", "value", "dId", 'idNotif'],
+  props: ["time", "varName", "condition", "valueToMatch", "dId", 'idNotif','value'],
   data() {
     return {};
   },
@@ -25,7 +25,7 @@ export default {
     },
     getNameDevice(dId) {
       const devices = this.$store.getters["devices/getDevices"];
-      const device = devices.find(d => (d.dId = dId));
+      const device = devices.find(d => (d.dId == dId));
       return device.name;
     },
     unixToDate(ms) {

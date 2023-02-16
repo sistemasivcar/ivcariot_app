@@ -6,11 +6,11 @@ LLAMARÁ EL MISMO BROKER EMQX
  */
 
 import { Router } from "express";
-import asyncMiddleware from '../middleware/async';
+
 import DataModel from "../models/data";
 import TemplateModel from '../models/template';
 import DeviceModel from "../models/device";
-import Notification from "../models/notifications";
+import Notification from "../models/notification";
 import AlarmRuleModel from "../models/emqx_alarm_rule";
 import EmqxAuthModel from '../models/emqx_auth'
 import mqtt from "mqtt";

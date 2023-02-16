@@ -72,6 +72,15 @@ export default {
     async login() {
       try {
 
+        if(!this.user.email || !this.user.password){
+          this.$notify({
+          type: "warning",
+          icon:'tim-icons icon-alert-circle-exc',
+          message:'There are empty fields!'
+        });
+        return;
+        }
+
         await this.$store.dispatch('auth/login', this.user);
         this.$notify({
           type: "success",
@@ -80,11 +89,11 @@ export default {
         });
         $nuxt.$router.push("/app/dashboard");
 
-      } catch (error) {
+      } catch (e) {
         this.$notify({
           type: "danger",
           icon:'tim-icons icon-alert-circle-exc',
-          message:error
+          message:e
         });
       }
     },

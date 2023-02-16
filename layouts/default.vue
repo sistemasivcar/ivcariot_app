@@ -11,7 +11,7 @@
         <sidebar-item
           :link="{
             name: 'Dashboard',
-            icon: 'tim-icons icon-chart-pie-36',
+            icon: 'tim-icons tim-icons icon-laptop',
             path: '/app/dashboard'
           }"
         >
@@ -20,7 +20,7 @@
         <sidebar-item
           :link="{
             name: 'Devices',
-            icon: 'tim-icons icon-chart-pie-36',
+            icon: 'tim-icons icon-light-3',
             path: '/app/devices'
           }"
         >
@@ -29,7 +29,7 @@
         <sidebar-item
           :link="{
             name: 'Alarms',
-            icon: 'tim-icons icon-chart-pie-36',
+            icon: 'tim-icons icon-bell-55',
             path: '/app/alarms'
           }"
         >
@@ -38,8 +38,26 @@
         <sidebar-item
           :link="{
             name: 'Templates',
-            icon: 'tim-icons icon-chart-pie-36',
+            icon: 'tim-icons icon-atom',
             path: '/app/templates'
+          }"
+        >
+        </sidebar-item>
+
+                <sidebar-item
+          :link="{
+            name: 'Notifications',
+            icon: 'tim-icons icon-spaceship',
+            path: '/app/notifications'
+          }"
+        >
+        </sidebar-item>
+
+          <sidebar-item
+          :link="{
+            name: 'Help',
+            icon: 'tim-icons icon-paper',
+            path: '/app/docs'
           }"
         >
         </sidebar-item>
@@ -247,6 +265,7 @@ export default {
     async getNotifications() {
       try {
         await this.$store.dispatch("notif/fetchNotifications");
+        await this.$store.dispatch("notif/fetchNotificationsForDevice",1);
       } catch (e) {
         this.$notify({
           type: "danger",
@@ -274,9 +293,7 @@ export default {
         docClasses.add("perfect-scrollbar-off");
       }
     },
-    hola(){
-      console.log('HOLAAA')
-    }
+
   },
   async mounted() {
     this.initScrollbar();
