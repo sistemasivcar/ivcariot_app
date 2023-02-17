@@ -54,8 +54,8 @@ router.post('/alarm-webhook', async (req, res) => {
     try {
         res.sendStatus(200);
         if (!req.headers.token === process.env.EMQX_MANAGMENT_TOKEN) return res.sendStatus(404);
-
         const incomingAlarm = req.body;
+        console.log(incomingAlarm)
 
         updateAlarmCounter(incomingAlarm.emqxRuleId)
         const lastNotif = await Notification.find({ dId: incomingAlarm.dId, emqxRuleId: incomingAlarm.emqxRuleId }).sort({ createdTime: -1 }).limit(1);

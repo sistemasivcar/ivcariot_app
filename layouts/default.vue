@@ -28,6 +28,16 @@
 
         <sidebar-item
           :link="{
+            name: 'Templates',
+            icon: 'tim-icons icon-atom',
+            path: '/app/templates'
+          }"
+        >
+        </sidebar-item>
+
+
+        <sidebar-item
+          :link="{
             name: 'Alarms',
             icon: 'tim-icons icon-bell-55',
             path: '/app/alarms'
@@ -35,14 +45,6 @@
         >
         </sidebar-item>
 
-        <sidebar-item
-          :link="{
-            name: 'Templates',
-            icon: 'tim-icons icon-atom',
-            path: '/app/templates'
-          }"
-        >
-        </sidebar-item>
 
                 <sidebar-item
           :link="{

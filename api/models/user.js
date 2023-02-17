@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
     phones: { type: Array },
     country: { type: String },
     city: { type: String },
-    codezip:{type:Number}
+    codezip: { type: String }
 });
 
 userSchema.plugin(uniqueValidator, { message: 'Sorry, email or phone already exists ):' });

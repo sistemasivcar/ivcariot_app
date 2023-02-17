@@ -121,24 +121,67 @@ export default {
   },
   methods: {
     async updateProfile() {
-
       try {
-
-        var phonesValidos = /^[0-9]+$/;
-        if(this.user.phone01 !== '' && !this.user.phone01.match(phonesValidos) ||
-         this.user.phone02 !== '' && !this.user.phone02.match(phonesValidos)||
-         this.user.phone03 !== '' && !this.user.phone03.match(phonesValidos)){
-                  this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-check-2",
-          message: `Number phone invalid`
-        });
-
-          return ;
+        if (!this.user.phone01) {
+          this.$notify({
+            type: "warning",
+            icon: "tim-icons icon-alert-circle-exc",
+            message: "You must have a valid Phone01"
+          });
+          return;
         }
 
-        const phones =
-          [this.user.phone01, this.user.phone02 || "", this.user.phone03] || "";
+        if (!this.user.email) {
+          this.$notify({
+            type: "warning",
+            icon: "tim-icons icon-alert-circle-exc",
+            message: "You must have an email"
+          });
+          return;
+        }
+
+        if (!this.user.name) {
+          this.$notify({
+            type: "warning",
+            icon: "tim-icons icon-alert-circle-exc",
+            message: "You must have a name"
+          });
+          return;
+        }
+        var phonesValidos = /^[0-9]+$/;
+
+        if (
+          (this.user.phone01 != "" &&
+            !this.user.phone01.match(phonesValidos)) ||
+          (this.user.phone02 != "" &&
+            !this.user.phone02.match(phonesValidos)) ||
+          (this.user.phone03 != "" && !this.user.phone03.match(phonesValidos))
+        ) {
+          this.$notify({
+            type: "warning",
+            icon: "tim-icons icon-alert-circle-exc",
+            message: "Number phone invalid"
+          });
+          return;
+        }
+
+        if (
+          this.user.postalCode != "" &&
+          !this.user.postalCode.match(phonesValidos)
+        ) {
+          this.$notify({
+            type: "warning",
+            icon: "tim-icons icon-alert-circle-exc",
+            message: "Invalid Postal Code "
+          });
+          return;
+        }
+
+        const phones = [
+          this.user.phone01,
+          this.user.phone02 || "",
+          this.user.phone03 || ""
+        ];
 
         const userUpdated = {
           name: this.user.name,
@@ -157,6 +200,7 @@ export default {
         });
       } catch (e) {
         await this.getUser();
+  
         this.$notify({
           type: "danger",
           icon: "tim-icons icon-alert-circle-exc",
@@ -171,11 +215,14 @@ export default {
         this.user.email = this.$store.state.auth.auth.userData.email;
         this.user.name = this.$store.state.auth.auth.userData.name;
         this.user.phone01 = this.$store.state.auth.auth.userData.phones[0];
-        this.user.phone02 = this.$store.state.auth.auth.userData.phones[1];
-        this.user.phone03 = this.$store.state.auth.auth.userData.phones[2];
-        this.user.city = this.$store.state.auth.auth.userData.city;
-        this.user.country = this.$store.state.auth.auth.userData.country;
-        this.user.postalCode = this.$store.state.auth.auth.userData.codezip;
+        this.user.phone02 =
+          this.$store.state.auth.auth.userData.phones[1] || "";
+        this.user.phone03 =
+          this.$store.state.auth.auth.userData.phones[2] || "";
+        this.user.city = this.$store.state.auth.auth.userData.city || "";
+        this.user.country = this.$store.state.auth.auth.userData.country || "";
+        this.user.postalCode =
+          this.$store.state.auth.auth.userData.codezip || "";
       } catch (e) {
         console.log(e);
       }
