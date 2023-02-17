@@ -53,16 +53,20 @@ router.post('/login', async (req, res) => {
 // REGISTER
 router.post('/register', asyncMiddleware(async (req, res) => {
 
+    console.log(req.body)
+
     const password = req.body.password;
     const name = req.body.name;
     const email = req.body.email;
+    const phones = req.body.phones;
 
     const encryptedPassword = bcrypt.hashSync(password, 10);
 
     const newUser = {
         name,
         email,
-        password: encryptedPassword
+        password: encryptedPassword,
+        phones
     };
     const user = await UserModel.create(newUser)
     const toSend = {
@@ -71,6 +75,35 @@ router.post('/register', asyncMiddleware(async (req, res) => {
     res.status(200).json(toSend);
 
 }));
+
+router.get('/', checkAuth, asyncMiddleware(async (req, res) => {
+    const userId = req.userData._id;
+
+    const user = await UserModel.findOne({ _id: userId });
+    user.set('password', undefined, { strict: false });
+    res.json({ status: 'success', data: user });
+}))
+
+router.put('/', checkAuth, asyncMiddleware(async (req, res) => {
+    const userId = req.userData._id;
+    const userUpdated = req.body.updatedUser;
+
+    const resp = await UserModel.updateOne({ _id: userId }, {
+        name: userUpdated.name,
+        email:userUpdated.email,
+        phones: userUpdated.phones,
+        country: userUpdated.country,
+        city: userUpdated.city,
+        codezip: userUpdated.codezip,
+        
+    });
+    if (resp.n === 1 && resp.ok === 1) {
+        res.json({status:'success'})
+    }
+    else {
+        res.json({ status: 'error' })
+    }
+}))
 
 //GET MQTT CREDENTIALS
 router.post('/getmqttcredentials', checkAuth, asyncMiddleware(async (req, res) => {

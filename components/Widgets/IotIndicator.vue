@@ -45,7 +45,6 @@ export default {
     
     // topic format for reading data ->>  userId / dId / uniquevariablename / sdata
     const topic = `${this.config.userId}/${this.config.selectedDevice.dId}/${this.config.variable}/sdata`
-    console.log(topic)
     this.$nuxt.$on(topic, this.porcessRecivedData);
   
   },

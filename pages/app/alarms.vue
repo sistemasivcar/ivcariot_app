@@ -67,18 +67,20 @@
           </div>
 
           <div class="row">
-            <div class="col-4">
+              <div class="col-6">
               <base-input
                 label="Trigger Time (minutes)"
                 v-model="newRule.triggerTime"
                 type="number"
+                placeholder="How much time should pass to notify again?"
               ></base-input>
             </div>
 
-            <div class="col-8">
+            <div class="col-6">
               <base-input
                 label="Message to Send"
                 v-model="newRule.message"
+                placeholder="What message you wanna recived?"
                 type="text"
               ></base-input>
             </div>

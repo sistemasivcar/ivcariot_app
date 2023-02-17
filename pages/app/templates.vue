@@ -72,6 +72,7 @@
              @send-freq="sendFreq"
              @var-full-name="variableFullName"
              @unit="unit"
+             @default-series-type="getStyleSerie"
              ></from-grafico-realtime>
             </div>
 
@@ -399,6 +400,7 @@ export default {
         decimalPlaces: 2,
         widgetName: "numberchart",
         icon: "fa-thermometer",
+        defaultSeriesType:'line',
         chartTimeAgo: 120,
         demo: true
       },
@@ -471,6 +473,9 @@ export default {
     },
     unit(value){
       this.ncConfig.unit=value;
+    },
+    getStyleSerie(value){
+      this.ncConfig.defaultSeriesType=value;
     },
     decimalPlaces(value){
       this.ncConfig.decimalPlaces=value;

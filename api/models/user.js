@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        equired: [true, '"email" field is required'],
+        required: [true, '"email" field is required'],
         min: [3, '"email" field is too short'],
         max: [512, '"email" field is too long'],
         unique: true
@@ -22,9 +22,13 @@ const userSchema = new mongoose.Schema({
         max: [512, '"password" field is too long']
         
     },
+    phones: { type: Array },
+    country: { type: String },
+    city: { type: String },
+    codezip:{type:Number}
 });
 
-userSchema.plugin(uniqueValidator, { message: 'Error, email already exists' });
+userSchema.plugin(uniqueValidator, { message: 'Sorry, email or phone already exists ):' });
 
 const UserModel = mongoose.model('User', userSchema);
 

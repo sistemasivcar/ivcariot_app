@@ -42,9 +42,9 @@ router.get('/', checAuth, asyncMiddleware(async (req, res) => {
         .populate('saverRule', 'emqxRuleId status')
         .populate('templateId', 'widgets')
         .populate('alarmRules');
-    
-    
-    
+
+
+
     const toSend = {
         status: 'success',
         data: devices,
@@ -60,11 +60,45 @@ router.post('/', checAuth, asyncMiddleware(async (req, res) => {
 
     const createdTime = Date.now();
     const whpassword = makeid(10);
-    const device = await DeviceModel.create({ ...newDevice, userId, whpassword, createdTime });
+
+
+    const resultEmqx = await createSaverRuleInEMQX(userId, newDevice.dId, true);
+    if (resultEmqx.status == 'error') return res.status(500).json({ status: 'error' });
+    const emqxRuleId = resultEmqx.emqxRuleId;
+
+    const resultMongo = await createSaverRuleInMongo(newDevice.dId, true, emqxRuleId);
+    if (resultMongo.status == 'error') {
+        if (resultMongo.error.errors.dId.kind === 'unique') {
+            res.status(500).json({ status: 'error', data: 'didunique' });
+            deleteAlarmRule(emqxRuleId);
+            return;
+        }
+        res.status(500).json({ status: 'error' });
+        deleteAlarmRule(emqxRuleId);
+        return;
+    }
+
+    const saverRule = resultMongo.saverRule._id;
+    const device = await DeviceModel.create({ ...newDevice, userId, whpassword, createdTime, saverRule })
+
+    
+
+/*     const result = await createSaverRule(userId, newDevice.dId, true);
+    if (result.status == 'error') {
+        if (result.error.errors.dId.kind === 'unique') {
+
+            return res.status(500).json({ status: 'error', data: 'didunqiue' });
+        }
+        return res.status(500).json({ status: 'error' });
+    }
+    const saverRule = result.saverRule._id
+    const device = await DeviceModel.create({ ...newDevice, userId, whpassword, createdTime, saverRule }) */
+
+    /* const device = await DeviceModel.create({ ...newDevice, userId, whpassword, createdTime });
     
     const saverRuleBack = await createSaverRule(userId, newDevice.dId, true);
     const saverRule = saverRuleBack._id
-    await DeviceModel.updateOne({ dId: newDevice.dId }, { saverRule: saverRule });
+    await DeviceModel.updateOne({ dId: newDevice.dId }, { saverRule: saverRule }); */
 
     await selectDevice(userId, newDevice.dId);
     const toSend = {
@@ -113,7 +147,7 @@ router.put('/saver-rule', checAuth, asyncMiddleware(async (req, res) => {
 
 }))
 
-router.delete('/',checAuth, asyncMiddleware(async (req, res) => {
+router.delete('/', checAuth, asyncMiddleware(async (req, res) => {
 
     const dId = req.query.dId;
     const userId = req.userData._id;
@@ -135,7 +169,7 @@ router.delete('/',checAuth, asyncMiddleware(async (req, res) => {
     }
 
     const devices = await DeviceModel.find({ userId: userId });
-    
+
     if (devices.length >= 1) {
         //any selected?
         var found = false;
@@ -144,7 +178,7 @@ router.delete('/',checAuth, asyncMiddleware(async (req, res) => {
                 found = true;
             }
         });
-    
+
         if (!found) {
             await DeviceModel.updateMany({ userId: userId }, { selected: false });
             await DeviceModel.updateOne(
@@ -154,7 +188,7 @@ router.delete('/',checAuth, asyncMiddleware(async (req, res) => {
         }
     }
 
-    
+
 
     const toSend = {
         status: "success",
@@ -182,9 +216,9 @@ async function deleteMqttDeviceCredentials(dId) {
         return true;
     } catch (e) {
         console.log(error);
-        
+
     }
-    
+
 }
 
 async function deleteAllAlarmRules(userId, dId) {
@@ -200,7 +234,7 @@ async function deleteAllAlarmRules(userId, dId) {
     } catch (e) {
         console.log(e);
     }
-    
+
 }
 async function selectDevice(userId, dId) {
     try {
@@ -228,7 +262,7 @@ SAVER RULES FUNCTIONS
 */
 
 // create a rule 
-async function createSaverRule(userId, dId, status) {
+async function createSaverRuleInEMQX(userId, dId, status) {
     try {
         const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules`;
         const topic = userId + "/" + dId + "/+/sdata";
@@ -250,25 +284,44 @@ async function createSaverRule(userId, dId, status) {
             enabled: status
         };
         const res = await axios.post(url, newRule, auth);
-       
+
         if (res.status === 200 && res.data.data) {
 
-            const saverRule = await SaverRuleModel.create({
-                dId: dId,
-                emqxRuleId: res.data.data.id,
-                status: status
-            });
-
-            return saverRule;
+            return {
+                status: 'success',
+                emqxRuleId: res.data.data.id
+            };
 
         } else {
             return false;
         }
 
     } catch (error) {
-        console.log("Error creating saver rule")
-        console.log(error);
-        return false;
+        return {
+            status: 'error',
+            error
+        };
+    }
+}
+
+async function createSaverRuleInMongo(dId, status, emqxRuleId) {
+    try {
+        const saverRule = await SaverRuleModel.create({
+            dId: dId,
+            emqxRuleId,
+            status: status
+        });
+
+        return {
+            status: 'success',
+            saverRule
+        };
+
+    } catch (error) {
+        return {
+            status: 'error',
+            error
+        };
     }
 }
 
@@ -332,7 +385,7 @@ async function deleteAlarmRule(emqxRuleId) {
         return false;
 
     }
- }
+}
 
 async function asyncForEach(array, callback) {
     for (let index = 0; index < array.length; index++) {

@@ -47,6 +47,49 @@ const actions = {
             throw new Error('Something was wrong! Try later');
         }
     },
+
+    async fetchUserData(context) {
+        try {
+            const token = context.rootGetters['auth/getToken'];
+            const axiosHeader = {
+                headers: {
+                    'x-auth-token': token
+                }
+            };
+            const res = await this.$axios.get("/user", axiosHeader);
+
+            if (res.data.status == 'success') {
+                context.commit('setUser', res.data.data);
+                
+            }
+
+        } catch (err) {
+            console.log(e)
+        }
+        
+    },
+
+    async updateProfile(context,user) {
+        try {
+            const token = context.rootGetters['auth/getToken'];
+            const toSend = {
+                updatedUser:user
+            }
+            const axiosHeader = {
+                headers: {
+                    'x-auth-token': token
+                }
+            };
+            const res = await this.$axios.put("/user", toSend, axiosHeader);
+            if (res.data.status == 'success') {
+                return true;
+            }
+
+        } catch (e) {
+            throw new Error('The email may already exists')
+        }
+
+    }
 }
 
 export default actions;

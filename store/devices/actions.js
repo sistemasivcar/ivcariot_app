@@ -11,7 +11,7 @@ const actions = {
             const response = await this.$axios.get('/device', axiosHeader);
             if (response.data.status == 'success') {
                 const devices = response.data.data;
-                
+
                 if (devices.length == 0) {
                     context.commit("setSelectedDevice", {});
                     $nuxt.$emit('selectedDeviceIndex', null);
@@ -23,9 +23,9 @@ const actions = {
                         $nuxt.$emit('selectedDeviceIndex', index);
                     }
                 });
-                
+
                 // FIX THE WIDGETS
-    
+
                 context.commit('setDevices', devices);
             }
         } catch (e) {
@@ -52,12 +52,12 @@ const actions = {
                 return true;
             }
         } catch (e) {
-            if (e.response.data.err.errors.dId.kind == 'unique') {
+            console.dir(e)
+            if (e.response.data.status == 'error' && e.response.data.data == 'didunique') {
                 throw new Error('Device aleady exists')
-            } else {
-                console.log(e)
+            }
+            if (e.response.data.status == 'error') {
                 throw new Error('Falied to create device')
-
             }
         }
     },
@@ -160,8 +160,8 @@ const actions = {
         }
     },
 
- 
-        
+
+
 };
 
 export default actions;

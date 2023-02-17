@@ -1,7 +1,6 @@
 const actions = {
     async fetchNotifications(context, numberPage) {
         try {
-            console.log(numberPage)
             const token = context.rootGetters['auth/getToken'];
             const axiosHeader = {
                 headers: {
@@ -25,7 +24,6 @@ const actions = {
     },
     async fetchNotificationsForDevice(context, numberPage) {
         try {
-            console.log(numberPage)
             const token = context.rootGetters['auth/getToken'];
             const device = context.rootGetters['devices/getSelDevice'];
             const axiosHeader = {

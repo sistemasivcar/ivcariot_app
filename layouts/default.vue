@@ -53,6 +53,15 @@
         >
         </sidebar-item>
 
+        <sidebar-item
+          :link="{
+            name: 'Profile',
+            icon: 'tim-icons icon-single-02',
+            path: '/app/profile'
+          }"
+        >
+        </sidebar-item>
+
           <sidebar-item
           :link="{
             name: 'Help',
@@ -229,11 +238,11 @@ export default {
         this.options.password = credentials.data.password;
       } catch (e) {
         console.log(e);
-        this.$notify({
-          type: "danger",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: e
-        });
+        if(e.response.status === 400){
+          localStorage.clear();
+          this.$store.commit('auth/setAuth',null);
+          this.$router.replace('/')
+        }
       }
     },
     async getMqttCredentialsForReconnection(){
@@ -252,14 +261,11 @@ export default {
         );
         this.client.options.username = credentials.data.username;
         this.client.options.password = credentials.data.password;
-        console.log('credentials updated')
       } catch (e) {
         console.log(e);
-        this.$notify({
-          type: "danger",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: e
-        });
+          localStorage.clear();
+          this.$store.commit('auth/setAuth',null);
+          this.$router.replace('/')
       }
     },
     async getNotifications() {

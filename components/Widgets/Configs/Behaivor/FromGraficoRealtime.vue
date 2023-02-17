@@ -34,29 +34,74 @@
     </div>
 
     <div class="row">
-      <div class="col-sm-12">
+      <div class="col-sm-6">
         <base-input
           v-model.trim="sendFrequency"
-          label="Device Send Frequency (minutes)"
+          label="Send Frequency (minutes)"
           type="number"
         ></base-input>
       </div>
+
+      <div class="col-sm-6">
+        <label for="defaultSerieStyle">Style Series</label>
+        <el-select
+        label="Serie Style"
+          v-model="defaultSeriesType"
+          @change="getDefaultSeriesType"
+              class="select-info"
+              placeholder="Select Style"
+              style="width: 100%;"
+        >
+
+        <el-option
+          class="text-dark"
+          value="line"
+          label="Line"
+        ></el-option>
+        <el-option
+        class="text-dark"
+          value="spline"
+          label="Spline"
+        ></el-option>
+        <el-option
+        class="text-dark"
+          value="area"
+          label="Area"
+        ></el-option>
+        <el-option
+        class="text-dark"
+          value="scatter"
+          label="Scatter"
+        ></el-option>
+        </el-select>
+      </div>
+    
     </div>
+
   </div>
 </template>
 
 <script>
+import BaseCheckbox from "../../../Inputs/BaseCheckbox.vue";
+import { Select, Option } from "element-ui";
 export default {
+  components: { BaseCheckbox,
+      [Option.name]: Option,
+    [Select.name]: Select },
   data() {
     return {
       variableFullName: "temparature",
       chartTimeAgo: 120,
       unit: "ºC",
       decimalPlaces: 2,
-      sendFrequency: 5
+      sendFrequency: 5,
+      defaultSeriesType: "line"
     };
   },
   methods: {
+    getDefaultSeriesType() {
+      this.$emit("default-series-type", this.defaultSeriesType);
+    },
     validVarFullName() {
       if (!this.variableFullName) {
         this.variableFullName = "my var name";
@@ -115,9 +160,10 @@ export default {
         this.$emit("send-freq", value);
       }
     },
-    unit(value){
-        this.$emit('unit',value)
-    }
+    unit(value) {
+      this.$emit("unit", value);
+    },
+    
   }
 };
 </script>

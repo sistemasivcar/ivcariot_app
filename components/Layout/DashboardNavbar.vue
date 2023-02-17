@@ -152,11 +152,7 @@ export default {
         await this.$store.dispatch("notif/setReaded", notifId);
         await this.$store.dispatch('notif/fetchNotifications');
       } catch (e) {
-        this.$notify({
-          type: "danger",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: e
-        });
+        console.log(e)
       }
     },
     async getDevices() {
@@ -164,11 +160,7 @@ export default {
         await this.$store.dispatch("devices/fetchDevices");
         await this.$store.dispatch("notif/fetchNotificationsForDevice",1);
       } catch (e) {
-        this.$notify({
-          type: "danger",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: e
-        });
+        console.log(e)
       }
     },
     async selectDevice() {

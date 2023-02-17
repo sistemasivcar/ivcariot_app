@@ -14,7 +14,7 @@
         :key="widget.variable"
         :class="[widget.column]"
       >
-      <!--  <json :value="fixWidget(widget)"></json> -->
+       <json :value="fixWidget(widget)"></json>
         <grafico-realtime
           v-if="widget.widgetName == 'numberchart'"
           :config="fixWidget(widget)"

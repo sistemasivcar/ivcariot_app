@@ -8,14 +8,29 @@
         </template>
 
         <div>
+
+
           <base-input
             name="name"
             v-model="user.name"
-            placeholder="Name"
+            placeholder="Full Name"
             addon-left-icon="tim-icons icon-badge"
           >
           </base-input>
-          <p v-if="!nameValidity" class="text-danger">invalid name</p>
+          <p v-if="!nameValidity" class="text-danger">invalid Name</p>
+            
+ 
+
+
+          <base-input
+            name="phone"
+            v-model="user.phones"
+            placeholder="Phone Number"
+            addon-left-icon="tim-icons icon-badge"
+          >
+          </base-input>
+          <p v-if="!phonenumberValidity" class="text-danger">invalid Phone Number</p>
+
 
           <base-input
             name="email"
@@ -24,7 +39,7 @@
             addon-left-icon="tim-icons icon-email-85"
           >
           </base-input>
-          <p v-if="!emailValidity" class="text-danger">invalid email address</p>
+          <p v-if="!emailValidity" class="text-danger">invalid Email Address</p>
 
           <base-input
             name="password"
@@ -71,15 +86,18 @@ export default {
   layout: "auth",
   data() {
     return {
+      phones:[],
       user: {
-        name: "",
+        name:'',
         email: "",
-        password: ""
+        password: "",
+        phones:null
       },
       isValidForm: false,
       nameValidity: true,
       emailValidity: true,
-      passwordValidity: true
+      passwordValidity: true,
+      phonenumberValidity:true
     };
   },
   methods: {
@@ -114,8 +132,12 @@ export default {
     },
     register() {
       this.validateForm();
+  
       console.log(this.nameValidity, this.emailValidity, this.passwordValidity);
       if (!this.isValidForm) return;
+
+      this.phones.push(this.user.phones);
+      this.user.phones=this.phones;
 
       this.$axios
         .post("/user/register", this.user)

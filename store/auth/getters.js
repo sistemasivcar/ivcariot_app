@@ -5,6 +5,10 @@ const getters = {
     getUserId(state) {
         return state.auth.userData._id;
     },
+
+    getUserEmail(state) {
+        return state.auth.userData.email;
+    },
     getToken(state) {
         return state.auth.token;
     },

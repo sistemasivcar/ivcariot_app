@@ -313,7 +313,6 @@ export default {
           message: `Device "${newDevice.name.toUpperCase()}" created!`
         });
       } catch (e) {
-        console.log(e);
         this.$notify({
           type: "danger",
           icon: "tim-icons icon-alert-circle-exc",

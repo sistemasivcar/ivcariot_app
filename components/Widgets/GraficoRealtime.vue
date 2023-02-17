@@ -50,7 +50,7 @@ export default {
           zoomType:'x',
           timezone:'America/Argentina/Buenos_Aires',
           renderTo: "container",
-          defaultSeriesType: "line",
+          defaultSeriesType:null,
           backgroundColor: "rgba(0,0,0,0)"
         },
         title: {
@@ -124,11 +124,14 @@ export default {
       deep: true,
       handler() {
         setTimeout(() => {
-          this.chartOptions.series[0].name =
-            this.config.variableFullName + " " + this.config.unit;
+          this.chartOptions.series[0].name = this.config.variableFullName + " " + this.config.unit;
+
+
+          this.chartOptions.chart.defaultSeriesType=this.config.defaultSeriesType;
+
           this.updateColorClass();
           window.dispatchEvent(new Event("resize"));
-        }, 1000);
+        }, 300);
       }
     }
   },
@@ -159,8 +162,8 @@ export default {
     );
   },
   methods: {
+
     updateColorClass() {
-      console.log("update" + this.config.class);
 
       var c = this.config.class;
 
@@ -182,6 +185,8 @@ export default {
 
       this.chartOptions.series[0].name =
         this.config.variableFullName + " " + this.config.unit;
+
+       this.chartOptions.chart.defaultSeriesType=String(this.config.defaultSeriesType);
     },
 
     getChartData() {
@@ -211,7 +216,7 @@ export default {
         .get("data/get-data-chart", axiosHeaders)
         .then(res => {
           const data = res.data.data;
-          console.log(res.data);
+
 
           data.forEach(dato => {
             var point = [];
