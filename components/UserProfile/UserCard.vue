@@ -120,6 +120,18 @@ export default {
     await this.getUser();
   },
   methods: {
+    capitalizarPrimeraLetra(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    },
+    capitalizeWords(str) {
+      if(!str) return '';
+      let res = "";
+      const words = str.split(" ");
+      words.forEach(w => {
+        res += this.capitalizarPrimeraLetra(w) + " ";
+      });
+      return res;
+    },
     async updateProfile() {
       try {
         if (!this.user.phone01) {
@@ -200,7 +212,7 @@ export default {
         });
       } catch (e) {
         await this.getUser();
-  
+
         this.$notify({
           type: "danger",
           icon: "tim-icons icon-alert-circle-exc",
@@ -213,16 +225,16 @@ export default {
         await this.$store.dispatch("auth/fetchUserData");
 
         this.user.email = this.$store.state.auth.auth.userData.email;
-        this.user.name = this.$store.state.auth.auth.userData.name;
+        this.user.name = this.capitalizeWords(this.$store.state.auth.auth.userData.name);
         this.user.phone01 = this.$store.state.auth.auth.userData.phones[0];
         this.user.phone02 =
           this.$store.state.auth.auth.userData.phones[1] || "";
         this.user.phone03 =
           this.$store.state.auth.auth.userData.phones[2] || "";
-        this.user.city = this.$store.state.auth.auth.userData.city || "";
-        this.user.country = this.$store.state.auth.auth.userData.country || "";
+        this.user.city = this.capitalizeWords(this.$store.state.auth.auth.userData.city) || "";
+        this.user.country = this.capitalizeWords(this.$store.state.auth.auth.userData.country) || "";
         this.user.postalCode =
-          this.$store.state.auth.auth.userData.codezip || "";
+          this.capitalizeWords(this.$store.state.auth.auth.userData.codezip) || "";
       } catch (e) {
         console.log(e);
       }

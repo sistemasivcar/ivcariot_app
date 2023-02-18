@@ -3,7 +3,7 @@
     <!-- header-card -->
     <template slot="header">
       <h4 class="card-title">
-        {{ config.selectedDevice.name }} - {{ config.variableFullName }}
+        {{ deviceName }} - {{ variableFullName }}
       </h4>
     </template>
 
@@ -22,12 +22,21 @@ export default {
   props:['config'],
   data() {
     return {
-      value: false,
+      value: null,
     };
   },
   methods:{
     capitalizarPrimeraLetra(str) {
       return str.charAt(0).toUpperCase() + str.slice(1);
+    },
+    capitalizarPrimeraLetraDeCadaPalabra(str){
+      let res = '';
+      const words = str.split(' ');
+      words.forEach(w => {
+        res += this.capitalizarPrimeraLetra(w) + ' '
+      });
+      return res;
+
     },
     porcessRecivedData(data){
         
@@ -36,8 +45,28 @@ export default {
   },
 
   computed:{
+    deviceName(){
+      return this.capitalizarPrimeraLetraDeCadaPalabra(this.config.selectedDevice.name);
+
+    },
+    variableFullName(){
+      return this.capitalizarPrimeraLetraDeCadaPalabra(this.config.variableFullName);
+    },
     getColorIcon(){
+      if(this.config.isBoolean){
         return this.value ? 'text-'+this.config.color : 'text-dark'
+      }
+
+      if(!this.config.isBoolean){
+        if(this.config.condition === '=') return this.value == +this.config.value ?  'text-'+this.config.color : 'text-dark';
+        if(this.config.condition === '=>') return this.value >= +this.config.value ?  'text-'+this.config.color : 'text-dark'
+        if(this.config.condition === '<=') return this.value <= +this.config.value ?  'text-'+this.config.color : 'text-dark'
+        if(this.config.condition === '>') return this.value > +this.config.value ?  'text-'+this.config.color : 'text-dark'
+        if(this.config.condition === '<') return this.value < +this.config.value ?  'text-'+this.config.color : 'text-dark'
+        if(this.config.condition === '!=') return this.value != +this.config.value ?  'text-'+this.config.color : 'text-dark'
+     }
+
+
     },
   },
   

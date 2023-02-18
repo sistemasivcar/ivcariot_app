@@ -38,7 +38,7 @@
               <el-option
                 class="text-dark"
                 value="indicator"
-                label="Boolean Indicator"
+                label="Indicator"
               >
               </el-option>
               <!--               <el-option
@@ -69,7 +69,7 @@
              <from-grafico-realtime
              @decimal-places="decimalPlaces"
              @chart-time-ago="chartTimeAgo"
-             @send-freq="sendFreq"
+             @send-freq="sendFreqChart"
              @var-full-name="variableFullName"
              @unit="unit"
              @default-series-type="getStyleSerie"
@@ -96,7 +96,13 @@
             
             <div v-if="selectedWidgetName == 'indicator'">
               <from-indicator
-              @var-full-name="variableFullName"></from-indicator>
+              @var-full-name="variableFullName"
+              @send-freq="sendFreqIndicator"
+              @message-on="messageOn"
+              @message-off="messageOff"
+              @condition="condition"
+              @is-bool="isBoolean"
+              @value="valueIndicator"></from-indicator>
             </div>
   
 
@@ -435,10 +441,16 @@ export default {
           name: "Home",
           dId: "dummy-device-id"
         },
+        isBoolean:true,
+        messageOn:'The alarm is ON',
+        messageOff:'The alarm is OFF',
+        condition:'>',
+        value:0,
+
         variableFullName: "Alarm Status",
         color: "success",
         variableType: "input",
-        variableSendFreq: "30",
+        variableSendFreq: "5",
         widgetName: "indicator",
         icon: "fa-home",
         column: "col-6"
@@ -449,6 +461,7 @@ export default {
     };
   },
   methods: {
+    // metodos para actualizar el widget cuando cambia el formulario
     getColor(color) {
       this.iotButtonConfig.colorButton = color;
       this.ncConfig.class = color;
@@ -471,6 +484,8 @@ export default {
       this.iotIndicatorConfig.icon = icon;
       this.iotSwitchConfig.icon = icon;
     },
+
+    // metodos para el grafico
     unit(value){
       this.ncConfig.unit=value;
     },
@@ -483,9 +498,31 @@ export default {
     chartTimeAgo(value){
       this.ncConfig.chartTimeAgo=value;
     },
-    sendFreq(value){
+    sendFreqChart(value){
       this.ncConfig.variableSendFreq=value;
     },
+    // metodos para el indicator
+    messageOn(value){
+      this.iotIndicatorConfig.messageOn=value;
+    },
+    messageOff(value){
+      this.iotIndicatorConfig.messageOff=value;
+    },
+    valueIndicator(value){
+      this.iotIndicatorConfig.value=value;
+    },
+    condition(value){
+      this.iotIndicatorConfig.condition=value;
+    },
+    isBoolean(value){
+      this.iotIndicatorConfig.isBoolean=value;
+    },
+
+    sendFreqIndicator(value){
+      this.iotIndicatorConfig.variableSendFreq=value;
+    },
+
+    //metodos para el button
     text(value){
       this.iotButtonConfig.text=value;
     },
@@ -500,7 +537,8 @@ export default {
       this.iotSwitchConfig.variableFullName=value;
     },
     defaultValues(selectedWidgetName){
-      console.log('itchanger')
+      // para que los valores por defectos con los que se monta el
+      // formulario coincidan con los valores de configuracion del widget preview 
       switch (selectedWidgetName) {
         case "button":
           this.iotButtonConfig.variableFullName = 'Pump';
@@ -510,10 +548,20 @@ export default {
         case "numberchart":
           this.ncConfig.icon="fa-thermometer"
           this.ncConfig.variableFullName = 'Temperature';
+          this.ncConfig.decimalPlaces = 2;
+          this.ncConfig.unit = "ºC";
+          this.ncConfig.chartTimeAgo = 120;
+          this.ncConfig.variableSendFreq = "120";
           this.$nuxt.$emit('set-icon',this.ncConfig.icon);
           break;
         case "indicator":
           this.iotIndicatorConfig.icon="fa-home"
+          this.iotIndicatorConfig.variableSendFreq = "5";
+          this.iotIndicatorConfig.value = 0;
+          this.iotIndicatorConfig.isBoolean = true;
+          this.iotIndicatorConfig.condition = ">";
+          this.iotIndicatorConfig.messageOn = "The alarm is ON";
+          this.iotIndicatorConfig.messageOff = "The alarm is OFF";
           this.iotIndicatorConfig.variableFullName = 'Alarm Status';
           this.$nuxt.$emit('set-icon',this.iotIndicatorConfig.icon);
 
@@ -633,7 +681,6 @@ export default {
         case "numberchart":
           this.ncConfig.userId = this.$store.getters["auth/getUserId"];
           this.ncConfig.variable = this.makeid(10);
-          this.ncConfig.variableSendFreq = this.sendFrequency;
           this.widgets.push(JSON.parse(JSON.stringify(this.ncConfig)));
           break;
         case "indicator":
@@ -641,7 +688,7 @@ export default {
             "auth/getUserId"
           ];
           this.iotIndicatorConfig.variable = this.makeid(10);
-          this.iotIndicatorConfig.variableSendFreq = this.sendFrequency;
+          
           this.widgets.push(
             JSON.parse(JSON.stringify(this.iotIndicatorConfig))
           );

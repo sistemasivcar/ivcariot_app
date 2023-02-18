@@ -26,7 +26,7 @@
             name="phone"
             v-model="user.phones"
             placeholder="Phone Number"
-            addon-left-icon="tim-icons icon-badge"
+            addon-left-icon="tim-icons icon-mobile"
           >
           </base-input>
           <p v-if="!phonenumberValidity" class="text-danger">invalid Phone Number</p>

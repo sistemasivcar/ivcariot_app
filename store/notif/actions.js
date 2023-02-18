@@ -18,7 +18,7 @@ const actions = {
             }
         } catch (e) {
             console.log(e)
-            const error = new Error('Falied to load notifications')
+            const error = new Error('')
             throw error;
         }
     },
@@ -26,6 +26,7 @@ const actions = {
         try {
             const token = context.rootGetters['auth/getToken'];
             const device = context.rootGetters['devices/getSelDevice'];
+            if (!device) return;
             const axiosHeader = {
                 headers: {
                     'x-auth-token': token
@@ -43,7 +44,7 @@ const actions = {
             }
         } catch (e) {
             console.log(e)
-            const error = new Error('Falied to load notifications')
+            const error = new Error('')
             throw error;
         }
     },

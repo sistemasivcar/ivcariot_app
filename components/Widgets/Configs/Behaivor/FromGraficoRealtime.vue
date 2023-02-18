@@ -45,39 +45,28 @@
       <div class="col-sm-6">
         <label for="defaultSerieStyle">Style Series</label>
         <el-select
-        label="Serie Style"
+          label="Serie Style"
           v-model="defaultSeriesType"
           @change="getDefaultSeriesType"
-              class="select-info"
-              placeholder="Select Style"
-              style="width: 100%;"
+          class="select-info"
+          placeholder="Select Style"
+          style="width: 100%;"
         >
-
-        <el-option
-          class="text-dark"
-          value="line"
-          label="Line"
-        ></el-option>
-        <el-option
-        class="text-dark"
-          value="spline"
-          label="Spline"
-        ></el-option>
-        <el-option
-        class="text-dark"
-          value="area"
-          label="Area"
-        ></el-option>
-        <el-option
-        class="text-dark"
-          value="scatter"
-          label="Scatter"
-        ></el-option>
+          <el-option class="text-dark" value="line" label="Line"></el-option>
+          <el-option
+            class="text-dark"
+            value="spline"
+            label="Spline"
+          ></el-option>
+          <el-option class="text-dark" value="area" label="Area"></el-option>
+          <el-option
+            class="text-dark"
+            value="scatter"
+            label="Scatter"
+          ></el-option>
         </el-select>
       </div>
-    
     </div>
-
   </div>
 </template>
 
@@ -85,9 +74,11 @@
 import BaseCheckbox from "../../../Inputs/BaseCheckbox.vue";
 import { Select, Option } from "element-ui";
 export default {
-  components: { BaseCheckbox,
-      [Option.name]: Option,
-    [Select.name]: Select },
+  components: {
+    BaseCheckbox,
+    [Option.name]: Option,
+    [Select.name]: Select
+  },
   data() {
     return {
       variableFullName: "temparature",
@@ -162,8 +153,7 @@ export default {
     },
     unit(value) {
       this.$emit("unit", value);
-    },
-    
+    }
   }
 };
 </script>

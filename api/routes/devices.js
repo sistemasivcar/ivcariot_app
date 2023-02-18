@@ -13,6 +13,7 @@ ___  ______________ _____ _      _____
 
 import DeviceModel from '../models/device';
 import SaverRuleModel from '../models/emqx_saver_rule';
+import NotificationModel from '../models/notification';
 import EmqxAuthModel from '../models/emqx_auth';
 import AlarmRuleModel from '../models/emqx_alarm_rule.js';
 
@@ -157,6 +158,8 @@ router.delete('/', checAuth, asyncMiddleware(async (req, res) => {
     await deleteAllAlarmRules(userId, dId);
 
     await deleteSaverRule(dId);
+
+    NotificationModel.deleteMany({ dId });
 
     const result = await DeviceModel.deleteOne({ dId: dId });
     if (result.n == 0) {
