@@ -38,7 +38,6 @@ router.get('/', checAuth, asyncMiddleware(async (req, res) => {
 router.post('/', checAuth, asyncMiddleware(async (req, res) => {
     const userId = req.userData._id;
     const createdTime = Date.now();
-
     const template = await templateModel.create({ ...req.body.template, userId,createdTime });
     const toSend = {
         status: 'success',

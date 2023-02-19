@@ -1,175 +1,79 @@
 <template>
   <div>
-    <!-- WIDGET CONFIGURATOR -->
+    <!-- CREATING TEMPLATE -->
     <div class="row">
       <card>
-        <div slot="header">
+        <template slot="header">
           <div class="row">
             <div class="col-6">
-              <h4 class="card-title" v-if="!selectedWidgetName">Select Widget</h4>
+              <h4 class="card-title" v-if="!selectedWidgetName">
+                Select Widget
+              </h4>
               <h4 class="card-title" v-else>Configure Widget Parameters</h4>
             </div>
             <div class="col-6">
-              <h4 class="card-title" v-if="selectedWidgetName">Widget Preview</h4>
+              <h4 class="card-title" v-if="selectedWidgetName">
+                Widget Preview
+              </h4>
             </div>
           </div>
-        </div>
+        </template>
 
-        <div class="row">
-          <!-- WIDGET SELECTOR AND FORMS -->
-          <div class="col-6">
-            <!-- WIDGETS SELECTOR -->
+        <template name="card-body">
+          <div class="row">
+            <div class="col-6">
+              <!-- WIDGET SELECTOR -->
+              <WidgetSelector @selected-widget="getSelectedWidgetName" />
 
-            <el-select
-              v-model="selectedWidgetName"
-              @change="defaultValues"
-              class="select-info"
-              placeholder="Select Widget"
-              style="width: 100%;"
-            >
-              <el-option
-                class="text-dark"
-                value="numberchart"
-                label="Realtime number chart"
-              >
-              </el-option>
-              <el-option
-                class="text-dark"
-                value="indicator"
-                label="Indicator"
-              >
-              </el-option>
-              <!--               <el-option
-                class="text-dark"
-                value="map"
-                label="Map INPUT <-"
-              ></el-option> -->
-              <el-option
-                class="text-dark"
-                value="switch"
-                label="Switch "
-              ></el-option>
-              <el-option
-                class="text-dark"
-                value="button"
-                label="Button "
-              ></el-option>
-            </el-select>
-            <div class="row"  v-if="selectedWidgetName">
-              <div class="col-4"><hr></div>
-              <div class="col-4">Behavior</div>
-              <div class="col-4"><hr></div>
+              <!-- WIDGET FORMS -->
+              <FromNumberchart
+                v-if="selectedWidgetName === 'numberchart'"
+                @numberchart-config="getNumberchartConfig"
+                @add-widget="addNewWidget"
+              />
+              <FromIndicator
+                @indicator-config="getIndicatorConfig"
+                v-if="selectedWidgetName === 'indicator'"
+                @add-widget="addNewWidget"
+              />
+              <FormButton
+                v-if="selectedWidgetName === 'button'"
+                @button-config="getButtonConfig"
+                @add-widget="addNewWidget"
+              />
+              <FromSwitch
+                v-if="selectedWidgetName === 'switch'"
+                @switch-config="getSwitchConfig"
+                @add-widget="addNewWidget"
+              />
             </div>
 
-
-            <div v-if="selectedWidgetName == 'numberchart'">
-
-             <from-grafico-realtime
-             @decimal-places="decimalPlaces"
-             @chart-time-ago="chartTimeAgo"
-             @send-freq="sendFreqChart"
-             @var-full-name="variableFullName"
-             @unit="unit"
-             @default-series-type="getStyleSerie"
-             ></from-grafico-realtime>
-            </div>
-
-
-            <div v-if="selectedWidgetName == 'switch'">
-              <from-switch
-              @var-full-name="variableFullName"
-              ></from-switch>
-
-            </div>
-
-
-            <div v-if="selectedWidgetName == 'button'">
-              <form-button
-              @var-full-name="variableFullName"
-              @message="message"
-              @text="text"></form-button>
-
-            </div>
-
-
-            <div v-if="selectedWidgetName == 'indicator'">
-              <from-indicator
-              @var-full-name="variableFullName"
-              @send-freq="sendFreqIndicator"
-              @message-on="messageOn"
-              @message-off="messageOff"
-              @condition="condition"
-              @is-bool="isBoolean"
-              @value="valueIndicator"></from-indicator>
-            </div>
-
-
-            <div class="row"  v-if="selectedWidgetName">
-              <div class="col-4"><hr></div>
-              <div class="col-4">Styles</div>
-              <div class="col-4"><hr></div>
-            </div>
-
-            <div v-if="selectedWidgetName">
-              <div class="row">
-                <div class="col-6">
-                  <label for="color">Color</label>
-                  <color-config @color="getColor"></color-config>
-                </div>
-                <div class="col-6">
-                  <label for="color">Icon</label>
-                  <config-icon @icon="getIcon"></config-icon>
-                </div>
-              </div>
-              <label for="color">Ancho</label>
-              <config-cols @cols="getCols"></config-cols>
+            <!-- WIDGET PREVIEW -->
+            <div class="col-6">
+              <IotNumberchart
+                :config="ncConfig"
+                v-if="selectedWidgetName === 'numberchart'"
+              />
+              <IotIndicator
+                :config="iotIndicatorConfig"
+                v-if="selectedWidgetName === 'indicator'"
+              />
+              <IotButton
+                :config="iotButtonConfig"
+                v-if="selectedWidgetName === 'button'"
+              />
+              <IotSwitch
+                :config="iotSwitchConfig"
+                v-if="selectedWidgetName === 'switch'"
+              />
             </div>
           </div>
-
-          <!-- WIDGET PREVIEW -->
-          <div class="col-6">
-            <grafico-realtime
-              v-if="selectedWidgetName == 'numberchart'"
-              :config="ncConfig"
-            ></grafico-realtime>
-            <iot-switch
-              v-if="selectedWidgetName == 'switch'"
-              :config="iotSwitchConfig"
-            ></iot-switch>
-            <iot-button
-              v-if="selectedWidgetName == 'button'"
-              :config="iotButtonConfig"
-            ></iot-button>
-            <iot-indicator
-              v-if="selectedWidgetName == 'indicator'"
-              :config="iotIndicatorConfig"
-            ></iot-indicator>
-          </div>
-        </div>
-
-        <!-- ADD WIDGET BUTTON -->
-        <div slot="raw-content" class="row pull-right">
-          <div class="col-12">
-            <base-button
-              :disabled="!selectedWidgetName"
-              native-type="submit"
-              type="info"
-              class="mb-3 mr-3 pull-right"
-              size="lg"
-              @click="addNewWidget()"
-            >
-              Add Widget
-            </base-button>
-          </div>
-        </div>
+        </template>
       </card>
     </div>
 
     <!-- DASHBOARD PREVIEW -->
-    <div class="row" v-if="widgets.length > 0">
-      <div class="col-sm-12">
-        <h4 class="card-title">Dashboard Preview</h4>
-      </div>
+    <div class="row">
       <div
         v-for="(widget, index) in widgets"
         :key="widget.variable"
@@ -182,29 +86,20 @@
           style="margin-bottom: 10px;"
         ></i>
 
-        <grafico-realtime
-          v-if="widget.widgetName == 'numberchart'"
+        <IotNumberchart
+          v-if="widget.widgetName === 'numberchart'"
           :config="widget"
-        ></grafico-realtime>
+        />
 
-        <iot-switch
-          v-if="widget.widgetName == 'switch'"
+        <IotIndicator
+          v-if="widget.widgetName === 'indicator'"
           :config="widget"
-        ></iot-switch>
-
-        <iot-button
-          v-if="widget.widgetName == 'button'"
-          :config="widget"
-        ></iot-button>
-
-        <iot-indicator
-          v-if="widget.widgetName == 'indicator'"
-          :config="widget"
-        ></iot-indicator>
+        />
+        <IotButton v-if="widget.widgetName === 'button'" :config="widget" />
       </div>
     </div>
 
-    <!-- SAVE TEMPLATE-->
+    <!-- SAVE TEMPLATE -->
     <div class="row" v-if="widgets.length > 0">
       <card>
         <div slot="header">
@@ -249,6 +144,7 @@
     </div>
 
     <!-- TEMPLATES TABLE -->
+
     <div class="row">
       <card>
         <div slot="header">
@@ -341,53 +237,53 @@
         </template>
       </modal>
     </div>
-
-    <!-- JSONS -->
-    <!-- <Json :value="widgets"></Json> -->
   </div>
 </template>
 
 <script>
 import { Table, TableColumn } from "element-ui";
-import { Select, Option } from "element-ui";
-import IotSwitch from "../../../components/Widgets/IotSwitch.vue";
-import IotButton from "../../../components/Widgets/IotButton.vue";
-import IotIndicator from "../../../components/Widgets/IotIndicator.vue";
-import GraficoRealtime from "../../../components/Widgets/GraficoRealtime.vue";
 import Card from "../../../components/Cards/Card.vue";
-import ColorConfig from "../../../components/Widgets/Configs/Style/ColorConfig.vue";
-import ConfigCols from "../../../components/Widgets/Configs/Style/ConfigCols.vue";
-import ConfigIcon from "../../../components/Widgets/Configs/Style/ConfigIcon.vue";
-import FromGraficoRealtime from '../../../components/Widgets/Configs/Behaivor/FromGraficoRealtime.vue';
-import FromIndicator from '../../../components/Widgets/Configs/Behaivor/FromIndicator.vue';
+import FromIndicator from "../../../components/Widgets/Forms/IotIndicator.vue";
+import FormButton from "../../../components/Widgets/Forms/IotButton.vue";
+import FromNumberchart from "../../../components/Widgets/Forms/GraficoRealtime.vue";
+import FromSwitch from "../../../components/Widgets/Forms/IotSwitch.vue";
+import WidgetSelector from "../../../components/Widgets/WidgetSelector.vue";
+import BaseInput from "../../../components/Inputs/BaseInput.vue";
+import IotIndicator from "../../../components/Widgets/IotIndicator.vue";
+import IotNumberchart from "../../../components/Widgets/GraficoRealtime.vue";
+import IotButton from "../../../components/Widgets/IotButton.vue";
+import IotSwitch from "../../../components/Widgets/IotSwitch.vue";
+import BaseButton from "../../../components/BaseButton.vue";
 
 export default {
-  middleware: "authtenticated",
   components: {
-    ColorConfig,
-    ConfigIcon,
-    ConfigCols,
-    IotSwitch,
-    IotIndicator,
-    IotButton,
-    GraficoRealtime,
     Card,
-    FromGraficoRealtime,
-    FromIndicator,
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
-    [Option.name]: Option,
-    [Select.name]: Select
+    BaseInput,
+    BaseButton,
+    WidgetSelector,
+    FromIndicator,
+    FormButton,
+    FromSwitch,
+    FromNumberchart,
+    IotIndicator,
+    IotNumberchart,
+    IotButton,
+    IotSwitch
   },
+  middleware: "authtenticated",
   data() {
     return {
-      widgets: [],
-      templates: [],
+      selectedWidgetName: null,
       templateInUse: false,
-      selectedWidgetName: "",
-      templateName: "",
-      templateDescription: "",
-      sendFrequency: 5,
+      value: false,
+      templateToDelete: null,
+      indexToDelete: null,
+      templates: [],
+      widgets: [],
+      templateName: null,
+      templateDescription: null,
       ncConfig: {
         selectedDevice: {
           name: "Home",
@@ -402,9 +298,27 @@ export default {
         decimalPlaces: 2,
         widgetName: "numberchart",
         icon: "fa-thermometer",
-        defaultSeriesType:'line',
+        defaultSeriesType: "line",
         chartTimeAgo: 120,
         demo: true
+      },
+      iotIndicatorConfig: {
+        selectedDevice: {
+          name: "Home",
+          dId: "dummy-device-id"
+        },
+        isBoolean: true,
+        messageOn: "The alarm is ON",
+        messageOff: "The alarm is OFF",
+        condition: ">",
+        value: 0,
+        variableFullName: "Alarm Status",
+        color: "success",
+        variableType: "input",
+        variableSendFreq: "5",
+        widgetName: "indicator",
+        icon: "fa-home",
+        column: "col-6"
       },
       iotSwitchConfig: {
         selectedDevice: {
@@ -431,147 +345,65 @@ export default {
         colorButton: "success",
         icon: "fa-home",
         column: "col-6"
-      },
-      iotIndicatorConfig: {
-        selectedDevice: {
-          name: "Home",
-          dId: "dummy-device-id"
-        },
-        isBoolean:true,
-        messageOn:'The alarm is ON',
-        messageOff:'The alarm is OFF',
-        condition:'>',
-        value:0,
-
-        variableFullName: "Alarm Status",
-        color: "success",
-        variableType: "input",
-        variableSendFreq: "5",
-        widgetName: "indicator",
-        icon: "fa-home",
-        column: "col-6"
-      },
-      value: false,
-      templateToDelete: null,
-      indexToDelete: null
+      }
     };
   },
   methods: {
-    // metodos para actualizar el widget cuando cambia el formulario
-    getColor(color) {
-      this.iotButtonConfig.colorButton = color;
-      this.ncConfig.class = color;
-      this.iotIndicatorConfig.color = color;
-      this.iotSwitchConfig.class = color;
+    getWidgets(w) {
+      console.log(w);
     },
-
-    getCols(cols) {
-      this.iotButtonConfig.column = cols;
-
-      this.ncConfig.column = cols;
-
-      this.iotIndicatorConfig.column = cols;
-
-      this.iotSwitchConfig.column = cols;
+    getSelectedWidgetName(name) {
+      this.selectedWidgetName = name;
     },
-    getIcon(icon) {
-      this.iotButtonConfig.icon = icon;
-      this.ncConfig.icon = icon;
-      this.iotIndicatorConfig.icon = icon;
-      this.iotSwitchConfig.icon = icon;
+    getIndicatorConfig(config) {
+      this.iotIndicatorConfig = config;
     },
-
-    // metodos para el grafico
-    unit(value){
-      this.ncConfig.unit=value;
+    getNumberchartConfig(config) {
+      this.ncConfig = config;
     },
-    getStyleSerie(value){
-      this.ncConfig.defaultSeriesType=value;
+    getButtonConfig(config) {
+      this.iotButtonConfig = config;
     },
-    decimalPlaces(value){
-      this.ncConfig.decimalPlaces=value;
+    getSwitchConfig(config) {
+      this.iotSwitchConfig = config;
     },
-    chartTimeAgo(value){
-      this.ncConfig.chartTimeAgo=value;
+    addNewWidget(widgetConfig) {
+      widgetConfig.variable = this.makeid(15);
+      widgetConfig.userId = this.$store.getters["auth/getUserId"];
+      this.widgets.push(JSON.parse(JSON.stringify(widgetConfig)));
     },
-    sendFreqChart(value){
-      this.ncConfig.variableSendFreq=value;
+    deleteWidget(index) {
+      this.widgets.splice(index, 1);
     },
-    // metodos para el indicator
-    messageOn(value){
-      this.iotIndicatorConfig.messageOn=value;
+    closeModalTemplate() {
+      this.templateToDelete = null;
     },
-    messageOff(value){
-      this.iotIndicatorConfig.messageOff=value;
-    },
-    valueIndicator(value){
-      this.iotIndicatorConfig.value=value;
-    },
-    condition(value){
-      this.iotIndicatorConfig.condition=value;
-    },
-    isBoolean(value){
-      this.iotIndicatorConfig.isBoolean=value;
-    },
-
-    sendFreqIndicator(value){
-      this.iotIndicatorConfig.variableSendFreq=value;
-    },
-
-    //metodos para el button
-    text(value){
-      this.iotButtonConfig.text=value;
-    },
-    message(value){
-      this.iotButtonConfig.message=value;
-    },
-
-    variableFullName(value){
-      this.ncConfig.variableFullName=value;
-      this.iotIndicatorConfig.variableFullName=value;
-      this.iotButtonConfig.variableFullName=value;
-      this.iotSwitchConfig.variableFullName=value;
-    },
-    defaultValues(selectedWidgetName){
-      // para que los valores por defectos con los que se monta el
-      // formulario coincidan con los valores de configuracion del widget preview
-      switch (selectedWidgetName) {
-        case "button":
-          this.iotButtonConfig.variableFullName = 'Pump';
-          this.iotButtonConfig.icon = 'fa-bath';
-          this.$nuxt.$emit('set-icon',this.iotButtonConfig.icon);
-          break;
-        case "numberchart":
-          this.ncConfig.icon="fa-thermometer"
-          this.ncConfig.variableFullName = 'Temperature';
-          this.ncConfig.decimalPlaces = 2;
-          this.ncConfig.unit = "ºC";
-          this.ncConfig.chartTimeAgo = 120;
-          this.ncConfig.variableSendFreq = "120";
-          this.$nuxt.$emit('set-icon',this.ncConfig.icon);
-          break;
-        case "indicator":
-          this.iotIndicatorConfig.icon="fa-home"
-          this.iotIndicatorConfig.variableSendFreq = "5";
-          this.iotIndicatorConfig.value = 0;
-          this.iotIndicatorConfig.isBoolean = true;
-          this.iotIndicatorConfig.condition = ">";
-          this.iotIndicatorConfig.messageOn = "The alarm is ON";
-          this.iotIndicatorConfig.messageOff = "The alarm is OFF";
-          this.iotIndicatorConfig.variableFullName = 'Alarm Status';
-          this.$nuxt.$emit('set-icon',this.iotIndicatorConfig.icon);
-
-          break;
-        case "switch":
-          this.iotSwitchConfig.variableFullName = 'Ligth';
-          this.iotSwitchConfig.icon="fa-lightbulb"
-          this.$nuxt.$emit('set-icon',this.iotSwitchConfig.icon);
-
-          break;
-
-        default:
-          break;
+    showModalDeleteTemplate(template, index) {
+      const devices = this.$store.getters["devices/getDevices"];
+      const isTemplateInUse = devices.some(
+        d => d.templateId._id == template._id
+      );
+      if (isTemplateInUse) {
+        this.templateInUse = true;
+        this.templateToDelete = template;
+        this.indexToDelete = index;
+      } else {
+        this.templateInUse = false;
+        this.templateToDelete = template;
+        this.indexToDelete = index;
       }
+    },
+    makeid(length) {
+      var result = "";
+      var characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      var charactersLength = characters.length;
+      for (var i = 0; i < length; i++) {
+        result += characters.charAt(
+          Math.floor(Math.random() * charactersLength)
+        );
+      }
+      return result;
     },
     async newTemplate() {
       try {
@@ -589,19 +421,18 @@ export default {
             widgets: this.widgets
           }
         };
-
         const res = await this.$axios.post("/template", toSend, axiosHeaders);
 
         if (res.data.status == "success") {
           this.templates.push(res.data.data);
-          this.templateName = "";
-          this.templateDescription = "";
-          this.selectedWidgetName = "";
           this.widgets = [];
+          this.templateName = null;
+          this.templateDescription =null;
+          this.selectedWidgetName = null;
           this.$notify({
             type: "success",
             icon: "tim-icons icon-check-2",
-            message: `Template "${this.templateName.toUpperCase()}" created!`
+            message: `Template "${this.template.name.toUpperCase()}" created!`
           });
         }
       } catch (e) {
@@ -666,91 +497,12 @@ export default {
           message: "Error deleting template"
         });
       }
-    },
-    addNewWidget() {
-      switch (this.selectedWidgetName) {
-        case "button":
-          this.iotButtonConfig.variable = this.makeid(10);
-          this.iotButtonConfig.userId = this.$store.getters["auth/getUserId"];
-          this.widgets.push(JSON.parse(JSON.stringify(this.iotButtonConfig)));
-          break;
-        case "numberchart":
-          this.ncConfig.userId = this.$store.getters["auth/getUserId"];
-          this.ncConfig.variable = this.makeid(10);
-          this.widgets.push(JSON.parse(JSON.stringify(this.ncConfig)));
-          break;
-        case "indicator":
-          this.iotIndicatorConfig.userId = this.$store.getters[
-            "auth/getUserId"
-          ];
-          this.iotIndicatorConfig.variable = this.makeid(10);
-
-          this.widgets.push(
-            JSON.parse(JSON.stringify(this.iotIndicatorConfig))
-          );
-          break;
-        case "switch":
-          this.iotSwitchConfig.userId = this.$store.getters["auth/getUserId"];
-          this.iotSwitchConfig.variable = this.makeid(10);
-          this.widgets.push(JSON.parse(JSON.stringify(this.iotSwitchConfig)));
-
-          break;
-
-        default:
-          break;
-      }
-    },
-    deleteWidget(index) {
-      this.widgets.splice(index, 1);
-    },
-    closeModalTemplate() {
-      this.templateToDelete = null;
-    },
-    showModalDeleteTemplate(template, index) {
-      const devices = this.$store.getters["devices/getDevices"];
-      const isTemplateInUse = devices.some(
-        d => d.templateId._id == template._id
-      );
-      if (isTemplateInUse) {
-        this.templateInUse = true;
-        this.templateToDelete = template;
-        this.indexToDelete = index;
-      } else {
-        this.templateInUse = false;
-        this.templateToDelete = template;
-        this.indexToDelete = index;
-      }
-    },
-    makeid(length) {
-      var result = "";
-      var characters =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-      var charactersLength = characters.length;
-      for (var i = 0; i < length; i++) {
-        result += characters.charAt(
-          Math.floor(Math.random() * charactersLength)
-        );
-      }
-      return result;
     }
   },
 
-  computed: {
-    userId() {
-      return this.$store.getters["auth/getUserId"];
-    },
-    inputTypeWidget() {
-      return (
-        this.selectedWidgetName == "indicator" ||
-        this.selectedWidgetName == "numberchart"
-      );
-    }
+  mounted() {
+    this.getTemplates();
   },
-  async mounted() {
-    await this.getTemplates();
-  },
-  watch:{
-
-  }
+  created() {}
 };
 </script>

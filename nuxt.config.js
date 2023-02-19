@@ -78,7 +78,8 @@ export default {
           'component',
           {
             'libraryName': 'element-ui',
-            'styleLibraryName': 'theme-chalk'
+            'styleLibraryName': 'theme-chalk',
+
           }
         ]
       ]

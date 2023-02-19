@@ -1,0 +1,44 @@
+<template>
+
+    <el-select
+      @change="handleChange"
+      class="select-info mb-3"
+      v-model="widgetSelected"
+      placeholder="Select Widget"
+      style="width: 100%;"
+    >
+      <el-option
+        class="text-dark"
+        value="numberchart"
+        label="Realtime number chart"
+      >
+      </el-option>
+      <el-option class="text-dark" value="indicator" label="Indicator">
+      </el-option>
+      <el-option class="text-dark" value="switch" label="Switch "></el-option>
+      <el-option class="text-dark" value="button" label="Button "></el-option>
+    </el-select>
+  
+</template>
+
+<script>
+import Card from "../Cards/Card.vue";
+import { Select, Option } from "element-ui";
+export default {
+  components: {
+    Card,
+    [Option.name]: Option,
+    [Select.name]: Select
+  },
+  data() {
+    return {
+      widgetSelected:null
+    };
+  },
+  methods: {
+    handleChange(value) {
+      this.$emit("selected-widget", value);
+    }
+  }
+};
+</script>
