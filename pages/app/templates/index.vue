@@ -1,8 +1,6 @@
 <template>
-<keep-alive>
   <div>
     <!-- WIDGET CONFIGURATOR -->
-
     <div class="row">
       <card>
         <div slot="header">
@@ -63,7 +61,7 @@
               <div class="col-4"><hr></div>
             </div>
 
-           
+
             <div v-if="selectedWidgetName == 'numberchart'">
 
              <from-grafico-realtime
@@ -76,24 +74,24 @@
              ></from-grafico-realtime>
             </div>
 
-           
+
             <div v-if="selectedWidgetName == 'switch'">
               <from-switch
               @var-full-name="variableFullName"
               ></from-switch>
-              
+
             </div>
 
-           
+
             <div v-if="selectedWidgetName == 'button'">
               <form-button
               @var-full-name="variableFullName"
               @message="message"
               @text="text"></form-button>
-              
+
             </div>
 
-            
+
             <div v-if="selectedWidgetName == 'indicator'">
               <from-indicator
               @var-full-name="variableFullName"
@@ -104,7 +102,7 @@
               @is-bool="isBoolean"
               @value="valueIndicator"></from-indicator>
             </div>
-  
+
 
             <div class="row"  v-if="selectedWidgetName">
               <div class="col-4"><hr></div>
@@ -347,23 +345,21 @@
     <!-- JSONS -->
     <!-- <Json :value="widgets"></Json> -->
   </div>
-  </keep-alive>
 </template>
 
 <script>
 import { Table, TableColumn } from "element-ui";
 import { Select, Option } from "element-ui";
-import BaseSwitch from "../../components/BaseSwitch.vue";
-import IotSwitch from "../../components/Widgets/IotSwitch.vue";
-import IotButton from "../../components/Widgets/IotButton.vue";
-import IotIndicator from "../../components/Widgets/IotIndicator.vue";
-import GraficoRealtime from "../../components/Widgets/GraficoRealtime.vue";
-import Card from "../../components/Cards/Card.vue";
-import ColorConfig from "../../components/Widgets/Configs/Style/ColorConfig.vue";
-import ConfigCols from "../../components/Widgets/Configs/Style/ConfigCols.vue";
-import ConfigIcon from "../../components/Widgets/Configs/Style/ConfigIcon.vue";
-import FromGraficoRealtime from '../../components/Widgets/Configs/Behaivor/FromGraficoRealtime.vue';
-import FromIndicator from '../../components/Widgets/Configs/Behaivor/FromIndicator.vue';
+import IotSwitch from "../../../components/Widgets/IotSwitch.vue";
+import IotButton from "../../../components/Widgets/IotButton.vue";
+import IotIndicator from "../../../components/Widgets/IotIndicator.vue";
+import GraficoRealtime from "../../../components/Widgets/GraficoRealtime.vue";
+import Card from "../../../components/Cards/Card.vue";
+import ColorConfig from "../../../components/Widgets/Configs/Style/ColorConfig.vue";
+import ConfigCols from "../../../components/Widgets/Configs/Style/ConfigCols.vue";
+import ConfigIcon from "../../../components/Widgets/Configs/Style/ConfigIcon.vue";
+import FromGraficoRealtime from '../../../components/Widgets/Configs/Behaivor/FromGraficoRealtime.vue';
+import FromIndicator from '../../../components/Widgets/Configs/Behaivor/FromIndicator.vue';
 
 export default {
   middleware: "authtenticated",
@@ -529,7 +525,7 @@ export default {
     message(value){
       this.iotButtonConfig.message=value;
     },
-    
+
     variableFullName(value){
       this.ncConfig.variableFullName=value;
       this.iotIndicatorConfig.variableFullName=value;
@@ -538,7 +534,7 @@ export default {
     },
     defaultValues(selectedWidgetName){
       // para que los valores por defectos con los que se monta el
-      // formulario coincidan con los valores de configuracion del widget preview 
+      // formulario coincidan con los valores de configuracion del widget preview
       switch (selectedWidgetName) {
         case "button":
           this.iotButtonConfig.variableFullName = 'Pump';
@@ -688,7 +684,7 @@ export default {
             "auth/getUserId"
           ];
           this.iotIndicatorConfig.variable = this.makeid(10);
-          
+
           this.widgets.push(
             JSON.parse(JSON.stringify(this.iotIndicatorConfig))
           );

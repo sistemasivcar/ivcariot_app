@@ -82,25 +82,6 @@ router.post('/', checAuth, asyncMiddleware(async (req, res) => {
     const saverRule = resultMongo.saverRule._id;
     const device = await DeviceModel.create({ ...newDevice, userId, whpassword, createdTime, saverRule })
 
-    
-
-/*     const result = await createSaverRule(userId, newDevice.dId, true);
-    if (result.status == 'error') {
-        if (result.error.errors.dId.kind === 'unique') {
-
-            return res.status(500).json({ status: 'error', data: 'didunqiue' });
-        }
-        return res.status(500).json({ status: 'error' });
-    }
-    const saverRule = result.saverRule._id
-    const device = await DeviceModel.create({ ...newDevice, userId, whpassword, createdTime, saverRule }) */
-
-    /* const device = await DeviceModel.create({ ...newDevice, userId, whpassword, createdTime });
-    
-    const saverRuleBack = await createSaverRule(userId, newDevice.dId, true);
-    const saverRule = saverRuleBack._id
-    await DeviceModel.updateOne({ dId: newDevice.dId }, { saverRule: saverRule }); */
-
     await selectDevice(userId, newDevice.dId);
     const toSend = {
         status: "success",
@@ -138,8 +119,8 @@ router.put('/', checAuth, asyncMiddleware(async (req, res) => {
 router.put('/saver-rule', checAuth, asyncMiddleware(async (req, res) => {
     const status = req.body.status;
     const emqxRuleId = req.body.emqxRuleId;
-    // await SaverRuleModel.updateOne({ dId: dId }, { status: status });
-    const resp = await updateSaverRule(emqxRuleId, status);
+    
+    await updateSaverRule(emqxRuleId, status);
 
     const toSend = {
         status: 'success',
