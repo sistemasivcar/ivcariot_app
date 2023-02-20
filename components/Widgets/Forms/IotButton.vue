@@ -6,6 +6,7 @@
           v-model="config.variableFullName"
           label="Var Name"
           type="text"
+          :class="{'has-danger': !inputs.varFullNameValid}"
         >
         </base-input>
       </div>
@@ -13,7 +14,7 @@
 
     <div class="row">
       <div class="col-6">
-        <base-input v-model="config.text" label="Button Text" type="text">
+        <base-input v-model="config.text" label="Button Text" type="text" :class="{'has-danger': !inputs.textValid}">
         </base-input>
       </div>
       <div class="col-6">
@@ -21,6 +22,7 @@
           v-model="config.message"
           label="Message to send"
           type="text"
+          :class="{'has-danger': !inputs.messageValid}"
         >
         </base-input>
       </div>
@@ -29,18 +31,17 @@
     <div class="row">
       <div class="col-6">
         <label for="color">Color</label>
-        <color-config @color="getColor"></color-config>
+        <color-config @color="getColor" :color="config.colorButton"></color-config>
       </div>
       <div class="col-6">
         <label for="color">Icon</label>
-        <config-icon @icon="getIcon"></config-icon>
+        <config-icon @icon="getIcon" :icon="config.icon"></config-icon>
       </div>
     </div>
-
     <div class="row">
       <div class="col-12">
         <label for="color">Ancho</label>
-        <config-cols @cols="getCols"></config-cols>
+        <config-cols @cols="getCols" :column="config.column"></config-cols>
       </div>
     </div>
     <div class="row">
@@ -70,7 +71,12 @@ export default {
     return {
       isValidForm: true,
       oldConfig: {},
-      isCanceled: false
+      isCanceled: false,
+      inputs:{
+        varFullNameValid:true,
+        textValid:true,
+        messageValid:true,
+      }
     };
   },
   methods: {
@@ -83,7 +89,24 @@ export default {
     getCols(value) {
       this.config.column = value;
     },
-    validateFrom() {},
+    watchInputs(){
+      !this.config.text ? this.inputs.textValid=false : this.inputs.textValid=true; 
+
+      !this.config.message ? this.inputs.messageValid=false : this.inputs.messageValid=true;
+
+      !this.config.variableFullName ? this.inputs.varFullNameValid=false : this.inputs.varFullNameValid=true;
+
+    },
+    validateFrom() {
+      if(!this.config.text || !this.config.message || !this.config.variableFullName) {
+        this.isValidForm=false;
+        return;
+      }
+
+      this.isValidForm=true;
+    
+
+    },
     cancel() {
       this.isCanceled = true;
       this.addWidget();
@@ -108,7 +131,7 @@ export default {
         if(this.isCanceled) this.$emit("button-config", this.oldConfig); 
       
       } else {
-        this.$emit("add-widget", false);
+        this.$emit("add-widget", {isValidForm:false});
       }
       this.isCanceled = false;
     }
@@ -129,6 +152,7 @@ export default {
       immediate: true,
       deep: true,
       handler() {
+        this.watchInputs()
         this.$emit("button-config", this.config);
       }
     }

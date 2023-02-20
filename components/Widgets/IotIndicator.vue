@@ -9,7 +9,9 @@
 
     <!-- body-card -->
     <template #default >
-      <i class="fa " :class="[config.icon, getColorIcon]" style="font-size:35px"></i>
+      <div class="text-center">
+        <i class="fa " :class="[config.icon, getColorIcon]" style="font-size:63px"></i>
+        </div>
     </template>
 
     <!-- footer-card -->
@@ -29,7 +31,7 @@ export default {
     capitalizarPrimeraLetra(str) {
       return str.charAt(0).toUpperCase() + str.slice(1);
     },
-    capitalizarPrimeraLetraDeCadaPalabra(str){
+    capitalizeWords(str){
       let res = '';
       const words = str.split(' ');
       words.forEach(w => {
@@ -46,11 +48,11 @@ export default {
 
   computed:{
     deviceName(){
-      return this.capitalizarPrimeraLetraDeCadaPalabra(this.config.selectedDevice.name);
+      return this.capitalizeWords(this.config.selectedDevice.name);
 
     },
     variableFullName(){
-      return this.capitalizarPrimeraLetraDeCadaPalabra(this.config.variableFullName);
+      return this.capitalizeWords(this.config.variableFullName);
     },
     getColorIcon(){
       if(this.config.isBoolean){

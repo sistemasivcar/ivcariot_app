@@ -184,9 +184,6 @@
       </template>
     </modal>
 
-<!--   <json :value="$store.state.devices.selectedDevice"></json> 
- <json :value="$store.getters['devices/getDevices']"></json>
-    <json :value="templates"></json> -->
   </div>
 </template>
 
@@ -204,6 +201,7 @@ import { Select, Option } from "element-ui";
 import BaseSwitch from "../../components/BaseSwitch.vue";
 import LoadingPanel from "../../components/LoadingPanel.vue";
 import Modal from "../../components/Modal.vue";
+
 export default {
     middleware:'authtenticated',
   components: {

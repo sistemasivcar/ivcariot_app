@@ -27,30 +27,17 @@
 <script>
 import { Select, Option } from "element-ui";
 export default {
+  props:['icon'],
   components: {
     [Option.name]: Option,
     [Select.name]: Select
   },
-  data() {
-    return {
-      icon: "home"
-    };
-  },
-  methods:{
-    setIcon(icon){
-      this.icon=icon;
-    }
-  },
+
   watch: {
     icon(value) {
       this.$emit("icon", value);
     }
   },
-  mounted(){
-    this.$nuxt.$on('set-icon', this.setIcon);
-  },
-  beforeDestroy(){
-    this.$nuxt.$off('set-icon');
-  }
+
 };
 </script>

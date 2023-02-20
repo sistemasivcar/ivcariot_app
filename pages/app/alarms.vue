@@ -25,10 +25,10 @@
             <div class="col-4">
               <el-select
                 required
-                class="select-info"
+                class="select-info mb-2"
                 placeholder="Select Variable"
                 v-model="selectedWidgetIndex"
-                style="margin-top: 25px;"
+                style="margin-top: 25px; width:100%"
               >
                 <el-option
                   v-for="(widget, index) in widgets"
@@ -43,10 +43,10 @@
             <div class="col-4">
               <el-select
                 required
-                class="select-warning"
+                class="select-warning mb-2"
                 placeholder="Select Condition"
                 v-model="newRule.condition"
-                style="margin-top: 25px;"
+                style="margin-top: 25px; width:100%"
               >
                 <el-option class="text-dark" value="=" label="="></el-option>
                 <el-option class="text-dark" value=">" label=">"></el-option>

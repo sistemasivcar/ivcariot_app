@@ -78,15 +78,10 @@
 <script>
 import { Select, Option } from "element-ui";
 export default {
-
+  props:['column'],
   components: {
     [Option.name]: Option,
     [Select.name]: Select
-  },
-  data() {
-    return {
-      column: 'col-6'
-    };
   },
   watch: {
     column(value) {

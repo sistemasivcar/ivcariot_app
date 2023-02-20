@@ -34,28 +34,28 @@
                 :isEdition="enableEdition.numberchart"
                 :config="numberchartConfig"
                 v-if="selectedWidgetName === 'numberchart'"
-                @numberchart-config="getNumberchartConfig"
-                @add-widget="addNewWidget"
+                @numberchart-config="getWidgetConfiguration"
+                @add-widget="handleNewWidget"
               />
               <FromIndicator
                 :isEdition="enableEdition.indicator"
                 :config="indicatorConfig"
-                @indicator-config="getIndicatorConfig"
+                @indicator-config="getWidgetConfiguration"
                 v-if="selectedWidgetName === 'indicator'"
-                @add-widget="addNewWidget"
+                @add-widget="handleNewWidget"
               />
               <FormButton
                 :isEdition="enableEdition.button"
                 :config="buttonConfig"
                 v-if="selectedWidgetName === 'button'"
-                @button-config="getButtonConfig"
-                @add-widget="addNewWidget"
+                @button-config="getWidgetConfiguration"
+                @add-widget="handleNewWidget"
               />
               <FromSwitch
                 :isEdition="enableEdition.switch"
                 v-if="selectedWidgetName === 'switch'"
-                @switch-config="getSwitchConfig"
-                @add-widget="addNewWidget"
+                @switch-config="getWidgetConfiguration"
+                @add-widget="handleNewWidget"
               />
             </div>
 
@@ -312,11 +312,7 @@ export default {
   middleware: "authtenticated",
   data() {
     return {
-      items: [
-      'a',
-      'b',
-      'c'
-    ],
+
       selectedWidgetName: null,
       templateInUse: false,
       value: false,
@@ -397,33 +393,26 @@ export default {
     };
   },
   methods: {
-
-    getWidgets(w) {
-      console.log(w);
-    },
     getSelectedWidgetName(name) {
       this.selectedWidgetName = name;
     },
-    getIndicatorConfig(config) {
-      this.indicatorConfig = config;
-    },
-    getNumberchartConfig(config) {
-      this.numberchartConfig = config;
-    },
-    getButtonConfig(config) {
-      this.buttonConfig = config;
-    },
-    getSwitchConfig(config) {
-      this.switchConfig = config;
+    getWidgetConfiguration(config){
+      this[`${config.widgetName}Config`]=config
     },
     scrollToTop() {
       window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
     },
 
-
-    addNewWidget({ widgetConfig, isEdition, cancel }) {
+    handleNewWidget({ widgetConfig, isEdition, cancel, isValidForm }) {
       // invalid inputs
-      if (!widgetConfig) return;
+      if (isValidForm === false) {
+        this.$notify({
+          message:'Invalid inputs',
+          type:'warning',
+          icon: "tim-icons icon-alert-circle-exc",
+        })
+        return;
+      };
 
       if (!isEdition) {
         // add widget
@@ -521,6 +510,14 @@ export default {
     },
     async newTemplate() {
       try {
+        if(!this.templateName){
+          this.$notify({
+            message:'Template Name is required',
+            type:'warning',
+            icon: "tim-icons icon-alert-circle-exc",
+          })
+          return;
+        }
         const token = this.$store.state.auth.auth.token;
         const axiosHeaders = {
           headers: {

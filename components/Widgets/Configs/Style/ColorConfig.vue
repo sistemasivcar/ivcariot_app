@@ -16,18 +16,12 @@
 <script>
 import { Select, Option } from "element-ui";
 export default {
+  props:['color'],
   components: {
     [Option.name]: Option,
     [Select.name]: Select
   },
-  data() {
-    return {
-      color: 'success'
-    };
-  },
-  methods:{
 
-  },
   watch: {
     color(value) {
       this.$emit("color", value);

@@ -7,8 +7,8 @@
           label="Variable Name"
           type="text"
           :class="[
-            { 'has-danger': !inputs.varFullName },
-            { 'has-success': inputs.varFullName }
+            { 'has-danger': !inputs.varFullNameValid },
+  
           ]"
         >
         </base-input>
@@ -18,7 +18,7 @@
           v-model.number="config.chartTimeAgo"
           label="Chart Back Time (minutes)"
           type="number"
-          :class="{ 'has-danger': !inputs.chartTimeAgo }"
+          :class="{ 'has-danger': !inputs.chartTimeAgoValid }"
         ></base-input>
       </div>
     </div>
@@ -28,7 +28,7 @@
         <base-input
           v-model="config.unit"
           label="Unit"
-          :class="{ 'has-danger': !inputs.unitValidity }"
+          :class="{ 'has-danger': !inputs.unitValid }"
           type="text"
         >
         </base-input>
@@ -49,7 +49,7 @@
           v-model="config.variableSendFreq"
           label="Update interval (mins)"
           type="number"
-          :class="{ 'has-danger': !inputs.variableSendFreq }"
+          :class="{ 'has-danger': !inputs.sendFreqValid }"
         ></base-input>
       </div>
 
@@ -81,17 +81,17 @@
     <div class="row">
       <div class="col-6">
         <label for="color">Color</label>
-        <color-config @color="getColor"></color-config>
+        <color-config @color="getColor" :color="config.class"></color-config>
       </div>
       <div class="col-6">
         <label for="color">Icon</label>
-        <config-icon @icon="getIcon"></config-icon>
+        <config-icon @icon="getIcon" :icon="config.icon"></config-icon>
       </div>
     </div>
     <div class="row">
       <div class="col-12">
         <label for="color">Ancho</label>
-        <config-cols @cols="getCols"></config-cols>
+        <config-cols @cols="getCols" :column="config.column"></config-cols>
       </div>
     </div>
     <div class="row">
@@ -132,10 +132,10 @@ export default {
       oldConfig: {},
       isCanceled: false,
       inputs: {
-        unitValidity: true,
-        varFullName: true,
-        chartTimeAgo: true,
-        variableSendFreq: true
+        unitValid: true,
+        varFullNameValid: true,
+        chartTimeAgoValid: true,
+        sendFreqValid: true
       }
     };
   },
@@ -153,78 +153,28 @@ export default {
       this.config.defaultSeriesType = value;
     },
     watchInputs() {
-      this.config.decimalPlaces > 100 ||
-      this.config.decimalPlaces < 0 ||
-      this.config.decimalPlaces === ""
-        ? (this.config.decimalPlaces = 0)
-        : "";
-      this.config.decimalPlaces < 0;
-      this.config.unit != ""
-        ? (this.inputs.unitValidity = true)
-        : (this.inputs.unitValidity = false);
-      this.config.variableFullName != ""
-        ? (this.inputs.varFullName = true)
-        : (this.inputs.varFullName = false);
-      this.config.variableSendFreq > 0
-        ? (this.inputs.variableSendFreq = true)
-        : (this.inputs.variableSendFreq = false);
-      this.config.chartTimeAgo >= 0
-        ? (this.inputs.chartTimeAgo = true)
-        : (this.inputs.chartTimeAgo = false);
+
+      !this.config.variableFullName ? this.inputs.varFullNameValid=false : this.inputs.varFullNameValid=true;
+      !this.config.unit ? this.inputs.unitValid=false : this.inputs.unitValid=true;
+      !this.config.chartTimeAgo || this.config.chartTimeAgo < 0 ? this.inputs.chartTimeAgoValid=false : this.inputs.chartTimeAgoValid=true;
+      !this.config.variableSendFreq  || this.config.variableSendFreq <= 0 ? this.inputs.sendFreqValid=false : this.inputs.sendFreqValid=true;
+
+      if(this.config.decimalPlaces < 0) this.config.decimalPlaces=0;
+      if(this.config.decimalPlaces > 100) this.config.decimalPlaces=100;
+
+      
     },
     validateFrom() {
-      if (!this.config.variableFullName) {
-        this.isValidForm = false;
-        this.inputs.varFullName = false;
-        this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: "Variable name can not be empty"
-        });
+
+      if( !this.config.variableFullName || !this.config.unit ||  !this.config.chartTimeAgo || 
+      this.config.chartTimeAgo < 0 || !this.config.variableSendFreq  || this.config.variableSendFreq <= 0){
+        this.isValidForm=false;
         return;
-      } else {
-        this.isValidForm = true;
-        this.inputs.varFullName = true;
       }
-      if (!this.config.unit) {
-        this.isValidForm = false;
-        this.inputs.unitValidity = false;
-        this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: "Unit can not be empty"
-        });
-        return;
-      } else {
-        this.isValidForm = true;
-        this.inputs.unitValidity = true;
-      }
-      if (this.config.chartTimeAgo < 0) {
-        this.isValidForm = false;
-        this.inputs.chartTimeAgo = false;
-        this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: "Chart Back Time can not be negative"
-        });
-        return;
-      } else {
-        this.isValidForm = true;
-        this.inputs.chartTimeAgo = true;
-      }
-      if (this.config.variableSendFreq <= 0) {
-        this.isValidForm = false;
-        this.inputs.variableSendFreq = false;
-        this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: "Update Interval must be grather than zero"
-        });
-        return;
-      } else {
-        this.isValidForm = true;
-        this.inputs.variableSendFreq = true;
-      }
+      
+      this.isValidForm=true;
+      
+
     },
     cancel() {
       this.isCanceled = true;
@@ -248,7 +198,7 @@ export default {
         // piso los ultimos cambios por lo que habia antes (para FORM && WIDGET PREVIEW)
         if (this.isCanceled) this.$emit("numberchart-config", this.oldConfig);
       } else {
-        this.$emit("add-widget", false);
+        this.$emit("add-widget", {isValidForm:false});
       }
       this.isCanceled = false;
     }
@@ -269,8 +219,8 @@ export default {
       immediate: true,
       deep: true,
       handler() {
-        this.watchInputs();
 
+        this.watchInputs();
         this.$emit("numberchart-config", this.config);
       }
     }

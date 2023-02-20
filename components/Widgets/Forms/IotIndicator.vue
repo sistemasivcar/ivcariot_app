@@ -6,7 +6,7 @@
           v-model="config.variableFullName"
           label="Variable Name"
           type="text"
-          :class="[{'has-danger':!input.varNameValid}]"
+          :class="[{'has-danger':!inputs.varFullNameValid}]"
         >
         </base-input>
       </div>
@@ -16,7 +16,7 @@
           v-model="config.variableSendFreq"
           label="Update interval (mins)"
           type="number"
-          :class="[{'has-danger':!input.variableSendFreqValid}]"
+          :class="[{'has-danger':!inputs.sendFreqValid}]"
         >
         </base-input>
       </div>
@@ -58,7 +58,8 @@
           >For status change notifications:
         </label>
         <el-tooltip
-          content="This is optional and apart from the alarm rules that you can create later!"
+          content="This is optional and apart from the alarm rules that you can create later.
+           If you dont want to recive this notifications, empty these filed"
           :open-delay="300"
           placement="top"
           ><label class="" for="">⚠️</label></el-tooltip
@@ -99,17 +100,17 @@
     <div class="row">
       <div class="col-6">
         <label for="color">Color</label>
-        <color-config @color="getColor"></color-config>
+        <color-config @color="getColor" :color="config.color"></color-config>
       </div>
       <div class="col-6">
         <label for="color">Icon</label>
-        <config-icon @icon="getIcon"></config-icon>
+        <config-icon @icon="getIcon" :icon="config.icon"></config-icon>
       </div>
     </div>
     <div class="row">
       <div class="col-12">
         <label for="color">Ancho</label>
-        <config-cols @cols="getCols"></config-cols>
+        <config-cols @cols="getCols" :column="config.column"></config-cols>
       </div>
     </div>
     <div class="row">
@@ -147,9 +148,9 @@ export default {
       isValidForm: true,
       oldConfig: {},
       isCanceled: false,
-      input:{
-        varNameValid:true,
-        variableSendFreqValid:true
+      inputs:{
+        varFullNameValid:true,
+        sendFreqValid:true
       }
 
     };
@@ -165,31 +166,20 @@ export default {
       this.config.column = value;
     },
 
+    watchInputs(){
+      !this.config.variableFullName ? this.inputs.varFullNameValid=false : this.inputs.varFullNameValid=true;
+      !this.config.variableSendFreq  || this.config.variableSendFreq <= 0 ? this.inputs.sendFreqValid=false : this.inputs.sendFreqValid=true;
+
+    },
+
     validateFrom() {
-      
-      if(!this.config.variableFullName){
+      if(!this.config.variableFullName||!this.config.variableSendFreq  || this.config.variableSendFreq <= 0){
         this.isValidForm=false;
-        this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: "Variable name can not be empty"
-        });
         return;
-      }else{
-        this.isValidForm=true;
       }
-      if(this.config.variableSendFreq<=0){
-        this.isValidForm=false;
-        this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: "Update interval must be grather than zero"
-        });
-        return;
-        
-      }else{
-        this.isValidForm=true;
-      }
+
+      this.isValidForm=true;
+
     },
         cancel() {
       this.isCanceled = true;
@@ -240,17 +230,8 @@ export default {
       immediate: true,
       deep: true,
       handler() {
-        if(this.config.variableFullName==''|| !this.config.variableFullName) {
-          this.input.varNameValid=false;
-        }else{
-          this.input.varNameValid=true;
-        }
-        if(this.config.variableSendFreq<=0) {
-          this.input.variableSendFreqValid=false;
-        }else{
-          this.input.variableSendFreqValid=true;
-        }
-
+        
+        this.watchInputs();
         this.$emit("indicator-config", this.config);
       }
     }
