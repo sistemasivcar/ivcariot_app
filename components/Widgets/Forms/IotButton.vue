@@ -44,9 +44,20 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-12">
-        <base-button type="info" @click="addWidget" class="mt-3" size="lg"
-          >Add</base-button>
+      <div class="col-6">
+        <base-button
+          :type="getTypeButton"
+          @click="addWidget"
+          class="mt-3"
+          size="lg"
+          >{{ textButton }}</base-button
+        >
+      </div>
+
+      <div class="col-6" v-if="isEdition">
+        <base-button type="danger" @click="cancel" class="mt-3 pull-right" size="lg"
+          >Cancel</base-button
+        >
       </div>
     </div>
   </div>
@@ -54,23 +65,12 @@
 
 <script>
 export default {
+  props: ["isEdition", "config"],
   data() {
     return {
-      isValidFrom: true,
-      config: {
-        selectedDevice: {
-          name: "Home",
-          dId: "dummy-device-id"
-        },
-        variableFullName: "Pump",
-        variableType: "output",
-        text: "ON",
-        message: "on",
-        widgetName: "button",
-        colorButton: "success",
-        icon: "fa-home",
-        column: "col-6"
-      }
+      isValidForm: true,
+      oldConfig: {},
+      isCanceled: false
     };
   },
   methods: {
@@ -83,15 +83,46 @@ export default {
     getCols(value) {
       this.config.column = value;
     },
-    validateFrom(){
-
+    validateFrom() {},
+    cancel() {
+      this.isCanceled = true;
+      this.addWidget();
     },
     addWidget() {
       this.validateFrom();
-      this.isValidForm
-        ? this.$emit("add-widget", this.config)
-        : this.$emit("add-widget", false);
+
+      if (this.isValidForm) {
+        
+        this.$emit("add-widget", {
+          widgetConfig: this.config,
+          isEdition: this.isEdition,
+          cancel: {
+            isCanceled: this.isCanceled,
+            oldConfig: this.oldConfig
+          }
+        });
+        // actualizo el oldConfig al widget si no se canceló y lo devuelvo 
+        if(!this.isCanceled) this.oldConfig = this.config;
+        
+        // piso los ultimos cambios por lo que habia antes (para FORM && WIDGET PREVIEW)
+        if(this.isCanceled) this.$emit("button-config", this.oldConfig); 
+      
+      } else {
+        this.$emit("add-widget", false);
+      }
+      this.isCanceled = false;
     }
+  },
+  computed: {
+    textButton() {
+      return this.isEdition ? "Accept" : "Add";
+    },
+    getTypeButton() {
+      return this.isEdition ? "success" : "info";
+    }
+  },
+  mounted() {
+    this.oldConfig = this.config;
   },
   watch: {
     config: {

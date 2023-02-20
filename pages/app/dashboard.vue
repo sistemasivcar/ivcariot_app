@@ -1,49 +1,55 @@
 
 <template>
 <div>
-    <card v-if="!hasDevices">
+  
+    <Card v-if="!hasDevices">
       You need first create a device to create an Alarm <base-button :link="true"  @click="godevices" type="info">Create new Device</base-button>
-    </card>
+    </Card>
 
-    <card v-else-if="!hasSelectedDevice">
+    <Card v-else-if="!hasSelectedDevice">
       You need to select a device to create an Alarm
-    </card>
+    </Card>
+
     <div class="row" v-if="hasDevices"> <!-- el v-if es para que no de error al refrescar -->
       <div
-        v-for="widget in widgets"
+        v-for="(widget) in widgets"
         :key="widget.variable"
         :class="[widget.column]"
       >
-       <json :value="fixWidget(widget)"></json>
-        <grafico-realtime
-          v-if="widget.widgetName == 'numberchart'"
-          :config="fixWidget(widget)"
-        ></grafico-realtime>
+      
+      <!-- <Json :value="fixWidget(widget)"/> -->
 
-        <iot-switch
-          v-if="widget.widgetName == 'switch'"
+        <IotNumberchart
+          v-if="widget.widgetName === 'numberchart'"
           :config="fixWidget(widget)"
-        ></iot-switch>
+        />
 
-        <iot-button
-          v-if="widget.widgetName == 'button'"
+        <IotIndicator
+          v-if="widget.widgetName === 'indicator'"
           :config="fixWidget(widget)"
-        ></iot-button>
-
-        <iot-indicator
-          v-if="widget.widgetName == 'indicator'"
-          :config="fixWidget(widget)"
-        ></iot-indicator>
+        />
+        <IotButton v-if="widget.widgetName === 'button'" :config="fixWidget(widget)" />
       </div>
-   
     </div>
 </div>
 </template>
 
 <script>
-import Json from '../../components/Json.vue'
+import Json from '../../components/Json.vue';
+import IotIndicator from "../../components/Widgets/IotIndicator.vue";
+import IotNumberchart from "../../components/Widgets/GraficoRealtime.vue";
+import IotButton from "../../components/Widgets/IotButton.vue";
+import IotSwitch from "../../components/Widgets/IotSwitch.vue";
+
 export default {
-  components: { Json },
+  components: { 
+    Json,
+    IotIndicator,
+    IotNumberchart,
+    IotButton,
+    IotSwitch
+    
+    },
     middleware:'authtenticated',
     data(){
         return {

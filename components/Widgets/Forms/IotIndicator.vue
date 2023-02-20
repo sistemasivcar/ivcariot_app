@@ -6,6 +6,7 @@
           v-model="config.variableFullName"
           label="Variable Name"
           type="text"
+          :class="[{'has-danger':!input.varNameValid}]"
         >
         </base-input>
       </div>
@@ -15,6 +16,7 @@
           v-model="config.variableSendFreq"
           label="Update interval (mins)"
           type="number"
+          :class="[{'has-danger':!input.variableSendFreqValid}]"
         >
         </base-input>
       </div>
@@ -45,7 +47,7 @@
       </div>
 
       <div class="col-6">
-        <base-input v-model="config.value" label="Value:" type="number">
+        <base-input v-model.number="config.value" label="Value:" type="number">
         </base-input>
       </div>
     </div>
@@ -65,7 +67,7 @@
 
       <div class="col-6 ">
         <base-input
-          v-model="config.messageOn"
+          v-model.trim="config.messageOn"
           label="ON status message"
           type="text"
         >
@@ -111,9 +113,14 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-12">
-        <base-button type="info" @click="addWidget" class="mt-3" size="lg"
-          >Add</base-button>
+      <div class="col-6">
+        <base-button :type="getTypeButton" @click="addWidget" class="mt-3" size="lg"
+          >{{textButton}}</base-button>
+      </div>
+
+      <div class="col-6" v-if="isEdition">
+        <base-button type="danger" @click="cancel" class="mt-3 pull-right" size="lg"
+          >Cancel</base-button>
       </div>
     </div>
   </div>
@@ -125,6 +132,8 @@ import { Select, Option } from "element-ui";
 import BaseInput from "../../../components/Inputs/BaseInput.vue";
 import IotIndicator from "../IotIndicator.vue";
 export default {
+
+  props:['isEdition','config'],
   components: {
     BaseInput,
     IotIndicator,
@@ -136,24 +145,13 @@ export default {
   data() {
     return {
       isValidForm: true,
-      config: {
-        selectedDevice: {
-          name: "Home",
-          dId: "dummy-device-id"
-        },
-        isBoolean: true,
-        messageOn: "The alarm is ON",
-        messageOff: "The alarm is OFF",
-        condition: ">",
-        value: 0,
-        variableFullName: "Alarm Status",
-        color: "success",
-        variableType: "input",
-        variableSendFreq: "5",
-        widgetName: "indicator",
-        icon: "fa-home",
-        column: "col-6"
+      oldConfig: {},
+      isCanceled: false,
+      input:{
+        varNameValid:true,
+        variableSendFreqValid:true
       }
+
     };
   },
   methods: {
@@ -168,29 +166,91 @@ export default {
     },
 
     validateFrom() {
-      if (!this.config.variableFullName) {
+      
+      if(!this.config.variableFullName){
+        this.isValidForm=false;
         this.$notify({
           type: "warning",
           icon: "tim-icons icon-alert-circle-exc",
           message: "Variable name can not be empty"
         });
         return;
+      }else{
+        this.isValidForm=true;
+      }
+      if(this.config.variableSendFreq<=0){
+        this.isValidForm=false;
+        this.$notify({
+          type: "warning",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: "Update interval must be grather than zero"
+        });
+        return;
+        
+      }else{
+        this.isValidForm=true;
       }
     },
+        cancel() {
+      this.isCanceled = true;
+      this.addWidget();
+    },
     addWidget() {
-      console.log('sdfklsd')
       this.validateFrom();
 
-      this.isValidForm
-        ? this.$emit("add-widget", this.config)
-        : this.$emit("add-widget", false);
+      if (!this.isValidForm) {
+        //
+        return;
+      }
+      if (this.isValidForm) {
+        
+        this.$emit("add-widget", {
+          widgetConfig: this.config,
+          isEdition: this.isEdition,
+          cancel: {
+            isCanceled: this.isCanceled,
+            oldConfig: this.oldConfig
+          }
+        });
+        // actualizo el oldConfig al widget si no se canceló y lo devuelvo 
+        if(!this.isCanceled) this.oldConfig = this.config;
+        
+        // piso los ultimos cambios por lo que habia antes (para FORM && WIDGET PREVIEW)
+        if(this.isCanceled) this.$emit("indicator-config", this.oldConfig); 
+      
+      } else {
+        this.$emit("add-widget", false);
+      }
+      this.isCanceled = false;
     }
+  },
+  computed:{
+    textButton() {
+      return this.isEdition ? "Accept" : "Add";
+    },
+    getTypeButton(){
+      return this.isEdition ? 'success' : 'info'
+    }
+  },
+  mounted() {
+    this.oldConfig = this.config;
   },
   watch: {
     config: {
       immediate: true,
       deep: true,
       handler() {
+        if(this.config.variableFullName==''|| !this.config.variableFullName) {
+          this.input.varNameValid=false;
+        }else{
+          this.input.varNameValid=true;
+        }
+        if(this.config.variableSendFreq<=0) {
+          this.input.variableSendFreqValid=false;
+        }else{
+          this.input.variableSendFreqValid=true;
+        }
+
         this.$emit("indicator-config", this.config);
       }
     }

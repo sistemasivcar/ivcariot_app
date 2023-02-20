@@ -7,8 +7,12 @@
           <div class="row">
             <div class="col-6">
               <h4 class="card-title" v-if="!selectedWidgetName">
-                Select Widget
+                Create Template
               </h4>
+              <p class="card-category" v-if="!selectedWidgetName">
+                Add a collection of widgets to create a template
+              </p>
+
               <h4 class="card-title" v-else>Configure Widget Parameters</h4>
             </div>
             <div class="col-6">
@@ -23,25 +27,32 @@
           <div class="row">
             <div class="col-6">
               <!-- WIDGET SELECTOR -->
-              <WidgetSelector @selected-widget="getSelectedWidgetName" />
+              <WidgetSelector @selected-widget="getSelectedWidgetName" :widgetSelected="selectedWidgetName" />
 
               <!-- WIDGET FORMS -->
               <FromNumberchart
+                :isEdition="enableEdition.numberchart"
+                :config="numberchartConfig"
                 v-if="selectedWidgetName === 'numberchart'"
                 @numberchart-config="getNumberchartConfig"
                 @add-widget="addNewWidget"
               />
               <FromIndicator
+                :isEdition="enableEdition.indicator"
+                :config="indicatorConfig"
                 @indicator-config="getIndicatorConfig"
                 v-if="selectedWidgetName === 'indicator'"
                 @add-widget="addNewWidget"
               />
               <FormButton
+                :isEdition="enableEdition.button"
+                :config="buttonConfig"
                 v-if="selectedWidgetName === 'button'"
                 @button-config="getButtonConfig"
                 @add-widget="addNewWidget"
               />
               <FromSwitch
+                :isEdition="enableEdition.switch"
                 v-if="selectedWidgetName === 'switch'"
                 @switch-config="getSwitchConfig"
                 @add-widget="addNewWidget"
@@ -51,19 +62,19 @@
             <!-- WIDGET PREVIEW -->
             <div class="col-6">
               <IotNumberchart
-                :config="ncConfig"
+                :config="numberchartConfig"
                 v-if="selectedWidgetName === 'numberchart'"
               />
               <IotIndicator
-                :config="iotIndicatorConfig"
+                :config="indicatorConfig"
                 v-if="selectedWidgetName === 'indicator'"
               />
               <IotButton
-                :config="iotButtonConfig"
+                :config="buttonConfig"
                 v-if="selectedWidgetName === 'button'"
               />
               <IotSwitch
-                :config="iotSwitchConfig"
+                :config="switchConfig"
                 v-if="selectedWidgetName === 'switch'"
               />
             </div>
@@ -73,7 +84,7 @@
     </div>
 
     <!-- DASHBOARD PREVIEW -->
-    <div class="row">
+    <div class="row" ref="dashpreview">
       <div
         v-for="(widget, index) in widgets"
         :key="widget.variable"
@@ -81,22 +92,45 @@
       >
         <i
           aria-hidden="true"
-          class="fa fa-trash text-warning pull-right"
+          class="tim-icons icon-trash-simple text-warning option"
           @click="deleteWidget(index)"
-          style="margin-bottom: 10px;"
+          style="margin-bottom: 8px;"
+        ></i>
+        <i
+          aria-hidden="true"
+          class="tim-icons icon-pencil text-warning option pull-right"
+          @click="editWidget(widget, index)"
+          style="margin-bottom: 8px;"
         ></i>
 
         <IotNumberchart
+          :ref="'widget_' + index"
           v-if="widget.widgetName === 'numberchart'"
           :config="widget"
         />
-
         <IotIndicator
+          :ref="'widget_' + index"
           v-if="widget.widgetName === 'indicator'"
           :config="widget"
         />
-        <IotButton v-if="widget.widgetName === 'button'" :config="widget" />
+        <IotButton
+          :ref="'widget_' + index"
+          v-if="widget.widgetName === 'button'"
+          :config="widget"
+        />
       </div>
+
+      <base-button
+        v-if="widgets.length > 0"
+        type="warning"
+        icon
+        style="background:#344675;"
+        size="sm"
+        class="btn-link mt-4 ml-3 mb-3"
+        @click="scrollToTop"
+      >
+        <i class="tim-icons icon-simple-add"></i>
+      </base-button>
     </div>
 
     <!-- SAVE TEMPLATE -->
@@ -148,7 +182,7 @@
     <div class="row">
       <card>
         <div slot="header">
-          <p class="card-title">My Templates</p>
+          <h4 class="card-title">My Templates</h4>
         </div>
 
         <div class="row">
@@ -237,6 +271,7 @@
         </template>
       </modal>
     </div>
+
   </div>
 </template>
 
@@ -254,6 +289,7 @@ import IotNumberchart from "../../../components/Widgets/GraficoRealtime.vue";
 import IotButton from "../../../components/Widgets/IotButton.vue";
 import IotSwitch from "../../../components/Widgets/IotSwitch.vue";
 import BaseButton from "../../../components/BaseButton.vue";
+import BaseAlert from "../../../components/BaseAlert.vue";
 
 export default {
   components: {
@@ -270,21 +306,33 @@ export default {
     IotIndicator,
     IotNumberchart,
     IotButton,
-    IotSwitch
+    IotSwitch,
+    BaseAlert
   },
   middleware: "authtenticated",
   data() {
     return {
+      items: [
+      'a',
+      'b',
+      'c'
+    ],
       selectedWidgetName: null,
       templateInUse: false,
       value: false,
+      enableEdition: {
+        indicator: false,
+        numberchart: false,
+        button: false,
+        switch: false
+      },
       templateToDelete: null,
       indexToDelete: null,
       templates: [],
       widgets: [],
       templateName: null,
       templateDescription: null,
-      ncConfig: {
+      numberchartConfig: {
         selectedDevice: {
           name: "Home",
           dId: "dummy-device-id"
@@ -302,7 +350,7 @@ export default {
         chartTimeAgo: 120,
         demo: true
       },
-      iotIndicatorConfig: {
+      indicatorConfig: {
         selectedDevice: {
           name: "Home",
           dId: "dummy-device-id"
@@ -320,7 +368,7 @@ export default {
         icon: "fa-home",
         column: "col-6"
       },
-      iotSwitchConfig: {
+      switchConfig: {
         selectedDevice: {
           name: "Home",
           dId: "dummy-device-id"
@@ -332,7 +380,7 @@ export default {
         icon: "fa-lightbulb",
         column: "col-6"
       },
-      iotButtonConfig: {
+      buttonConfig: {
         selectedDevice: {
           name: "Home",
           dId: "dummy-device-id"
@@ -349,6 +397,7 @@ export default {
     };
   },
   methods: {
+
     getWidgets(w) {
       console.log(w);
     },
@@ -356,24 +405,89 @@ export default {
       this.selectedWidgetName = name;
     },
     getIndicatorConfig(config) {
-      this.iotIndicatorConfig = config;
+      this.indicatorConfig = config;
     },
     getNumberchartConfig(config) {
-      this.ncConfig = config;
+      this.numberchartConfig = config;
     },
     getButtonConfig(config) {
-      this.iotButtonConfig = config;
+      this.buttonConfig = config;
     },
     getSwitchConfig(config) {
-      this.iotSwitchConfig = config;
+      this.switchConfig = config;
     },
-    addNewWidget(widgetConfig) {
-      widgetConfig.variable = this.makeid(15);
-      widgetConfig.userId = this.$store.getters["auth/getUserId"];
-      this.widgets.push(JSON.parse(JSON.stringify(widgetConfig)));
+    scrollToTop() {
+      window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+    },
+
+
+    addNewWidget({ widgetConfig, isEdition, cancel }) {
+      // invalid inputs
+      if (!widgetConfig) return;
+
+      if (!isEdition) {
+        // add widget
+        widgetConfig.variable = this.makeid(15);
+        widgetConfig.userId = this.$store.getters["auth/getUserId"];
+        this.widgets.push(JSON.parse(JSON.stringify(widgetConfig)));
+
+        this.$refs["dashpreview"].scrollIntoView({
+          behavior: "smooth"
+        });
+        this.$notify({
+          message: `Widget added!`,
+          type: "success",
+          icon: "tim-icons icon-check-2"
+        });
+        return;
+      }
+
+      // edition canceled
+      if (isEdition && cancel.isCanceled) {
+        this.enableEdition[widgetConfig.widgetName] = false;
+        const index = this.widgets.indexOf(widgetConfig);
+        this.widgets.splice(
+          index,
+          1,
+          JSON.parse(JSON.stringify(cancel.oldConfig))
+        );
+        this.$notify({
+          message: `Canceled!`,
+          type: "danger",
+          icon: "tim-icons icon-check-2"
+        });
+        return;
+      }
+
+      if (isEdition && !cancel.isCanceled) {
+        // edit widget
+        this.enableEdition[widgetConfig.widgetName] = false;
+        const index = this.widgets.indexOf(widgetConfig);
+        this.widgets.splice(index, 1, JSON.parse(JSON.stringify(widgetConfig)));
+        this.$refs["widget_" + index][0]["$el"].scrollIntoView({
+          behavior: "smooth"
+        }); // voy al elemento editado
+        this.$notify({
+          message: `Widget edited!`,
+          type: "success",
+          icon: "tim-icons icon-check-2"
+        });
+
+        return;
+      }
     },
     deleteWidget(index) {
       this.widgets.splice(index, 1);
+    },
+    editWidget(widgetConfig, index) {
+      const widgetName = widgetConfig.widgetName;
+      const widgetToEdit = widgetName + "Config";
+
+      this.enableEdition[widgetName] = true;
+      this.selectedWidgetName = widgetName;
+      this[widgetToEdit] = widgetConfig;
+
+      window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
     },
     closeModalTemplate() {
       this.templateToDelete = null;
@@ -427,12 +541,12 @@ export default {
           this.templates.push(res.data.data);
           this.widgets = [];
           this.templateName = null;
-          this.templateDescription =null;
+          this.templateDescription = null;
           this.selectedWidgetName = null;
           this.$notify({
             type: "success",
             icon: "tim-icons icon-check-2",
-            message: `Template "${this.template.name.toUpperCase()}" created!`
+            message: `Template "${toSend.template.name.toUpperCase()}" created!`
           });
         }
       } catch (e) {
@@ -506,3 +620,9 @@ export default {
   created() {}
 };
 </script>
+
+<style scoped>
+.option {
+  cursor: pointer;
+}
+</style>

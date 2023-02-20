@@ -277,7 +277,7 @@ async function createSaverRuleInEMQX(userId, dId, status) {
             };
 
         } else {
-            return false;
+            return {status: 'error'};
         }
 
     } catch (error) {

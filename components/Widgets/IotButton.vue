@@ -3,7 +3,7 @@
     <!-- header-card -->
     <template slot="header">
       <h4 class="card-title">
-        {{ config.selectedDevice.name }} - {{ config.variableFullName }}
+        {{ capitalizeWord(config.selectedDevice.name) }} - {{ capitalizeWord(config.variableFullName) }}
       </h4>
     </template>
 
@@ -40,8 +40,17 @@ export default {
       };
   },
   methods: {
-    capitalizarPrimeraLetra(str) {
+        capitalizarPrimeraLetra(str) {
       return str.charAt(0).toUpperCase() + str.slice(1);
+    },
+    capitalizeWord(str){
+      let res = '';
+      const words = str.split(' ');
+      words.forEach(w => {
+        res += this.capitalizarPrimeraLetra(w) + ' '
+      });
+      return res;
+
     },
     sendValue() {
       this.sneding = true;

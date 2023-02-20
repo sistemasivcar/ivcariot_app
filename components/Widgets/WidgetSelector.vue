@@ -25,6 +25,7 @@
 import Card from "../Cards/Card.vue";
 import { Select, Option } from "element-ui";
 export default {
+  props:['widgetSelected'],
   components: {
     Card,
     [Option.name]: Option,
@@ -32,7 +33,6 @@ export default {
   },
   data() {
     return {
-      widgetSelected:null
     };
   },
   methods: {
