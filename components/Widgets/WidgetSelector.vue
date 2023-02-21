@@ -4,7 +4,7 @@
       @change="handleChange"
       class="select-info mb-3"
       v-model="widgetSelected"
-      placeholder="Select Widget"
+      placeholder="Select Widget to Add"
       style="width: 100%;"
     >
       <el-option

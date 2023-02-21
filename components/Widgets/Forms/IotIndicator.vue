@@ -188,28 +188,15 @@ export default {
     addWidget() {
       this.validateFrom();
 
-      if (!this.isValidForm) {
-        //
-        return;
-      }
       if (this.isValidForm) {
         
         this.$emit("add-widget", {
           widgetConfig: this.config,
-          isEdition: this.isEdition,
-          cancel: {
-            isCanceled: this.isCanceled,
-            oldConfig: this.oldConfig
-          }
+          isCanceled: this.isCanceled,
         });
-        // actualizo el oldConfig al widget si no se canceló y lo devuelvo 
-        if(!this.isCanceled) this.oldConfig = this.config;
-        
-        // piso los ultimos cambios por lo que habia antes (para FORM && WIDGET PREVIEW)
-        if(this.isCanceled) this.$emit("indicator-config", this.oldConfig); 
-      
+
       } else {
-        this.$emit("add-widget", false);
+        this.$emit("add-widget", {isValidForm:false});
       }
       this.isCanceled = false;
     }
@@ -222,9 +209,7 @@ export default {
       return this.isEdition ? 'success' : 'info'
     }
   },
-  mounted() {
-    this.oldConfig = this.config;
-  },
+
   watch: {
     config: {
       immediate: true,

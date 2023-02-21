@@ -139,7 +139,9 @@ export default {
       if (parts == ",") {
         return "Dashboard";
       }
-      return parts.map(p => this.capitalizeFirstLetter(p)).join(" ");
+
+      const primerosDos=parts.splice(1,2)
+      return primerosDos.map(p => this.capitalizeFirstLetter(p)).join(" ");
     },
     isRTL() {
       return this.$rtl.isRTL;

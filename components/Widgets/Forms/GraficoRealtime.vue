@@ -121,7 +121,7 @@
 <script>
 import { Select, Option } from "element-ui";
 export default {
-  props: ["isEdition", "config"],
+  props: ["isEdition","config"],
   components: {
     [Option.name]: Option,
     [Select.name]: Select
@@ -129,7 +129,7 @@ export default {
   data() {
     return {
       isValidForm: true,
-      oldConfig: {},
+      
       isCanceled: false,
       inputs: {
         unitValid: true,
@@ -185,18 +185,12 @@ export default {
 
       if (this.isValidForm) {
         this.$emit("add-widget", {
-          widgetConfig: this.config,
-          isEdition: this.isEdition,
-          cancel: {
-            isCanceled: this.isCanceled,
-            oldConfig: this.oldConfig
-          }
-        });
-        // actualizo el oldConfig al widget si no se canceló y lo devuelvo
-        if (!this.isCanceled) this.oldConfig = this.config;
 
-        // piso los ultimos cambios por lo que habia antes (para FORM && WIDGET PREVIEW)
-        if (this.isCanceled) this.$emit("numberchart-config", this.oldConfig);
+          widgetConfig: this.config,
+          isCanceled: this.isCanceled
+
+        });
+
       } else {
         this.$emit("add-widget", {isValidForm:false});
       }
@@ -209,11 +203,11 @@ export default {
     },
     getTypeButton() {
       return this.isEdition ? "success" : "info";
+      
     }
   },
-  mounted() {
-    this.oldConfig = this.config;
-  },
+
+
   watch: {
     config: {
       immediate: true,

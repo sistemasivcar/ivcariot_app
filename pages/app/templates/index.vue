@@ -13,7 +13,10 @@
                 Add a collection of widgets to create a template
               </p>
 
-              <h4 class="card-title" v-else>Configure Widget Parameters</h4>
+              <h4 class="card-title" v-else>{{this.isEdition ? 'Edit Widget Configuration Parameters' : 'Configure New Widget Parameters'}}</h4>
+              <p class="card-category text-danger" v-if="indexToAdd!==null">
+                To add next to the widget number {{indexToAdd}}
+              </p>
             </div>
             <div class="col-6">
               <h4 class="card-title" v-if="selectedWidgetName">
@@ -83,6 +86,8 @@
       </card>
     </div>
 
+
+
     <!-- DASHBOARD PREVIEW -->
     <div class="row" ref="dashpreview">
       <div
@@ -90,18 +95,43 @@
         :key="widget.variable"
         :class="[widget.column]"
       >
-        <i
+        
+        <el-tooltip
+        :open-delay="300"
+        content="Delete"
+        placement="top">
+       <i
           aria-hidden="true"
           class="tim-icons icon-trash-simple text-warning option"
           @click="deleteWidget(index)"
           style="margin-bottom: 8px;"
         ></i>
+        </el-tooltip>
+
+        <el-tooltip
+        :open-delay="300"
+        content="Edit"
+        placement="top">
         <i
           aria-hidden="true"
-          class="tim-icons icon-pencil text-warning option pull-right"
+          class="tim-icons icon-pencil text-warning option ml-2"
           @click="editWidget(widget, index)"
           style="margin-bottom: 8px;"
         ></i>
+        </el-tooltip>
+
+        <el-tooltip
+        :open-delay="300"
+        content="Add Next"
+        placement="top">
+        <i
+          aria-hidden="true"
+          class="tim-icons icon-simple-add text-success option pull-right"
+          @click="addAt(index)"
+          style="margin-bottom: 8px;"
+        ></i>
+
+        </el-tooltip>
 
         <IotNumberchart
           :ref="'widget_' + index"
@@ -210,6 +240,24 @@
                 slot-scope="{ row, $index }"
                 class="text-right table-actions"
               >
+
+                <el-tooltip
+                  content="Edit"
+                  effect="light"
+                  :open-delay="300"
+                  placement="top"
+                >
+                  <base-button
+                    @click="goEditTemplate(row, $index)"
+                    type="warning"
+                    icon
+                    size="sm"
+                    class="btn-link"
+                  >
+                    <i class="tim-icons icon-settings "></i>
+                  </base-button>
+                </el-tooltip>
+
                 <el-tooltip
                   content="Delete"
                   effect="light"
@@ -310,18 +358,20 @@ export default {
     BaseAlert
   },
   middleware: "authtenticated",
+  scrollToTop: true,
   data() {
     return {
 
       selectedWidgetName: null,
       templateInUse: false,
-      value: false,
+      indexToAdd:null,
       enableEdition: {
         indicator: false,
         numberchart: false,
         button: false,
         switch: false
       },
+      isEdition:false,
       templateToDelete: null,
       indexToDelete: null,
       templates: [],
@@ -389,7 +439,8 @@ export default {
         colorButton: "success",
         icon: "fa-home",
         column: "col-6"
-      }
+      },
+      oldConfig:{},
     };
   },
   methods: {
@@ -402,9 +453,18 @@ export default {
     scrollToTop() {
       window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
     },
+    goEditTemplate(template){
+      this.$router.push({name:'app-templates-id',params:{id:template._id}})
 
-    handleNewWidget({ widgetConfig, isEdition, cancel, isValidForm }) {
-      // invalid inputs
+    },
+    addAt(index){
+      this.indexToAdd=index+1;
+      this.selectedWidgetName = 'numberchart'
+      this.scrollToTop();
+    },
+
+    handleNewWidget({ widgetConfig, isCanceled, isValidForm }) {
+      // INVALID INPUTS
       if (isValidForm === false) {
         this.$notify({
           message:'Invalid inputs',
@@ -414,8 +474,34 @@ export default {
         return;
       };
 
-      if (!isEdition) {
-        // add widget
+      // ADD WIDGET
+      if (!this.isEdition) {
+        if(this.indexToAdd!==null){
+          // add widget at specific index 
+          widgetConfig.variable = this.makeid(15);
+          widgetConfig.userId = this.$store.getters["auth/getUserId"];
+          console.log(this.indexToAdd)
+          const firstHalf = this.widgets.slice(0,this.indexToAdd);
+          const secondHalf = this.widgets.slice(this.indexToAdd); // hasta el final
+          const newWidget = JSON.parse(JSON.stringify(widgetConfig))
+          this.widgets = [...firstHalf, newWidget, ...secondHalf];
+          console.log(firstHalf,secondHalf,this.widgets)
+          
+          this.$notify({
+          message: `Widget added!`,
+          type: "success",
+          icon: "tim-icons icon-check-2"
+        });
+
+        this.$refs["dashpreview"].scrollIntoView({
+          behavior: "smooth"
+        });
+
+          this.indexToAdd=null;
+          return;
+        }
+
+        // just push the widget to the array
         widgetConfig.variable = this.makeid(15);
         widgetConfig.userId = this.$store.getters["auth/getUserId"];
         this.widgets.push(JSON.parse(JSON.stringify(widgetConfig)));
@@ -430,15 +516,21 @@ export default {
         });
         return;
       }
-
-      // edition canceled
-      if (isEdition && cancel.isCanceled) {
+      
+      // EDITION CANCELED
+      if (this.isEdition && isCanceled) {
+        this.isEdition=false;
         this.enableEdition[widgetConfig.widgetName] = false;
         const index = this.widgets.indexOf(widgetConfig);
+        
+
+        // update form and widget preview
+        this.[widgetConfig.widgetName + 'Config']=this.oldConfig; 
+        // delete the widget and replace it for another with the original data
         this.widgets.splice(
           index,
           1,
-          JSON.parse(JSON.stringify(cancel.oldConfig))
+          JSON.parse(JSON.stringify(this.oldConfig))
         );
         this.$notify({
           message: `Canceled!`,
@@ -448,14 +540,18 @@ export default {
         return;
       }
 
-      if (isEdition && !cancel.isCanceled) {
-        // edit widget
+
+      // EDIT WIDGET
+      if (this.isEdition && !isCanceled) {
+        this.isEdition=false;
         this.enableEdition[widgetConfig.widgetName] = false;
         const index = this.widgets.indexOf(widgetConfig);
+        // delete the widget and replace it for another with the new data
         this.widgets.splice(index, 1, JSON.parse(JSON.stringify(widgetConfig)));
+        // voy al elemento editado
         this.$refs["widget_" + index][0]["$el"].scrollIntoView({
           behavior: "smooth"
-        }); // voy al elemento editado
+          }); 
         this.$notify({
           message: `Widget edited!`,
           type: "success",
@@ -465,10 +561,14 @@ export default {
         return;
       }
     },
+
     deleteWidget(index) {
       this.widgets.splice(index, 1);
     },
     editWidget(widgetConfig, index) {
+      this.oldConfig=Object.assign({},widgetConfig);
+      this.isEdition=true;
+      
       const widgetName = widgetConfig.widgetName;
       const widgetToEdit = widgetName + "Config";
 

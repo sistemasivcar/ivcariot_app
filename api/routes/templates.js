@@ -25,8 +25,22 @@ const router = Router();
 
 router.get('/', checAuth, asyncMiddleware(async (req, res) => {
     const userId = req.userData._id;
+    console.log(req.query)
 
     const templates = await templateModel.find({ userId: userId });
+    const toSend = {
+        status: 'success',
+        data:templates
+    }
+
+    res.status(200).json(toSend);
+}))
+
+router.get('/:id', checAuth, asyncMiddleware(async (req, res) => {
+    const userId = req.userData._id;
+    console.log(req.params)
+
+    const templates = await templateModel.findOne({ userId: userId,_id:req.params.id });
     const toSend = {
         status: 'success',
         data:templates
@@ -44,6 +58,15 @@ router.post('/', checAuth, asyncMiddleware(async (req, res) => {
         data: template,
     };
     res.status(200).json(toSend);
+
+}))
+
+router.put('/', checAuth, asyncMiddleware(async (req,res)=>{
+    const userId = req.userData._id;
+    const template = req.body.template
+
+    await templateModel.updateOne({userId, _id:template.id},{widgets:template.widgets});
+    res.json({status:'success'})
 
 }))
 
