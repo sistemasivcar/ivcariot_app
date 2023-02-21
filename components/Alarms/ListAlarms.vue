@@ -1,7 +1,10 @@
 <template>
   <div class="row">
     <div class="col-sm-12">
-      <card>
+      <card v-if="hasSelectedDevice!==null"
+      title="Alarm Rules"
+      :subTitle="'The list of alarm rules belonging to ' + hasSelectedDevice.name.toUpperCase() +' device'">
+        
         <el-table v-if="hasAlarmRules" :data="alarmRules">
           <el-table-column min-width="50" label="#" align="center">
             <div class="photo" slot-scope="{ row, $index }">

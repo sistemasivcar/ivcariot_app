@@ -25,7 +25,7 @@ const actions = {
     async fetchNotificationsForDevice(context, numberPage) {
         try {
             const token = context.rootGetters['auth/getToken'];
-            const device = context.rootGetters['devices/getSelDevice'];
+            const device = context.rootGetters['devices/getSelectedDevice'];
             if (!device) return;
             const axiosHeader = {
                 headers: {

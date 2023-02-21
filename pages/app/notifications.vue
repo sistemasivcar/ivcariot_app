@@ -119,7 +119,7 @@ export default {
       return this.$store.getters["notif/getDeviceNotifications"];
     },
     deviceSelected() {
-      return this.$store.getters["devices/getSelDevice"];
+      return this.$store.getters["devices/getSelectedDevice"];
     }
   },
   mounted() {

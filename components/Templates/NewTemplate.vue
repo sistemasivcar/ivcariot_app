@@ -20,6 +20,9 @@
                     : "Configure New Widget Parameters"
                 }}
               </h4>
+               <p class="card-category" v-if="indexToAdd == null && selectedWidgetName && !isEdition">
+                The widget will be pushed at the final position
+              </p>
               <p class="card-category text-danger" v-if="indexToAdd !== null">
                 To add next to the widget number {{ indexToAdd }}
               </p>
@@ -147,17 +150,6 @@
         />
       </div>
 
-      <base-button
-        v-if="widgets.length > 0"
-        type="warning"
-        icon
-        style="background:#344675;"
-        size="sm"
-        class="btn-link mt-4 ml-3 mb-3"
-        @click="scrollToTop"
-      >
-        <i class="tim-icons icon-simple-add"></i>
-      </base-button>
     </div>
 
     <!-- SAVE TEMPLATE -->
@@ -441,6 +433,7 @@ export default {
     editWidget(widgetConfig, index) {
       this.oldConfig = Object.assign({}, widgetConfig);
       this.isEdition = true;
+      this.indexToAdd = null;
 
       const widgetName = widgetConfig.widgetName;
       const widgetToEdit = widgetName + "Config";

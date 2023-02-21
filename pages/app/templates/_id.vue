@@ -20,8 +20,11 @@
                     : "Configure New Widget Parameters"
                 }}
               </h4>
+              <p class="card-category" v-if="indexToAdd == null && selectedWidgetName && !isEdition">
+                The widget will be pushed at the final position
+              </p>
               <p class="card-category text-danger" v-if="indexToAdd !== null">
-                To add next to the widget number {{ indexToAdd }}
+                To push next to the widget number {{ indexToAdd }}
               </p>
             </div>
             <div class="col-6">
@@ -96,14 +99,25 @@
     </div>
 
     <div class="row">
-      <div class="col-12">
+      <div class="col-8">
         <base-button
-          type="primary"
+          type="success"
           size="md"
-          class="mb-3"
+          class="mb-3 pull-left"
           @click="confirmTemplate"
         >
-          Confirm New Dashboard
+          Confirm New {{ templateName.toUpperCase() }} Template
+        </base-button>
+      </div>
+
+      <div class="col-4">
+        <base-button
+          type="danger"
+          size="md"
+          class="mb-3 pull-right"
+          @click="cancelEdition"
+        >
+          Cancel edition
         </base-button>
       </div>
     </div>
@@ -158,18 +172,6 @@
           :config="widget"
         />
       </div>
-
-      <base-button
-        v-if="widgets.length > 0"
-        type="warning"
-        icon
-        style="background:#344675;"
-        size="sm"
-        class="btn-link mt-4 ml-3 mb-3"
-        @click="pushWidget"
-      >
-        <i class="tim-icons icon-simple-add"></i>
-      </base-button>
     </div>
   </div>
 </template>
@@ -410,6 +412,11 @@ export default {
       this.scrollToTop();
     },
 
+
+    cancelEdition() {
+      this.$router.back()
+    },
+
     async confirmTemplate() {
       try {
         const token = this.$store.getters["auth/getToken"];
@@ -447,11 +454,6 @@ export default {
     },
     scrollToTop() {
       window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
-    },
-    pushWidget() {
-      this.selectedWidgetName = "numberchart";
-      this.indexToAdd = null;
-      this.scrollToTop();
     },
     async getWidgets() {
       try {

@@ -237,7 +237,7 @@ export default {
     },
     hasSelectedDevice() {
       //retorna el objeto device seleccionado
-      return this.$store.getters["devices/getSelDevice"];
+      return this.$store.getters["devices/getSelectedDevice"];
     },
     hasDevices() {
       return this.$store.getters["devices/hasDevices"];

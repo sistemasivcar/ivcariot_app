@@ -82,7 +82,7 @@
       <router-view name="header"></router-view>
 
       <div :class="{ content: !isFullScreenRoute }" @click="toggleSidebar">
-        <zoom-center-transition :duration="800" mode="out-in">
+        <zoom-center-transition :duration="350" mode="out-in">
           <!-- your content here -->
           <nuxt></nuxt>
         </zoom-center-transition>

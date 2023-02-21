@@ -11,14 +11,17 @@
       You need to select a device to create an Alarm
     </card>
 
-    <div class="row" v-else-if="hasDevices && hasSelectedDevice">
+    <div class="row" v-else-if="hasDevices && hasSelectedDevice !== null">
       <div class="col-sm-12">
         <card>
           <div slot="header">
             <h4 class="card-title">
-              Create new Alarm Rule:
-              <strong>{{ hasSelectedDevice.name.toUpperCase() }}</strong>
+              Create new Alarm Rule
             </h4>
+            <p class="card-category inline">
+              the new alarm rule will be added for
+              {{ hasSelectedDevice.name.toUpperCase() }} device
+            </p>
           </div>
 
           <div class="row">
@@ -124,7 +127,7 @@ export default {
         condition: null,
         triggerTime: null
       },
-      selectedWidgetIndex: null
+      selectedWidgetIndex: null,
     };
   },
   computed: {
@@ -141,19 +144,7 @@ export default {
     }
   },
   methods: {
-    async getDevices() {
-      try {
-        await this.$store.dispatch("devices/fetchDevices");
-      } catch (e) {
-        this.$notify({
-          type: "danger",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: e
-        });
-      }
-    },
-
-    async createNewRule() {
+    validNewRule() {
       if (this.selectedWidgetIndex == null) {
         this.$notify({
           type: "warning",
@@ -168,7 +159,7 @@ export default {
           icon: "tim-icons icon-alert-circle-exc",
           message: " Condition must be selected"
         });
-        return;
+        return false;
       }
       if (this.newRule.value == null) {
         this.$notify({
@@ -176,7 +167,7 @@ export default {
           icon: "tim-icons icon-alert-circle-exc",
           message: " Value is empty"
         });
-        return;
+        return false;
       }
       if (this.newRule.triggerTime == null) {
         this.$notify({
@@ -184,7 +175,7 @@ export default {
           icon: "tim-icons icon-alert-circle-exc",
           message: " Trigger Time is empty"
         });
-        return;
+        return false;
       }
       if (this.newRule.message == null) {
         this.$notify({
@@ -192,7 +183,7 @@ export default {
           icon: "tim-icons icon-alert-circle-exc",
           message: " Message is empty"
         });
-        return;
+        return false;
       }
       if (this.newRule.triggerTime <= 0) {
         this.$notify({
@@ -200,8 +191,44 @@ export default {
           icon: "tim-icons icon-alert-circle-exc",
           message: " Trigger Time must be >= than 5"
         });
-        return;
+        return false;
       }
+
+      return true;
+    },
+
+
+    async getDevices() {
+      try {
+        await this.$store.dispatch("devices/fetchDevices");
+      } catch (e) {
+        this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: e
+        });
+      }
+    },
+
+    emptyInputs() {
+
+      this.newRule.dId = null
+      this.newRule.status= null;
+      this.newRule.variableFullName= null;
+      this.newRule.variable= null;
+      this.newRule.value= null;
+      this.newRule.message= null;
+      this.newRule.condition= null;
+      this.newRule.triggerTime= null
+      this.selectedWidgetIndex= null;
+
+    },
+
+    async createNewRule() {
+
+      const isValidForm = this.validNewRule();
+      if (!isValidForm) return;
+
 
       const variableFullName = this.widgets[this.selectedWidgetIndex]
         .variableFullName;
@@ -222,6 +249,7 @@ export default {
           icon: "tim-icons icon-check-2",
           message: `Alarm rule created!`
         });
+        this.emptyInputs()
       } catch (e) {
         this.$notify({
           type: "danger",
