@@ -8,18 +8,7 @@ export default {
     getDevices(state) {
         return state.devices
     },
-
-    // selectedDevice variable
     getSelectedDevice(state) {
-        const dev = state.devices.find((device) => { return device.selected == true })
-        return dev;
-    },
-    getIndexSelectedDevice(state,getters) {
-        const dev = getters.getSelectedDevice;
-        const index = state.devices.indexOf(dev)
-        return index;
-    },
-    getSelDevice(state) {
         return state.selectedDevice;
     },
     getWidgetsSelectedDevice(state) {

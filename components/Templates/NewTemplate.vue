@@ -1,16 +1,16 @@
 <template>
   <div>
-    <!-- EDITING TEMPLATE -->
+    <!-- CREATING TEMPLATE -->
     <div class="row">
       <card>
         <template slot="header">
           <div class="row">
             <div class="col-6">
               <h4 class="card-title" v-if="!selectedWidgetName">
-                Edit Template {{ templateName.toUpperCase() }}
+                Create Template
               </h4>
               <p class="card-category" v-if="!selectedWidgetName">
-                You can add widgets or edit any configuration of them
+                Add a collection of widgets to create a template
               </p>
 
               <h4 class="card-title" v-else>
@@ -35,7 +35,8 @@
         <template name="card-body">
           <div class="row">
             <div class="col-6">
-              <!-- WIDGET SELECTOR -->
+          
+                <!-- WIDGET SELECTOR -->
               <WidgetSelector
                 @selected-widget="getSelectedWidgetName"
                 :widgetSelected="selectedWidgetName"
@@ -93,19 +94,6 @@
           </div>
         </template>
       </card>
-    </div>
-
-    <div class="row">
-      <div class="col-12">
-        <base-button
-          type="primary"
-          size="md"
-          class="mb-3"
-          @click="confirmTemplate"
-        >
-          Confirm New Dashboard
-        </base-button>
-      </div>
     </div>
 
     <!-- DASHBOARD PREVIEW -->
@@ -166,31 +154,73 @@
         style="background:#344675;"
         size="sm"
         class="btn-link mt-4 ml-3 mb-3"
-        @click="pushWidget"
+        @click="scrollToTop"
       >
         <i class="tim-icons icon-simple-add"></i>
       </base-button>
+    </div>
+
+    <!-- SAVE TEMPLATE -->
+    <div class="row" v-if="widgets.length > 0">
+      <card>
+        <div slot="header">
+          <h4 class="card-title">Save Template</h4>
+        </div>
+
+        <div class="row">
+          <base-input
+            class="col-4"
+            v-model="templateName"
+            label="Template Name"
+            type="text"
+          >
+          </base-input>
+
+          <base-input
+            class="col-8"
+            v-model="templateDescription"
+            label="Template Description (optional)"
+            type="text"
+          >
+          </base-input>
+        </div>
+
+        <br /><br />
+
+        <div class="row">
+          <div class="col-12">
+            <base-button
+              :disabled="!widgets.length"
+              native-type="submit"
+              type="info"
+              class="mb-3 pull-right"
+              size="lg"
+              @click="newTemplate()"
+            >
+              Save Template
+            </base-button>
+          </div>
+        </div>
+      </card>
     </div>
   </div>
 </template>
 
 <script>
-import Card from "../../../components/Cards/Card.vue";
-import FromIndicator from "../../../components/Widgets/Forms/IotIndicator.vue";
-import FormButton from "../../../components/Widgets/Forms/IotButton.vue";
-import FromNumberchart from "../../../components/Widgets/Forms/GraficoRealtime.vue";
-import FromSwitch from "../../../components/Widgets/Forms/IotSwitch.vue";
-import WidgetSelector from "../../../components/Widgets/WidgetSelector.vue";
-import BaseInput from "../../../components/Inputs/BaseInput.vue";
-import IotIndicator from "../../../components/Widgets/IotIndicator.vue";
-import IotNumberchart from "../../../components/Widgets/GraficoRealtime.vue";
-import IotButton from "../../../components/Widgets/IotButton.vue";
-import IotSwitch from "../../../components/Widgets/IotSwitch.vue";
-import BaseButton from "../../../components/BaseButton.vue";
-import BaseAlert from "../../../components/BaseAlert.vue";
+import Card from "../Cards/Card.vue";
+import FromIndicator from "../Widgets/Forms/IotIndicator.vue";
+import FormButton from "../Widgets/Forms/IotButton.vue";
+import FromNumberchart from "../Widgets/Forms/GraficoRealtime.vue";
+import FromSwitch from "../Widgets/Forms/IotSwitch.vue";
+import WidgetSelector from "../Widgets/WidgetSelector.vue";
+import BaseInput from "../Inputs/BaseInput.vue";
+import IotIndicator from "../Widgets/IotIndicator.vue";
+import IotNumberchart from "../Widgets/GraficoRealtime.vue";
+import IotButton from "../Widgets/IotButton.vue";
+import IotSwitch from "../Widgets/IotSwitch.vue";
+import BaseButton from "../BaseButton.vue";
+import BaseAlert from "../BaseAlert.vue";
 export default {
-  middleware: "authtenticated",
-  scrollToTop: true,
   components: {
     Card,
     BaseInput,
@@ -203,21 +233,23 @@ export default {
     IotIndicator,
     IotNumberchart,
     IotButton,
-    IotSwitch
+    IotSwitch,
+    BaseAlert
   },
   data() {
     return {
-      templateName: "",
       widgets: [],
-      selectedWidgetName: "",
+      templateName: null,
+      templateDescription: null,
+      selectedWidgetName: null,
       indexToAdd: null,
+      isEdition: false,
       enableEdition: {
         indicator: false,
         numberchart: false,
         button: false,
         switch: false
       },
-      isEdition: false,
       numberchartConfig: {
         selectedDevice: {
           name: "Home",
@@ -283,6 +315,7 @@ export default {
       oldConfig: {}
     };
   },
+  computed: {},
   methods: {
     getSelectedWidgetName(name) {
       this.selectedWidgetName = name;
@@ -290,7 +323,15 @@ export default {
     getWidgetConfiguration(config) {
       this[`${config.widgetName}Config`] = config;
     },
-
+    scrollToTop() {
+      window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+    },
+    goEditTemplate(template) {
+      this.$router.push({
+        name: "app-templates-id",
+        params: { id: template._id }
+      });
+    },
     addAt(index) {
       this.indexToAdd = index + 1;
       this.selectedWidgetName = "numberchart";
@@ -393,6 +434,7 @@ export default {
         return;
       }
     },
+
     deleteWidget(index) {
       this.widgets.splice(index, 1);
     },
@@ -406,34 +448,46 @@ export default {
       this.enableEdition[widgetName] = true;
       this.selectedWidgetName = widgetName;
       this[widgetToEdit] = widgetConfig;
-
+      
       this.scrollToTop();
-    },
-
-    async confirmTemplate() {
+      },
+    
+    async newTemplate() {
       try {
-        const token = this.$store.getters["auth/getToken"];
+        if (!this.templateName) {
+          this.$notify({
+            message: "Template Name is required",
+            type: "warning",
+            icon: "tim-icons icon-alert-circle-exc"
+          });
+          return;
+        }
+        const token = this.$store.state.auth.auth.token;
         const axiosHeaders = {
           headers: {
             "x-auth-token": token
           }
         };
+
         const toSend = {
           template: {
-            id: this.$route.params.id,
+            name: this.templateName,
+            description: this.templateDescription,
             widgets: this.widgets
           }
         };
+        const res = await this.$axios.post("/template", toSend, axiosHeaders);
 
-        const res = await this.$axios.put(`/template`, toSend, axiosHeaders);
-        if (res.data.status == "success") {
-          this.getDevices();
-          this.$router.push({ name: "app-templates" });
-          await this.getWidgets();
+          if (res.data.status == "success") {
+        this.$emit('new-template')
+          this.widgets = [];
+          this.templateName = null;
+          this.templateDescription = null;
+          this.selectedWidgetName = null;
           this.$notify({
             type: "success",
-            icon: "tim-icons icon-simple-check",
-            message: `Template ${this.templateName.toUpperCase()} updated`
+            icon: "tim-icons icon-check-2",
+            message: `Template "${toSend.template.name.toUpperCase()}" created!`
           });
         }
       } catch (e) {
@@ -441,55 +495,7 @@ export default {
         this.$notify({
           type: "danger",
           icon: "tim-icons icon-alert-circle-exc",
-          message: "Fail to load template"
-        });
-      }
-    },
-    scrollToTop() {
-      window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
-    },
-    pushWidget() {
-      this.selectedWidgetName = "numberchart";
-      this.indexToAdd = null;
-      this.scrollToTop();
-    },
-    async getWidgets() {
-      try {
-        const token = this.$store.getters["auth/getToken"];
-        const axiosHeaders = {
-          headers: {
-            "x-auth-token": token
-          }
-        };
-
-        const res = await this.$axios.get(
-          `/template/${this.$route.params.id}/`,
-          axiosHeaders
-        );
-        if (res.data.status == "success") {
-          const template = res.data.data;
-
-          this.templateName = template.name;
-          this.widgets = template.widgets;
-        }
-      } catch (e) {
-        console.log(e);
-        this.$notify({
-          type: "danger",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: "Fail to load template"
-        });
-      }
-    },
-    // para que se actualicen los widgets en las demas vistas --> cambio el devices store
-    getDevices() {
-      try {
-        this.$store.dispatch("devices/fetchDevices");
-      } catch (e) {
-        this.$notify({
-          type: "danger",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: e
+          message: "Error creating template"
         });
       }
     },
@@ -507,9 +513,7 @@ export default {
       return result;
     }
   },
-  async mounted() {
-    await this.getWidgets();
-  }
+  mounted() {}
 };
 </script>
 
