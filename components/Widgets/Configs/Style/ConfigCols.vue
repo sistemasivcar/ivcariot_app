@@ -8,17 +8,17 @@
 
                <el-option
                   class="text-dark"
-                  value="col-4"
+                  value="col-md-4"
                   label="Small"
                 ></el-option>
                 <el-option
                   class="text-dark"
-                  value="col-6"
+                  value="col-md-6"
                   label="Medium"
                 ></el-option>
                 <el-option
                   class="text-dark"
-                  value="col-12"
+                  value="col-md-12"
                   label="Big"
                 ></el-option>
     </el-select>

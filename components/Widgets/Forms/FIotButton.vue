@@ -4,7 +4,7 @@
       <div class="col-12">
         <base-input
           v-model="config.variableFullName"
-          label="Var Name"
+          :label="$t('lblvarname')"
           type="text"
           :class="{'has-danger': !inputs.varFullNameValid}"
         >
@@ -14,13 +14,13 @@
 
     <div class="row">
       <div class="col-6">
-        <base-input v-model="config.text" label="Button Text" type="text" :class="{'has-danger': !inputs.textValid}">
+        <base-input v-model="config.text" :label="$t('lblbtntext')" type="text" :class="{'has-danger': !inputs.textValid}">
         </base-input>
       </div>
       <div class="col-6">
         <base-input
           v-model="config.message"
-          label="Message to send"
+          :label="$t('lblmesgsend')"
           type="text"
           :class="{'has-danger': !inputs.messageValid}"
         >
@@ -51,13 +51,14 @@
           @click="addWidget"
           class="mt-3"
           size="lg"
-          >{{ textButton }}</base-button
+          >{{ textButton }}
+          <i class="fa fa-plus"></i></base-button
         >
       </div>
 
       <div class="col-6" v-if="isEdition">
         <base-button type="danger" @click="cancel" class="mt-3 pull-right" size="lg"
-          >Cancel</base-button
+          >{{$t('btncan')}}</base-button
         >
       </div>
     </div>
@@ -128,7 +129,7 @@ export default {
   },
   computed: {
     textButton() {
-      return this.isEdition ? "Accept" : "Add";
+      return this.isEdition ? `${this.$t('btnedit')}` : `${this.$t('btnadd')}`;
     },
     getTypeButton() {
       return this.isEdition ? "success" : "info";

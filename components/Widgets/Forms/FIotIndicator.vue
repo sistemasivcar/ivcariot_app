@@ -4,7 +4,7 @@
       <div class="col-6">
         <base-input
           v-model="config.variableFullName"
-          label="Variable Name"
+          :label="$t('lblvarname')"
           type="text"
           :class="[{'has-danger':!inputs.varFullNameValid}]"
         >
@@ -14,7 +14,7 @@
       <div class="col-6">
         <base-input
           v-model="config.variableSendFreq"
-          label="Update interval (mins)"
+          :label="$t('lblsendfreq')"
           type="number"
           :class="[{'has-danger':!inputs.sendFreqValid}]"
         >
@@ -25,7 +25,7 @@
     <div class="row" v-if="!config.isBoolean">
       <div class="col-12">
         <label class="text-success mt-3 "
-          >Turn ON the icon if {{ config.variableFullName }} is:</label
+          >{{ $t('lblturnon {variableFullName}',{variableFullName:config.variableFullName}) }}</label
         >
       </div>
 
@@ -33,7 +33,7 @@
         <el-select
           required
           class="select-info pull-left"
-          placeholder="Condition"
+          :placeholder="$t('selcond')"
           v-model="config.condition"
           style="margin-top: 30px; width:100%"
         >
@@ -47,7 +47,7 @@
       </div>
 
       <div class="col-6">
-        <base-input v-model.number="config.value" label="Value:" type="number">
+        <base-input v-model.number="config.value" :label="$t('lblvalu')" type="number">
         </base-input>
       </div>
     </div>
@@ -55,11 +55,10 @@
     <div class="row" v-if="config.isBoolean">
       <div class="col-12">
         <label class="text-success mt-3"
-          >For status change notifications:
+          >{{$t('lblnotif')}}
         </label>
         <el-tooltip
-          content="This is optional and apart from the alarm rules that you can create later.
-           If you dont want to recive this notifications, empty these filed"
+          :content="$t('toolwarn')"
           :open-delay="300"
           placement="top"
           ><label class="" for="">⚠️</label></el-tooltip
@@ -69,7 +68,7 @@
       <div class="col-6 ">
         <base-input
           v-model.trim="config.messageOn"
-          label="ON status message"
+         :label="$t('lblmesgon')"
           type="text"
         >
         </base-input>
@@ -78,7 +77,7 @@
       <div class="col-6 ">
         <base-input
           v-model="config.messageOff"
-          label="OFF status message"
+          :label="$t('lblmesgoff')"
           type="text"
         >
         </base-input>
@@ -92,7 +91,7 @@
           :checked="true"
           v-model="config.isBoolean"
           :value="true"
-          >Is Boolean Variable?</base-checkbox
+          >{{$t('chisbool')}}</base-checkbox
         >
       </div>
     </div>
@@ -116,12 +115,13 @@
     <div class="row">
       <div class="col-6">
         <base-button :type="getTypeButton" @click="addWidget" class="mt-3" size="lg"
-          >{{textButton}}</base-button>
+          >{{textButton}}
+          <i class="fa fa-plus"></i></base-button>
       </div>
 
       <div class="col-6" v-if="isEdition">
         <base-button type="danger" @click="cancel" class="mt-3 pull-right" size="lg"
-          >Cancel</base-button>
+          >{{$t('btncan')}}</base-button>
       </div>
     </div>
   </div>
@@ -130,7 +130,7 @@
 <script>
 import { Checkbox, CheckboxButton } from "element-ui";
 import { Select, Option } from "element-ui";
-import BaseInput from "../../../components/Inputs/BaseInput.vue";
+import BaseInput from "../../Inputs/BaseInput.vue";
 import IotIndicator from "../IotIndicator.vue";
 export default {
 
@@ -203,7 +203,7 @@ export default {
   },
   computed:{
     textButton() {
-      return this.isEdition ? "Accept" : "Add";
+      return this.isEdition ? `${this.$t('btnedit')}` : `${this.$t('btnadd')}`;
     },
     getTypeButton(){
       return this.isEdition ? 'success' : 'info'

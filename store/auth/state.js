@@ -9,7 +9,7 @@
 
     
 const state = () => ({
-    auth: null
+    auth: null,
 })
 
 export default state;

@@ -1,0 +1,190 @@
+{
+    "dashboardnavbar":{
+        "locales":{
+            "title":"Lenguaje"
+        },
+        "selectorDevice":"Seleccioná un Dispositivo",
+        "notifications":{
+            "nonotifs":"Sin Nuevas Notificaciones",
+            "title":"Notificaciones de Alarmas",
+            "viewhistory":"Ver Historial",
+            "notif":{
+                "device":"Dispositivo",
+                "variable":"Variable",
+                "with":"Con",
+                "condition":"Condición"
+            }
+        },
+        "user":{
+            "profile":"Perfil",
+            "settings":"Config",
+            "help":"Ayuda",
+            "logout":"Salir"
+        }
+    },
+
+    "--------TRADUCIONES-ALARMS PAGE-----------":"------ALARMS PAGE--------",
+    "nohasdev":"Primero necesitás crear un dispositivo para luego crearle una alama",
+    "newdev":"Nuevo Dispositivo",
+    "nohasseldev":"Seleccioná un dispositivo",
+    "newalarm":"Crear Nueva Alarma",
+    "selcondition":"Seleccionar condición",
+    "selvar":"Seleccionar variable",
+    "newalarmsub {selectedDevice}":"La nueva alarma sera añadida al dispositivo {selectedDevice}",
+    "palcetriggertime":"¿En cuanto tiempo vuelvo a notificar?", 
+    "inpvalue":"valor",
+    "inptriggertime":"Trigger Time (minutos)",
+    "inpmesg":"¿Qué mensaje querés recibir?",
+    "btnaddalarm":"Crear Alarma",
+    "notifalarm":"OK! Alarma Creada",
+    "sublistalarms {selectedDevice}":"Lista de alarmas pertenecientes al dispositivo {selectedDevice}",
+    "listalarms":"Alarmas Del Dispositivo",
+    "toolswitch":"Cambiar estado alarma",
+    "toolstatus":"Indicador de Estado",
+    "notifupdaterule":"Alarma",
+    "--------TRADUCIONES-TEMPLATES PAGE-----------":"------TEMPLATES PAGE--------",
+    "newTitle": "Crear Nueva Plantilla",
+    "newsubtitle":"Agregá una colección de widgets para crear una plantilla",
+    "edittitle":"Editar Configuración del Widget",
+    "addwidget":"El widget se agregará a la posición final",
+    "addwidgetat {indexToAdd}":"Se agregará al lado del widget número { indexToAdd }",
+    "confwidgtitle":"Configurar Parámetros del Widget",
+    "widgprev":"Vista Previa",
+    "selectwidget":"Seleccioná el widget",
+    "tooledit":"Editar",
+    "tooldelete":"Eliminar",
+    "tooladdnext":"Agregar al lado",
+    "newtemp":"Nueva Plantilla",
+    "temname":"Nombre de la Plantilla",
+    "tempdesc":"Descripción (opcional)",
+    "tempdescpl":"¿De qué se trata tu plantilla?",
+    "savetemp":"Guardar",
+    "notifaddwid":"Widget Agregado!",
+    "notifcancel":"Cambios cancelados!",
+    "notifeditwid":"Widget Editado!",
+    "notifnewtemp {templateName}":"Plantilla '{templateName}' creada!",
+    "notifupdatedtemp {templateName}":"Plantilla '{templateName}' actualizada!",
+
+    "inpinv":"Hay campos inválidos",
+    "widchart":"Gráfico en timepo real",
+    "widindicator":"Indicador",
+    "widbutton":"Activador",
+    "listTitle":"Mis Plantillas",
+    "templates":{
+        "new":{
+
+        },
+        "list":{
+            "tempinuse {templateToDelete}":"NO PODÉS ELIMINAR LA PLANTILLA '{templateToDelete} PORQUE ESTÁ SIENDO USADA POR DISPOSITIVOS",
+            "deletemodal {templateToDelete}":"¿Estás seguro de eliminar la plantilla {templateToDelete}?"
+        }
+    },
+    "templates_id":{
+        "title {templateName}":"Editar Plantilla {templateName}",
+        "subtitle":"Agregá widgets o modificá cualquier configuración de ellos",
+        "confbtn":"Confirmar Plantilla",
+        "cancelbtn":"Cancelar Edición"
+    },
+    
+    "--------TRADUCIONES-INDICATOR FROM-COMP-----------":"------INDICATOR FROM-COMP--------",
+    "lblvarname":"Nombre de la Variable",
+    "lblsendfreq":"Frequencia de Envío (min)",
+    "lblvalu":"Valor",
+    "lblmesgon":"Mensaje en estado ON",
+    "lblmesgoff":"Mensaje en estado OFF",
+    "lblnotif":"Para notificaciones ante cambios de estado:",
+    "lblturnon {variableFullName}":"Encender el ícono si la variable { variableFullName } es:",
+    "selcond":"Condición",
+    "chisbool":"Es variable booleana?",
+    "toolwarn":"Esto es opcional y aparte de las demás alarmas que podés crear luego. Si no querés recibir éstas notificaciones dejá ambos campos vacíos",
+    "btncan":"Cancelar",
+    "btnadd":"Agregar",
+    "btnedit":"Aceptar",
+    "--------TRADUCIONES-BUTTON FROM-COMP-----------":"------BUTTON FROM-COMP--------",
+    "lblmesgsend":"Mensage a Notificar",
+    "lblbtntext":"Texto del Botón",
+    "--------TRADUCIONES-GRAFICO FROM-COMP-----------":"------GRAFICO FROM-COMP--------",
+    "lblunit":"Unidad",
+    "lblback":"Histórico (min)",
+    "lbldec":"Cant. Decimales",
+    "lblstyleline":"Estilo de Línea",
+    "--------TRADUCIONES-SIDEBAR-----------":"------SIDEBAR--------", 
+    "sidebar":{
+        "dashboard":"Dashboard",
+        "devices":"Dispositivos",
+        "templates":"Plantillas",
+        "alarms":"Alarmas",
+        "notifications":"Notificaciones",
+        "profile":"Perfil",
+        "help":"Ayuda"
+    },
+
+    "notifications":{
+        "title {selectedDevice}":"Notificaciones del dispositivo {selectedDevice}"
+    },
+
+    "devices":{
+
+
+        "new":{
+            "title":"Agregar Nuevo Dispositivo",
+            "name":"Nombre del dispositivo",
+            "id":"Número de Serie",
+            "template":"Seleccionar Plantilla",
+            "templateinp":"Plantilla",
+            "btn":"Agregar Dispositivo",
+            "notemplatesbtn":"Crear Plantilla",
+            "notemplatestxt":"Antes de agregar dispostivos necesitas tener plantillas creadas",
+            "invalidinp":"Hay campos inválidos",
+            "ok {device}":"Dispositivo {device} creado con éxito!"
+        },
+        "list":{
+            "title":"Mis Dispositivos",
+            "dbsaver":"Guardado en BD",
+            "dbsaverindic":"Indicador de Estado",
+            "secret":"Clave secreta para que tu dispositivo pueda contectarse a nuestro broker. Nunca la compartas!",
+            "saver":"Grabador",
+            "online":"Tu dispositivo está En Linea",
+            "offline":"Tu dispositivo está Fuera de Línea",
+            "deletemodal {deviceName}":"¿Estás seguro de ELIMINAR el dispositivo '{deviceName}'?",
+            "hasalarms":"Sus alarmas creadas también serán removidas!"
+            
+        }
+
+    },
+
+    "docs":{
+        "title":"Bienvenido a nuestra platafroma para proyectos IoT",
+        "subtitle":"Esta es una guía sobre cómo usar la plataforma",
+        "pages":"SECCIONES",
+        "dashboard":"En esta página verá en tiempo real los datos entrantes de tus dispositivos y realizar acciones sobre estos a través de la plantilla asociada al DISPOSITIVO SELECCIONADO",
+        "devices":"En la página de dispositivos, podés crear un nuevo dispositivo y ver los dispositivos creados. Podés configurar si el envío de datos del dispositivo se guarda en la base de datos o no cambiando el estado del GRABADOR. Para crear un dispositivo, debe vincularlo a una PLANTILLA.",
+        "alarms":"Al crear una alarma, se le notificará en tiempo real cuando una determinada variable de su dispositivo infrinja la regla que especificó. Es obligatorio configurar el parámetro TRIGGER TIME para evitar infinitas notificaciones. Este parámetro especifica cuánto tiempo debe pasar antes de realizar una nueva notificación.",
+        "templates":"Una plantilla es un conjunto de WIDGETS, y cada widget es responsable de una VARIABLE individual de su dispositivo. En esta página puede crear plantillas configurando los parámetros para cada widget. Básicamente, tiene widgets para mostrar datos en tiempo real (Indicador o Gráfico ) y otros para enviar acciones a su dispositivo (Activador). Además, desde esta página podrá configurar la FRECUENCIA con la que el dispositivo envía datos.",
+        "notifications":"Esta página es solo una tabla simple que enumera todas las notificaciones históricas que recibió para el DISPOSITIVO SELECCIONADO",
+        "profile":"En la página de perfil verás tus datos ingresados ​​cuando te registraste. La página te permite modificar la información y agregar alguna otra pero debes tener un correo electrónico, un nombre y al menos un número de teléfono registrado (debe ser el CELULAR Nº 1). Puedes tener hasta tres números de teléfono y estos serán utilizados por el sistema para notificar cuando una alarma sea disparada.",
+        "howtouse":"CÓMO USAR LA PLATAFORMA",
+        "howtousetext":"Para empezar, tenés que definir una plantilla. Una plantilla es genérica y reutilizable para varios dispositivos. Ahora podés empezar a crear dispositivos y vincularlos a esta plantilla (asumimos que el dispositivo maneja las variables que se definieron en la plantilla). Si deseás recibir notificaciones en tiempo real acerca de los valores que toman tus variables , debés crear una alarma."
+
+    },
+
+
+    "--------TRADUCIONES-PROFILE PAGE-----------":"------PROFILE PAGE--------",
+    "editProfile":"Editar mi Perfil",
+    "inpEmail":"*Direccion de Correo",
+    "inpFullName":"*Nombre Completo",
+    "phone01":"*Celular Nº 1",
+    "phone02":"Celular Nº 2",
+    "phone03":"Celular Nº 3",
+    "inpPostalCode":"Código Postal",
+    "city":"Ciudad",
+    "country":"País",
+    "btnSave":"Guardar",
+    "notif":"Tu perfil fue actualizado!",
+    "invPC":"Código postal inválido",
+    "invPhone":"Número de celular inválido",
+    "empName":"El nombre no puede estar vacío",
+    "empEmail":"Tenés que tener una dirección de correo!",
+    "empPhone":"Debés llenar el campo 'celular Nº 1'"
+
+}

@@ -1,0 +1,189 @@
+{
+
+    "dashboardnavbar":{
+        "selectorDevice":"Select device",
+        "locales":{
+            "title":"Language"
+        },
+        "notifications":{
+            "nonotifs":"No New Notifications",
+            "title":"Alarms Notifications",
+            "viewhistory":"View History",
+            "notif":{
+                "device":"Device",
+                "variable":"Variable",
+                "with":"With",
+                "condition":"Condition"
+            }
+        },
+        "user":{
+
+            "profile":"Profile",
+            "settings":"Settings",
+            "help":"Help",
+            "logout":"Logout"
+        }
+    },
+
+    "--------TRADUCIONES-ALARMS PAGE-----------":"------ALARMS PAGE--------",
+    "nohasdev":"You need first create a device to create an Alarm",
+    "newdev":"Create new Device",
+    "nohasseldev":"You need to select a device to create an Alarm",
+    "newalarm":"Create new Alarm Rule",
+    "selcondition":"Select Condition",
+    "selvar":"Select Variable",
+    "newalarmsub {selectedDevice}":"the new alarm will be added for {selectedDevice} device",
+    "inpvalue":"value",
+    "palcetriggertime":"How much time should pass to notify again?",
+    "inptriggertime":"Trigger Time (mins)",
+    "impmesg":"What message you wanna recived?",
+    "btnaddalarm":"Create Alarm",
+    "notifalarm":"Alarm Rule Created!",
+    "sublistalarms {selectedDevice}":"The list of alarm rules belonging to {selectedDevice} device",
+    "listalarms":"Device Alarms",
+    "toolswitch":"Change alarm status",
+    "toolstatus":"Status indicator",
+    "notifupdaterule":"Alarm",
+    "--------TRADUCIONES-TEMPLATES PAGE-----------":"------TEMPLATES PAGE--------",
+    "newTitle": "Create New Template",
+    "newsubtitle":"Add a collection of widgets to create a template",
+    "edittitle":"Edit Widget Configuration Parameters",
+    "addwidget":"The widget will be pushed at the final position",
+    "addwidgetat {indexToAdd}":"To add next to the widget number { indexToAdd }",
+    "confwidgtitle":"Configure New Widget Parameters",
+    "widgprev":"Widget Preview",
+    "selectwidget":"Select widget",
+    "tooledit":"Edit",
+    "tooldelete":"Delete",
+    "tooladdnext":"Add Next",
+    "newtemp":"New Template",
+    "temname":"Template Name",
+    "tempdesc":"Template Description (optional)",
+    "tempdescpl":"What is your template about?",
+    "savetemp":"Save Template",
+    "notifaddwid":"Widgetd added!",
+    "notifcancel":"Canceled!",
+    "notifeditwid":"Widget Edited!",
+    "notifnewtemp {templateName}":"Template {templateName} created!",
+    "notifupdatedtemp {templateName}":"Template '{templateName}' updated!",
+    "inpinv":"There are invalid inputs",
+    "widchart":"Realtime number-chart",
+    "widindicator":"Indicator",
+    "widbutton":"Activator",
+    "listTitle":"My Temlpates",
+    "templates":{
+        "new":{
+
+        },
+        "list":{
+            "tempinuse {templateToDelete}":"YOU CAN NOT DELETE '{templateToDelete} TEMPLATE BECAUSE IT IS BEING USED BY OTHER DEVICES",
+            "deletemodal {templateToDelete}":"Are you sure you wanna DELETE {templateToDelete} template?"
+        }
+    },
+    "templates_id":{
+        "title {templateName}":"Edit {templateName} Template",
+        "subtitle":"You Can Add Widgets Or Edit Any Configuration Of Them",
+        "confbtn":"Confirm Template",
+        "cancelbtn":"Cancel Edition"
+    },
+    "--------TRADUCIONES-INDICATOR FROM-COMP-----------":"------INDICATOR FROM-COMP--------",
+    "lblvarname":"Variable Name",
+    "lblsendfreq":"Update interval (mins)",
+    "lblvalu":"Value",
+    "lblmesgon":"ON status message",
+    "lblmesgoff":"OFF status message",
+    "lblnotif":"For status change notifications:",
+    "lblturnon {variableFullName}":"Turn ON the icon if { variableFullName } is:",
+    "selcond":"Condition",
+    "chisbool":"Is Boolean Variable?",
+    "toolwarn":"This is optional and apart from the alarm rules that you can create later. If you dont want to recive this notifications, empty these filed",
+    "btncan":"Cancel",
+    "btnadd":"Add",
+    "btnedit":"Accept",
+    "--------TRADUCIONES-BUTTON FROM-COMP-----------":"------BUTTON FROM-COMP--------",
+    "lblmesgsend":"Message to Send",
+    "lblbtntext":"Button Text",
+    "--------TRADUCIONES-GRAFICO FROM-COMP-----------":"------GRAFICO FROM-COMP--------",
+    "lblunit":"Unit",
+    "lblback":"Chart Back Time (mins)",
+    "lbldec":"Decimal Places",
+    "lblstyleline":"Style Series",
+    
+    "--------TRADUCIONES-SIDEBAR-----------":"------SIDEBAR--------", 
+    "sidebar":{
+        "dashboard":"dashboard",
+        "devices":"devices",
+        "templates":"templates",
+        "alarms":"alarms",
+        "notifications":"notifications",
+        "profile":"profile",
+        "help":"help"
+    },
+
+    "notifications":{
+
+        "title {selectedDevice}":"Notifications for {selectedDevice}"
+    },
+
+    "devices":{
+
+        "new":{
+            "title":"Add New Device",
+            "name":"Device Name",
+            "id":"Device Id",
+            "template":"Select template",
+             "templateinp":"Plantilla",
+             "btn":"Add Device",
+             "notemplatesbtn":"Create new Template",
+             "notemplatestxt":"You need first create a Template to create a Device",
+             "invalidinp":"There are invalid inputs",
+             "ok {device}":"Device {device} created!"
+        },
+        "list":{
+            "title":"My Devices",
+            "dbsaver":"Change DB Saver",
+            "dbsaverindic":"DB Saver Status",
+            "secret":"A secret for your device to conect to the broker MQTT",
+            "saver":"Saver",
+            "online":"Your device is Online",
+            "offline":"Your device is Offline",
+            "deletemodal {deviceName}":"Are you sure to DELETE '{deviceName}' device?",
+            "hasalarms":"The ALARM-RULES associates will be deleted!"
+        }
+
+    },
+
+    "docs":{
+        "title":"Welcome to our IoT Platafarom",
+        "subtitle":"This Is A Guide About How To Use The Plataform",
+        "pages":"THE PAGES",
+        "dashboard":"In this page you will see reendered the template that you previously created for the SELECTED DEVICE.",
+        "devices":"In devices page you can create a new device and view your created devices. You can configure whether the data send for the device is saved on database or not by changing the SAVER RULE status. In order to create a device you need link it to a TEMPLATE.",
+        "alarms":"By creating an alarm, you will be notified in real time when a given variable of your device breaks the rule that you specified. Is mandatory to set the TRIGGER TIME parameter to preven infinites notifications. This parameter sepcify how much time has to pass before making a new notification.",
+        "templates":"A template is a set of WIDGETS, and each widget is responsable for a individual VARIABLE of your device. In this page you can create templates by configuring the parameters for a set widgets. Basically you hace widgets for show realtime data (Boolean Indicator or Realtime Numberchart) and others for send actions to your device (Button). Also, from this page you will be able to set the FREQUENCY wich the device send data.",
+        "notifications":"This page is just a simple table listing all the historic notifications you recived",
+        "profile":"In the profile page you will see your data entered when you registered. The page allows to you to modified the information and add some other but you must have an email a name and at least one numer phone registered (it must be the PHONE01). You can have up to three number phones and them will be used for the system to notifiy the alarms that you have created",
+        "howtouse":"HOW TO USE CORRECTLY",
+        "howtousetext":"To start, you have to define a template. A template is generic and reusable for several devices. Now you are able to create a device and link it to the template (we are assuming that the device manages the variables you define in the template) If you wanna recive realtime notifications and watching your variables you need to create an alarm."
+
+    },
+
+
+    "--------TRADUCIONES-PROFILE PAGE-----------":"------PROFILE PAGE--------", 
+    "editProfile":"Edit Profile",
+    "inpEmail":"Email Address",
+    "inpFullName":"Full Name",
+    "phone01":"phone Nº 1",
+    "phone02":"phone Nº 2",
+    "phone03":"phone Nº 3",
+    "inpPostalCode":"Postal Code",
+    "city":"City",
+    "country":"Country",
+    "btnSave":"Save",
+    "notif":"Your profile is up to date",
+    "invPC":"Invalid Postal Code",
+    "invPhone":"Invalid Phone Numbers",
+    "empName":"You must have a name",
+    "empEmail":"You must have an email",
+    "empPhone":"The phone Nº 1 cannot be empty"
+}

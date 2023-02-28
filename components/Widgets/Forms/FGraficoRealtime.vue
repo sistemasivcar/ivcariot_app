@@ -4,7 +4,7 @@
       <div class="col-6">
         <base-input
           v-model="config.variableFullName"
-          label="Variable Name"
+          :label="$t('lblvarname')"
           type="text"
           :class="[
             { 'has-danger': !inputs.varFullNameValid },
@@ -16,7 +16,7 @@
       <div class="col-6">
         <base-input
           v-model.number="config.chartTimeAgo"
-          label="Chart Back Time (minutes)"
+          :label="$t('lblback')"
           type="number"
           :class="{ 'has-danger': !inputs.chartTimeAgoValid }"
         ></base-input>
@@ -27,7 +27,7 @@
       <div class="col-6">
         <base-input
           v-model="config.unit"
-          label="Unit"
+          :label="$t('lblunit')"
           :class="{ 'has-danger': !inputs.unitValid }"
           type="text"
         >
@@ -36,8 +36,9 @@
       <div class="col-6">
         <base-input
           v-model.number="config.decimalPlaces"
-          label="Decimal Places"
+          :label="$t('lbldec')"
           type="number"
+          id="decimalPlaces"
         >
         </base-input>
       </div>
@@ -47,16 +48,15 @@
       <div class="col-sm-6">
         <base-input
           v-model="config.variableSendFreq"
-          label="Update interval (mins)"
+          :label="$t('lblsendfreq')"
           type="number"
           :class="{ 'has-danger': !inputs.sendFreqValid }"
         ></base-input>
       </div>
 
       <div class="col-sm-6">
-        <label for="defaultSerieStyle">Style Series</label>
+        <label for="defaultSerieStyle">{{$t('lblstyleline')}}</label>
         <el-select
-          label="Serie Style"
           v-model="config.defaultSeriesType"
           @change="getDefaultSeriesType"
           class="select-info"
@@ -101,7 +101,8 @@
           @click="addWidget"
           class="mt-3"
           size="lg"
-          >{{ textButton }}</base-button
+          >{{ textButton }}
+          <i class="fa fa-plus"></i></base-button
         >
       </div>
 
@@ -111,7 +112,7 @@
           @click="cancel"
           class="mt-3 pull-right"
           size="lg"
-          >Cancel</base-button
+          >{{$t('btncan')}}</base-button
         >
       </div>
     </div>
@@ -199,7 +200,7 @@ export default {
   },
   computed: {
     textButton() {
-      return this.isEdition ? "Accept" : "Add";
+      return this.isEdition ? `${this.$t('btnedit')}` : `${this.$t('btnadd')}`;
     },
     getTypeButton() {
       return this.isEdition ? "success" : "info";
@@ -211,8 +212,10 @@ export default {
   watch: {
     config: {
       immediate: true,
-      deep: true,
+      deep: true, // to watch nested properties 
+      // flush:'post',
       handler() {
+        
 
         this.watchInputs();
         this.$emit("numberchart-config", this.config);

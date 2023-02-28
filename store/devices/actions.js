@@ -13,8 +13,9 @@ const actions = {
                 const devices = response.data.data;
 
                 if (devices.length == 0) {
-                    context.commit("setSelectedDevice", {});
+                    context.commit("setSelectedDevice", null);
                     $nuxt.$emit('selectedDeviceIndex', null);
+
                 }
                 // SELECTOR DEVICE COMPONENT
                 devices.forEach((device, index) => {

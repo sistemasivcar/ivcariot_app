@@ -7,19 +7,19 @@
       <div class="block block-three"></div>
       <div class="block block-four"></div>
     </div>
-    <h5 slot="header" class="title">Edit Profile</h5>
+    <h5 slot="header" class="title">{{$t('editProfile')}}</h5>
 
     <form @submit.prevent="updateProfile">
       <div class="row">
         <div class="col-md-6">
-          <base-input type="email" label="*Email address" v-model="user.email">
+          <base-input type="email" :label="$t('inpEmail')" v-model="user.email">
           </base-input>
         </div>
 
         <div class="col-md-6">
           <base-input
             type="text"
-            label="*Full Name"
+            :label="$t('inpFullName')"
             placeholder="Full Name"
             v-model="user.name"
           >
@@ -31,7 +31,7 @@
         <div class="col-md-4">
           <base-input
             type="text"
-            label="*Phone 01"
+            :label="$t('phone01')"
             placeholder="Phone"
             v-model="user.phone01"
           >
@@ -40,7 +40,7 @@
         <div class="col-md-4">
           <base-input
             type="text"
-            label="Phone 02"
+            :label="$t('phone02')"
             placeholder="Enter your second phone number"
             v-model="user.phone02"
           >
@@ -49,7 +49,7 @@
         <div class="col-md-4">
           <base-input
             type="text"
-            label="Phone 03"
+            :label="$t('phone03')"
             placeholder="Enter your third phone number"
             v-model="user.phone03"
           >
@@ -62,7 +62,7 @@
       <div class="row">
         <div class="col-md-4">
           <base-input
-            label="Postal Code"
+            :label="$t('inpPostalCode')"
             placeholder="ZIP Code"
             v-model="user.postalCode"
           >
@@ -71,7 +71,7 @@
         <div class="col-md-4">
           <base-input
             type="text"
-            label="City"
+            :label="$t('city')"
             placeholder="Cordoba"
             v-model="user.city"
           >
@@ -80,7 +80,7 @@
         <div class="col-md-4">
           <base-input
             type="text"
-            label="Country"
+            :label="$t('country')"
             placeholder="Argentina"
             v-model="user.country"
           >
@@ -92,8 +92,9 @@
         <div class="col-md-12"></div>
       </div>
 
-      <base-button native-type="submit" type="info" class="btn-fill mt-3">
-        Save
+      <base-button native-type="submit" type="info" class="btn-fill mt-3" :loading="isLoading">
+        {{$t('btnSave')}}
+        <i class="tim-icons icon-check-2 ml-2"></i>
       </base-button>
     </form>
   </card>
@@ -103,6 +104,7 @@ export default {
   middleware: "authtenticated",
   data() {
     return {
+      isLoading:false,
       user: {
         email: "",
         name: "",
@@ -134,11 +136,12 @@ export default {
     },
     async updateProfile() {
       try {
+        this.isLoading=true;
         if (!this.user.phone01) {
           this.$notify({
             type: "warning",
             icon: "tim-icons icon-alert-circle-exc",
-            message: "You must have a valid Phone01"
+            message: `${this.$t('empPhone')}` 
           });
           return;
         }
@@ -147,7 +150,7 @@ export default {
           this.$notify({
             type: "warning",
             icon: "tim-icons icon-alert-circle-exc",
-            message: "You must have an email"
+            message: `${this.$t('empEmail')}` 
           });
           return;
         }
@@ -156,7 +159,7 @@ export default {
           this.$notify({
             type: "warning",
             icon: "tim-icons icon-alert-circle-exc",
-            message: "You must have a name"
+            message: `${this.$t('empName')}` 
           });
           return;
         }
@@ -172,7 +175,7 @@ export default {
           this.$notify({
             type: "warning",
             icon: "tim-icons icon-alert-circle-exc",
-            message: "Number phone invalid"
+            message: `${this.$t('invPhone')}` 
           });
           return;
         }
@@ -184,7 +187,7 @@ export default {
           this.$notify({
             type: "warning",
             icon: "tim-icons icon-alert-circle-exc",
-            message: "Invalid Postal Code "
+            message: `${this.$t('invPC')}` 
           });
           return;
         }
@@ -208,7 +211,7 @@ export default {
         this.$notify({
           type: "success",
           icon: "tim-icons icon-check-2",
-          message: `Your profile is up to date`
+          message: `${this.$t('notif')}` 
         });
       } catch (e) {
         await this.getUser();
@@ -218,6 +221,9 @@ export default {
           icon: "tim-icons icon-alert-circle-exc",
           message: e
         });
+      }
+      finally{
+        this.isLoading=false;
       }
     },
     async getUser() {

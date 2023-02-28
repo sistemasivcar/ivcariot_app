@@ -48,7 +48,7 @@ router.post('/', checkAuth, asyncMiddleware(async (req, res) => {
         console.log('ALARM-RULE CREATED'.green);
         res.status(200).json({ status: 'success' })
     } else {
-        console.log('error creatin rule')
+        throw new Error('Error creating alarm rule')
     }
 }));
 

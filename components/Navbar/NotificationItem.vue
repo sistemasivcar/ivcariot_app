@@ -4,10 +4,10 @@
     @click="setNotifReaded()">
       <b style="color:orangered">{{ unixToDate(time) }}</b>
       <div style="margin-left:50px">
-        <b>Device: </b> {{ getNameDevice(dId) }} <br />
-        <b>Variable: </b> {{ varName.toUpperCase() }} <br />
-        <b>With: </b> {{ value }}
-        <b>Condition: </b> {{ condition }} {{ valueToMatch }}<br />
+        <b>{{ $t('dashboardnavbar.notifications.notif.device') }}: </b> {{ getNameDevice(dId) }} <br />
+        <b>{{ $t('dashboardnavbar.notifications.notif.variable') }}: </b> {{ varName.toUpperCase() }} <br />
+        <b>{{ $t('dashboardnavbar.notifications.notif.with') }}:</b> {{ value }}
+        <b>{{ $t('dashboardnavbar.notifications.notif.condition') }}: </b> {{ condition }} {{ valueToMatch }}<br />
       </div>
     </a>
   </li>

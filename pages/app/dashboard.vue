@@ -14,6 +14,7 @@
       <div
         v-for="(widget) in widgets"
         :key="widget.variable"
+        class="col-12"
         :class="[widget.column]"
       >
       
@@ -42,6 +43,7 @@ import IotButton from "../../components/Widgets/IotButton.vue";
 import IotSwitch from "../../components/Widgets/IotSwitch.vue";
 
 export default {
+
   components: { 
     Json,
     IotIndicator,

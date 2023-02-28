@@ -4,7 +4,10 @@ export default function ({ store, redirect }) {
     store.dispatch("auth/autologin");
 
     if (store.getters['auth/isAuth']) {
-        console.log('esta auth')
-        return redirect("/app/dashboard");
+        if (store.state.locale.locale == 'es') {
+            
+            return redirect(`/app/dashboard`);
+        }
+        return redirect(`/en/app/dashboard`);
     }
 }

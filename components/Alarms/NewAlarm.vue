@@ -1,9 +1,9 @@
 <template>
   <div>
     <card v-if="!hasDevices">
-      You need first create a device to create an Alarm
+      {{$t('nohasdev')}}
       <base-button :link="true" @click="godevices" type="info"
-        >Create new Device</base-button
+        >{{$t('newdev')}}</base-button
       >
     </card>
 
@@ -12,24 +12,23 @@
     </card>
 
     <div class="row" v-else-if="hasDevices && hasSelectedDevice !== null">
-      <div class="col-sm-12">
+      <div class="col-12 col-md-12">
         <card>
           <div slot="header">
             <h4 class="card-title">
-              Create new Alarm Rule
+              {{$t('newalarm')}}
             </h4>
             <p class="card-category inline">
-              the new alarm rule will be added for
-              {{ hasSelectedDevice.name.toUpperCase() }} device
+              {{$t('newalarmsub {selectedDevice}',{selectedDevice:hasSelectedDevice.name})}}
             </p>
           </div>
 
           <div class="row">
-            <div class="col-4">
+            <div class="col-12 col-md-4">
               <el-select
                 required
                 class="select-info mb-2"
-                placeholder="Select Variable"
+                :placeholder="$t('selvar')"
                 v-model="selectedWidgetIndex"
                 style="margin-top: 25px; width:100%"
               >
@@ -43,11 +42,11 @@
               </el-select>
             </div>
 
-            <div class="col-4">
+            <div class="col-12 col-md-4">
               <el-select
                 required
                 class="select-warning mb-2"
-                placeholder="Select Condition"
+                :placeholder="$t('selcondition')"
                 v-model="newRule.condition"
                 style="margin-top: 25px; width:100%"
               >
@@ -60,9 +59,9 @@
               </el-select>
             </div>
 
-            <div class="col-4">
+            <div class="col-12 col-md-4">
               <base-input
-                label="Value"
+                :label="$t('inpvalue')"
                 v-model="newRule.value"
                 type="number"
               ></base-input>
@@ -70,20 +69,20 @@
           </div>
 
           <div class="row">
-            <div class="col-6">
+            <div class="col-12 col-md-6">
               <base-input
-                label="Trigger Time (minutes)"
+                :label="$t('inptriggertime')"
                 v-model="newRule.triggerTime"
                 type="number"
-                placeholder="How much time should pass to notify again?"
+                :placeholder="$t('palcetriggertime')"
               ></base-input>
             </div>
 
-            <div class="col-6">
+            <div class="col-12 col-md-6">
               <base-input
-                label="Message to Send"
+                :label="$t('lblmesgsend')"
                 v-model="newRule.message"
-                placeholder="What message you wanna recived?"
+                :placeholder="$t('inpmesg')"
                 type="text"
               ></base-input>
             </div>
@@ -97,8 +96,10 @@
                 type="info"
                 class="mb-3"
                 size="lg"
+                :loading="addLoading"
               >
-                Add Alarm Rule
+                {{$t('btnaddalarm')}}
+                <i class="tim-icons icon-bell-55 ml-2"></i>
               </base-button>
             </div>
           </div>
@@ -117,6 +118,7 @@ export default {
   },
   data() {
     return {
+      addLoading:false,
       newRule: {
         dId: null,
         status: null,
@@ -242,12 +244,13 @@ export default {
       };
 
       try {
+        this.addLoading=true;
         await this.$store.dispatch("devices/crateAlarmRule", newRule);
         await this.$store.dispatch("devices/fetchDevices");
         this.$notify({
           type: "success",
           icon: "tim-icons icon-check-2",
-          message: `Alarm rule created!`
+          message: `${this.$t('notifalarm')}`
         });
         this.emptyInputs()
       } catch (e) {
@@ -256,6 +259,8 @@ export default {
           icon: "tim-icons icon-alert-circle-exc",
           message: e
         });
+      }finally{
+        this.addLoading=false;
       }
     },
     godevices() {

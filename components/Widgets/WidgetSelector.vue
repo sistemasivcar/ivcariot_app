@@ -4,19 +4,19 @@
       @change="handleChange"
       class="select-info mb-3"
       v-model="widgetSelected"
-      placeholder="Select Widget to Add"
+      :placeholder="$t('selectwidget')"
       style="width: 100%;"
     >
       <el-option
         class="text-dark"
         value="numberchart"
-        label="Realtime number chart"
+        :label="$t('widchart')"
       >
       </el-option>
-      <el-option class="text-dark" value="indicator" label="Indicator">
+      <el-option class="text-dark" value="indicator" :label="$t('widindicator')">
       </el-option>
       <el-option class="text-dark" value="switch" label="Switch "></el-option>
-      <el-option class="text-dark" value="button" label="Button "></el-option>
+      <el-option class="text-dark" value="button" :label="$t('widbutton')"></el-option>
     </el-select>
   
 </template>

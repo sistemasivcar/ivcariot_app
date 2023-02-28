@@ -4,7 +4,7 @@
     <div v-else-if="devices.length > 0" class="row">
       <card>
         <template slot="header">
-          <h4 class="card-title">My Devices</h4>
+          <h4 class="card-title">{{$t('devices.list.title')}}</h4>
         </template>
 
         <el-table :data="devices">
@@ -21,10 +21,10 @@
           <el-table-column label="Password">
             <template slot-scope="{ row }">
               <el-tooltip
-                content="A secret for your device to conect to the broker MQTT"
+                :content="$t('devices.list.secret')"
                 :open-delay="300"
                 placement="top"
-                ><i class="fas fa-info" style="margin-right:5px"></i>
+                ><i class="tim-icons icon-key-25" style="margin-right:5px"></i>
               </el-tooltip>
 
               {{ row.whpassword }}
@@ -32,19 +32,46 @@
           </el-table-column>
 
           <el-table-column
-            prop="alarmRules.length"
-            label="Alarm Rules"
-          ></el-table-column>
-
-          <el-table-column
             prop="templateName"
             label="Template"
           ></el-table-column>
 
-          <el-table-column label="Actions">
-            <div slot-scope="{ row, $index }">
+          <el-table-column
+            label="Status"
+          ><template slot-scope="{ row }">
               <el-tooltip
-                content="Saver Status Indicator"
+                :content="row.status ? $t('devices.list.online') : $t('devices.list.offline')"
+                :open-delay="300"
+                placement="top"
+                ><i class="fa fa-circle" :class="{'text-danger':!row.status, 'text-success':row.status}"></i> 
+              </el-tooltip>
+            </template>
+          </el-table-column>
+
+
+          <el-table-column header-align="right" label="Actions" >
+            <div slot-scope="{ row, $index }" class="text-right table-actions">
+            
+              <el-tooltip
+                :content="$t('tooldelete')"
+                effect="light"
+                :open-delay="300"
+                class="mb-1"
+                placement="top"
+              >
+                <base-button
+                  type="danger"
+                  icon
+                  size="sm"
+                  class="btn-link"
+                  @click="showModalDeleteDevice(row)"
+                >
+                  <i class="tim-icons icon-simple-remove "></i>
+                </base-button>
+              </el-tooltip>
+              
+              <el-tooltip
+                :content="$t('devices.list.dbsaverindic')"
                 style="margin-right:10px"
               >
                 <i
@@ -55,9 +82,9 @@
                   }"
                 ></i>
               </el-tooltip>
-
+              
               <el-tooltip
-                content="DB Saver"
+                :content="$t('devices.list.dbsaver')"
                 effect="light"
                 :open-delay="300"
                 placement="top"
@@ -73,24 +100,9 @@
                 </base-switch>
               </el-tooltip>
 
-              <el-tooltip
-                content="Delete"
-                effect="light"
-                :open-delay="300"
-                placement="top"
-              >
-                <base-button
-                  type="danger"
-                  icon
-                  size="sm"
-                  class="btn-link"
-                  @click="showModalDeleteDevice(row)"
-                >
-                  <i class="tim-icons icon-simple-remove "></i>
-                </base-button>
-              </el-tooltip>
             </div>
           </el-table-column>
+
         </el-table>
       </card>
     </div>
@@ -100,13 +112,9 @@
         <h5 class="modal-title" id="exampleModalLabel">Atention!</h5>
       </template>
       <div>
-        Are you sure to
-        <a class="text-danger">
-          DELETE "{{ deviceToDelete.name.toUpperCase() }}"</a
-        >
-        device?
+       {{ $t('devices.list.deletemodal {deviceName}', {deviceName:deviceToDelete.name.toUpperCase()}) }}
         <div v-if="hasAlarmRules">
-          The <a class="text-danger">ALARM-RULES</a> associates will be deleted
+           {{ $t('devices.list.hasalarms')}}
         </div>
       </div>
       <template slot="footer">
@@ -179,7 +187,7 @@ export default {
         this.$notify({
           type: "success",
           icon: "tim-icons icon-check-2",
-          message: `Saver rule ${device.saverRule.status ? "OFF" : "ON"}`
+          message: `${device.saverRule.status ? this.$t('devices.list.saver') + " OFF" : this.$t('devices.list.saver')+" ON"}`
         });
       } catch (e) {
         this.$notify({
@@ -206,6 +214,9 @@ export default {
     devices() {
       return this.$store.getters["devices/getDevices"];
     },
+    checkStatus(device){
+
+    }
     
   },
   created() {}

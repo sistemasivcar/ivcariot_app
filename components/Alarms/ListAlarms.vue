@@ -2,8 +2,8 @@
   <div class="row">
     <div class="col-sm-12">
       <card v-if="hasSelectedDevice!==null"
-      title="Alarm Rules"
-      :subTitle="'The list of alarm rules belonging to ' + hasSelectedDevice.name.toUpperCase() +' device'">
+      :title="$t('listalarms')"
+      :subTitle="$t('sublistalarms {selectedDevice}',{selectedDevice:hasSelectedDevice.name.toUpperCase()})">
         
         <el-table v-if="hasAlarmRules" :data="alarmRules">
           <el-table-column min-width="50" label="#" align="center">
@@ -32,7 +32,7 @@
 
           <el-table-column header-align="right" align="right" label="Actions">
             <div slot-scope="{ row, $index }" class="text-right table-actions">
-              <el-tooltip content="Delete" effect="light" placement="top">
+              <el-tooltip :content="$t('tooldelete')" effect="light" placement="top">
                 <base-button
                   @click="deleteAlarmRule(row)"
                   type="danger"
@@ -44,7 +44,7 @@
                 </base-button>
               </el-tooltip>
 
-              <el-tooltip content="Rule Status" style="margin-left: 20px;">
+              <el-tooltip :content="$t('toolstatus')" style="margin-left: 20px;">
                 <i
                   class="fas fa-exclamation-triangle"
                   :class="{ 'text-warning': row.status }"
@@ -54,7 +54,7 @@
               <!-- no ato row.status al v model porque al cambiar de status cambiaria directo sobre store lo que daría error en 
                       cambio uso el value, al accionar el switch no cambiará el objeto, pero podré cambiar el valor en la función -->
               <el-tooltip
-                content="Change Rule Status"
+              :content="$t('toolswitch')"
                 style="margin-left: 5px;"
               >
                 <base-switch
@@ -74,7 +74,7 @@
           v-else-if="!hasAlarmRules && hasDevices && hasSelectedDevice"
           class="card-title"
         >
-          No Alarm Rules
+          
         </h4>
       </card>
     </div>
@@ -84,13 +84,12 @@
 <script>
 import { Table, TableColumn } from "element-ui";
 import BaseSwitch from "../../components/BaseSwitch.vue";
-import { BaseSwitch2 } from "@/components";
+// import { BaseSwitch2 } from "@/components";
 import Modal from "../../components/Modal.vue";
 
 export default {
   components: {
     BaseSwitch,
-    BaseSwitch2,
     Modal,
     [Table.name]: Table,
     [TableColumn.name]: TableColumn
@@ -121,7 +120,7 @@ export default {
           this.$notify({
             type: "success",
             icon: "tim-icons icon-check-2",
-            message: `Rule ${newStatus == true ? "ON" : "OFF"}!`
+            message: `${this.$t('notifupdaterule')} ${newStatus == true ? "ON" : "OFF"}!`
           });
         }
       } catch (e) {

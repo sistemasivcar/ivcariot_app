@@ -16,60 +16,18 @@
           <span class="navbar-toggler-bar bar3"></span>
         </button>
       </div>
-      <a class="navbar-brand ml-xl-3 ml-5" href="#pablo">{{ routeName }}</a>
+      <a  @click="toggleSidebar" class="navbar-brand ml-xl-3 ml-5" href="#">{{ routeName }}</a>
     </div>
 
     <ul class="navbar-nav" :class="$rtl.isRTL ? 'mr-auto' : 'ml-auto'">
-      <el-select
-        class="select-info"
-        placeholder="Select Device"
-        @change="selectDevice()"
-        v-model="selectedDeviceIndex"
-      >
-        <el-option
-          v-for="(device, index) in devices"
-          :value="index"
-          :label="device.name.toUpperCase()"
-          :key="device._id"
-        >
-        </el-option>
-      </el-select>
 
-      <base-dropdown
-        tag="li"
-        :menu-on-right="!$rtl.isRTL"
-        title-tag="a"
-        title-classes="nav-link"
-        class="nav-item"
-      >
-        <template slot="title">
-          <div
-            class="notification d-none d-lg-block d-xl-block"
-            v-if="notifs.length > 0"
-          ></div>
-          <i class="tim-icons icon-bell-55"></i>
-          <p class="d-lg-none">New Notifications</p>
-        </template>
-        <div v-if="notifs.length > 0">
-          <notification-item
-            v-for="notif in notifs"
-            :key="notif._id"
-            :condition="notif.condition"
-            :dId="notif.dId"
-            :time="notif.createdTime"
-            :idNotif="notif._id"
-            :valueToMatch="notif.value"
-            :value="notif.payload.value"
-            :varName="notif.variableFullName"
-            @setNotifReaded="setReaded"
-          >
-          </notification-item>
-        </div>
-        <li v-else>
-          <a href="#" class="nav-item dropdown-item"> No New Notifications</a>
-        </li>
-      </base-dropdown>
+      <DeviceSelector></DeviceSelector>
 
+      <LanguajeSwitcher></LanguajeSwitcher>
+
+      <NotificationsList></NotificationsList>
+
+      <!-- USER -->
       <base-dropdown
         tag="li"
         :menu-on-right="!$rtl.isRTL"
@@ -81,21 +39,28 @@
         <template slot="title">
           <i class="tim-icons icon-single-02"></i>
           <b class="caret d-none d-lg-block d-xl-block"></b>
-          <p class="d-lg-none" @click="logout">Log out</p>
+          <p class="d-lg-none"></p>
         </template>
         <li class="nav-link">
-          <nuxt-link class="nav-item dropdown-item" to="/app/profile"
-            >Profile</nuxt-link
+          <nuxt-link class="nav-item dropdown-item" :to="`${locale}/app/profile`"
+            >{{$t('dashboardnavbar.user.profile')}}</nuxt-link
           >
         </li>
         <li class="nav-link">
-          <a href="#" class="nav-item dropdown-item">Settings</a>
+          <a href="#" class="nav-item dropdown-item">{{$t('dashboardnavbar.user.settings')}}</a>
+        </li>
+        <li class="nav-link">
+          <nuxt-link class="nav-item dropdown-item" :to="`${locale}/app/docs`"
+            >{{$t('dashboardnavbar.user.help')}}</nuxt-link
+          >
         </li>
         <div class="dropdown-divider"></div>
         <li class="nav-link">
-          <a @click="logout()" class="nav-item dropdown-item">Log out</a>
+          <a @click="logout()" class="nav-item dropdown-item">{{$t('dashboardnavbar.user.logout')}}</a>
         </li>
       </base-dropdown>
+
+
     </ul>
   </base-nav>
 </template>
@@ -103,34 +68,34 @@
 import { CollapseTransition } from "vue2-transitions";
 import { BaseNav } from "@/components";
 import { Select, Option } from "element-ui";
-import NotificationItem from "../Navbar/NotificationItem.vue";
+import DeviceSelector from "../Navbar/DeviceSelector.vue";
+import NotificationsList from "../Navbar/NotificationsList.vue";
+import LanguajeSwitcher from "../Navbar/LanguajeSwitcher.vue";
+
 export default {
   components: {
     CollapseTransition,
     BaseNav,
-    NotificationItem,
     [Select.name]: Select,
-    [Option.name]: Option
-  },
+    [Option.name]: Option,
+    DeviceSelector,
+    NotificationsList,
+    LanguajeSwitcher
+},
   data() {
     return {
       activeNotifications: false,
       showMenu: false,
       searchModalVisible: false,
       searchQuery: "",
-      selectedDeviceIndex: null
+      
     };
   },
-  async mounted() {
-    this.$nuxt.$on("selectedDeviceIndex", this.setSelectedDeviceIndex);
-    this.getDevices();
-  },
   computed: {
-    notifs() {
-      return this.$store.getters["notif/getUnrededNotifications"];
-    },
-    devices() {
-      return this.$store.getters["devices/getDevices"];
+    locale() {
+      const locale = this.$store.state.locale.locale;
+      if (locale == 'es') return '';
+      return this.$store.state.locale.locale;
     },
 
     routeName() {
@@ -139,51 +104,26 @@ export default {
       if (parts == ",") {
         return "Dashboard";
       }
+      
+      if (parts[1] == 'en') {
+        const page=parts.splice(3)
+      return page[0];
+      }
 
-      const primerosDos=parts.splice(1,2)
-      return primerosDos.map(p => this.capitalizeFirstLetter(p)).join(" ");
+      const page=parts.splice(2)
+      return page[0];
     },
     isRTL() {
       return this.$rtl.isRTL;
     }
   },
 
-  methods: {
-    async setReaded(notifId) {
-      try {
-        await this.$store.dispatch("notif/setReaded", notifId);
-        await this.$store.dispatch('notif/fetchNotifications');
-      } catch (e) {
-        console.log(e)
-      }
-    },
-    async getDevices() {
-      try {
-        await this.$store.dispatch("devices/fetchDevices");
-        await this.$store.dispatch("notif/fetchNotificationsForDevice",1);
-      } catch (e) {
-        console.log(e)
-      }
-    },
-    async selectDevice() {
-      try {
-        const devices = this.$store.getters["devices/getDevices"];
-        const deviceSelected = devices[this.selectedDeviceIndex];
-        await this.$store.dispatch("devices/updateSelected", deviceSelected);
-        await this.$store.dispatch("devices/fetchDevices");
-        await this.$store.dispatch("notif/fetchNotificationsForDevice",1);
-      } catch (e) {
-        console.log(e);
-      }
-    },
-    setSelectedDeviceIndex(device) {
-      this.selectedDeviceIndex = device;
-    },
-
+  methods: {   
     logout() {
       console.log("salir");
       this.$store.dispatch("auth/logout");
     },
+    
     capitalizeFirstLetter(string) {
       if (!string || typeof string !== "string") {
         return "";
@@ -200,9 +140,6 @@ export default {
       this.showMenu = !this.showMenu;
     }
   },
-  beforeDestroy() {
-    this.$nuxt.$off("selectedDeviceIndex");
-  }
 };
 </script>
 <style scoped>

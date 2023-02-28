@@ -35,7 +35,10 @@ export default {
     round: Boolean,
     icon: Boolean,
     block: Boolean,
-    loading: Boolean,
+    loading: {
+      type:Boolean,
+      default:false
+    },
     wide: Boolean,
     disabled: Boolean,
     type: {

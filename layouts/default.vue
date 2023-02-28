@@ -10,27 +10,28 @@
       <template slot-scope="" slot="links">
         <sidebar-item
           :link="{
-            name: 'Dashboard',
+
+            name: `${$t('sidebar.dashboard')}`,
             icon: 'tim-icons tim-icons icon-laptop',
-            path: '/app/dashboard'
+            path: `${defaultLocal}/app/dashboard`
           }"
         >
         </sidebar-item>
 
         <sidebar-item
           :link="{
-            name: 'Devices',
+            name: `${$t('sidebar.devices')}`,
             icon: 'tim-icons icon-light-3',
-            path: '/app/devices'
+            path: `${defaultLocal}/app/devices`
           }"
         >
         </sidebar-item>
 
         <sidebar-item
           :link="{
-            name: 'Templates',
+            name: `${$t('sidebar.templates')}`,
             icon: 'tim-icons icon-atom',
-            path: '/app/templates'
+            path: `${defaultLocal}/app/templates`
           }"
         >
         </sidebar-item>
@@ -38,9 +39,9 @@
 
         <sidebar-item
           :link="{
-            name: 'Alarms',
+            name: `${$t('sidebar.alarms')}`,
             icon: 'tim-icons icon-bell-55',
-            path: '/app/alarms'
+            path: `${defaultLocal}/app/alarms`
           }"
         >
         </sidebar-item>
@@ -48,32 +49,33 @@
 
                 <sidebar-item
           :link="{
-            name: 'Notifications',
+            name: `${$t('sidebar.notifications')}`,
             icon: 'tim-icons icon-spaceship',
-            path: '/app/notifications'
+            path: `${defaultLocal}/app/notifications`
           }"
         >
         </sidebar-item>
 
         <sidebar-item
           :link="{
-            name: 'Profile',
+            name: `${$t('sidebar.profile')}`,
             icon: 'tim-icons icon-single-02',
-            path: '/app/profile'
+            path: `${defaultLocal}/app/profile`
           }"
         >
         </sidebar-item>
 
           <sidebar-item
           :link="{
-            name: 'Help',
+            name: `${$t('sidebar.help')}`,
             icon: 'tim-icons icon-paper',
-            path: '/app/docs'
+            path: `${defaultLocal}/app/docs`
           }"
         >
         </sidebar-item>
       </template>
     </side-bar>
+    
 
     <sidebar-share :background-color.sync="sidebarBackground"></sidebar-share>
 
@@ -94,6 +96,7 @@
 
 <script>
 /* eslint-disable no-new */
+import i18n from '../locales/i18n.js';
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 import SidebarShare from "@/components/Layout/SidebarSharePlugin";
@@ -112,6 +115,7 @@ function initScrollbar(className) {
   }
 }
 
+
 import DashboardNavbar from "@/components/Layout/DashboardNavbar.vue";
 import ContentFooter from "@/components/Layout/ContentFooter.vue";
 import DashboardContent from "@/components/Layout/Content.vue";
@@ -120,6 +124,9 @@ import SideBar from "../components/SidebarPlugin/SideBar.vue";
 import mqtt from "mqtt";
 
 export default {
+  head () {
+    return this.$nuxtI18nHead()
+  },
   components: {
     DashboardNavbar,
     ContentFooter,
@@ -152,6 +159,11 @@ export default {
   computed: {
     isFullScreenRoute() {
       return this.$route.path === "/maps/full-screen";
+    },
+    defaultLocal() {
+      const locale = this.$store.state.locale.locale;
+      if (locale == 'es') return '';
+      return this.$store.state.locale.locale;
     }
   },
   methods: {
@@ -304,6 +316,7 @@ export default {
 
   },
   async mounted() {
+    console.log(i18n.defaultLocale);
     this.initScrollbar();
     setTimeout(() => {
       this.startMqttClient();

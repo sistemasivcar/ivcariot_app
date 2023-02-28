@@ -2,39 +2,41 @@
   <div class="row">
     <card>
       <div slot="header">
-        <h4 class="card-title">Add new Device</h4>
+        <h4 class="card-title">{{$t('devices.new.title')}}</h4>
       </div>
 
       <div class="row">
-        <div class="col-4">
+        <div class="col-12 col-md-4">
           <base-input
             v-model.trim="deviceName"
-            label="Device Name"
+            :label="$t('devices.new.name')"
             type="text"
+             :class="{'has-danger': !inputs.deviceName}"
             placeholder="Ex: Home, Office..."
           >
           </base-input>
         </div>
 
-        <div class="col-4">
+        <div class="col-12 col-md-4">
           <base-input
             v-model.trim="deviceId"
-            label="Device Id"
+             :class="{'has-danger': !inputs.deviceId}"
+            :label="$t('devices.new.id')"
             type="text"
             placeholder="Ex: 7777-8888"
           >
           </base-input>
         </div>
 
-        <div class="col-4">
+        <div class="col-12 col-md-4">
           <slot name="label">
-            <label> Template </label>
+            <label> {{$t('devices.new.templateinp')}} </label>
           </slot>
 
           <el-select
             value="1"
             v-model="templateSelectedIndex"
-            placeholder="Select Template"
+            :placeholder="$t('devices.new.template')"
             class="select-info"
             style="width:100%"
           >
@@ -50,19 +52,19 @@
       </div>
 
       <div class="row pull-right">
-        <div class="col-12">
-          <base-button type="info" @click="newDevice()" class="mb-3" size="lg"
-            >Add</base-button
+        <div class="col-12 col-md-12 mt-2">
+          <base-button type="info" @click="newDevice()" :loading="addLoading" class="mb-3" size="lg"
+            >{{$t('devices.new.btn')}} <i class="fa fa-plus ml-2"></i></base-button
           >
         </div>
       </div>
       <div v-if="!hasTemplates">
-        You need first create a Template to create a Device
-        <base-button
+        {{$t('devices.new.notemplatestxt')}}
+        <BaseButton
           :link="true"
           @click="$router.push('/app/templates')"
           type="info"
-          >Create new Template</base-button
+          >{{$t('devices.new.notemplatesbtn')}}</BaseButton
         >
       </div>
     </card>
@@ -70,26 +72,29 @@
 </template>
 
 <script>
-import { Select, Option } from "element-ui";
+import { Select, Option} from 'element-ui';
+import BaseButton from '../BaseButton.vue';
 export default {
   components: {
     [Option.name]: Option,
-    [Select.name]: Select
-  },
+    [Select.name]: Select,
+    BaseButton
+},
   data() {
     return {
       deviceName: null,
       deviceId: null,
+      addLoading:false,
       templates: [],
+      inputs: {
+        deviceName: true,
+        deviceId:true,
+      },
       templateSelectedIndex: null
     };
   },
   methods: {
-    clearInputs() {
-      this.deviceName = "";
-      this.deviceId = "";
-      this.templateSelectedIndex = null;
-    },
+
     async getDevices() {
       try {
         await this.$store.dispatch("devices/fetchDevices");
@@ -122,46 +127,40 @@ export default {
         });
       }
     },
+    validateForm() {
+      if (!this.deviceName || !this.deviceId || this.templateSelectedIndex == null) {
+        this.isValidForm = false
+        this.$notify({
+          type: "warning",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: `${this.$t('devices.new.invalidinp')}`
+        });
+        return
+      }
+      this.isValidForm = true;
+    },
+
     async newDevice() {
-      if (!this.deviceName) {
-        this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: " Device Name is Empty"
-        });
-        return;
-      }
-      if (!this.deviceId) {
-        this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: " Device ID is Empty"
-        });
-        return;
-      }
-      if (this.templateSelectedIndex === null) {
-        this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: " Please, Select a Template"
-        });
-        return;
-      }
+      this.validateForm();
+      if (!this.isValidForm) return;
+
       try {
+        this.addLoading=true;
         const templateSelected = this.templates[this.templateSelectedIndex];
         const newDevice = {
           name: this.deviceName,
           dId: this.deviceId,
+          status:false,
           templateId: templateSelected._id,
           templateName: templateSelected.name
         };
         await this.$store.dispatch("devices/newDevice", newDevice);
         await this.$store.dispatch("devices/fetchDevices");
-        this.clearInputs();
         this.$notify({
           type: "success",
           icon: "tim-icons icon-check-2",
-          message: `Device "${newDevice.name.toUpperCase()}" created!`
+          //message: `Device "${newDevice.name.toUpperCase()}" created!`
+          message:`${this.$t('devices.new.ok {device}',{device:newDevice.name.toUpperCase()})}`
         });
       } catch (e) {
         this.$notify({
@@ -169,6 +168,8 @@ export default {
           icon: "tim-icons icon-alert-circle-exc",
           message: e
         });
+      }finally{
+        this.addLoading=false;
       }
     }
   },
@@ -176,6 +177,26 @@ export default {
     hasTemplates() {
       return this.templates.length > 0;
     }
+  },
+  watch: {
+
+    deviceName(val) {
+      if (!val) {
+        this.inputs.deviceName = false;
+      } else {
+        this.inputs.deviceName = true;
+      }
+    },
+    deviceId(val) {
+      if (!val) {
+         this.inputs.deviceId = false;
+      } else {
+        this.inputs.deviceId = true;
+      }
+    }
+
+
+    
   },
     created() {
         this.getTemplates();

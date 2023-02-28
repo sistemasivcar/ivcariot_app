@@ -1,3 +1,5 @@
+import i18n from './locales/i18n.js'
+
 export default {
   ssr: false,
   /*
@@ -53,8 +55,10 @@ export default {
     '@nuxtjs/pwa',
     '@nuxtjs/axios',
     'nuxt-highcharts',
+    '@nuxtjs/i18n',
   ],
 
+  i18n,
 
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)

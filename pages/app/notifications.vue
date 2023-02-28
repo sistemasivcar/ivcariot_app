@@ -3,7 +3,7 @@
     <card>
       <template slot="header">
         <h4 class="card-title" v-if="deviceSelected">
-          Notifications for Device: <strong> {{ deviceSelected.name }}</strong>
+          {{ $t('notifications.title {selectedDevice}', {selectedDevice:deviceSelected.name},) }}
         </h4>
       </template>
 

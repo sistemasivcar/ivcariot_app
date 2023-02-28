@@ -1,3 +1,4 @@
+
 <template>
   <div>
     <!-- CREATING TEMPLATE -->
@@ -5,39 +6,39 @@
       <card>
         <template slot="header">
           <div class="row">
-            <div class="col-6">
+            <div class="col-12 col-md-6">
               <h4 class="card-title" v-if="!selectedWidgetName">
-                Create Template
+                {{$t('newTitle')}}
               </h4>
               <p class="card-category" v-if="!selectedWidgetName">
-                Add a collection of widgets to create a template
+                {{$t('newsubtitle')}}
               </p>
 
               <h4 class="card-title" v-else>
                 {{
                   this.isEdition
-                    ? "Edit Widget Configuration Parameters"
-                    : "Configure New Widget Parameters"
+                    ? `${$t('edittitle')}`
+                    : `${$t('confwidgtitle')}`
                 }}
               </h4>
                <p class="card-category" v-if="indexToAdd == null && selectedWidgetName && !isEdition">
-                The widget will be pushed at the final position
+                {{$t('addwidget')}}
               </p>
               <p class="card-category text-danger" v-if="indexToAdd !== null">
-                To add next to the widget number {{ indexToAdd }}
+                {{$t('addwidgetat {indexToAdd}', {indexToAdd})}}
               </p>
             </div>
-            <div class="col-6">
-              <h4 class="card-title" v-if="selectedWidgetName">
-                Widget Preview
-              </h4>
+            <div class="col-12 col-md-6">
+              <!-- <h4 class="card-title" v-if="selectedWidgetName">
+                {{$t('widgprev')}}
+              </h4> -->
             </div>
           </div>
         </template>
 
         <template name="card-body">
           <div class="row">
-            <div class="col-6">
+            <div class="col-12 col-md-6">
           
                 <!-- WIDGET SELECTOR -->
               <WidgetSelector
@@ -76,7 +77,11 @@
             </div>
 
             <!-- WIDGET PREVIEW -->
-            <div class="col-6">
+            
+            <div class="col-12 col-md-6">
+              <h4 class="card-title" v-if="selectedWidgetName">
+                {{$t('widgprev')}}
+              </h4>
               <IotNumberchart
                 :config="numberchartConfig"
                 v-if="selectedWidgetName === 'numberchart'"
@@ -104,9 +109,11 @@
       <div
         v-for="(widget, index) in widgets"
         :key="widget.variable"
+        class="col-12"
         :class="[widget.column]"
+        ref="widgets"
       >
-        <el-tooltip :open-delay="300" content="Delete" placement="top">
+        <el-tooltip :open-delay="300" :content="$t('tooldelete')" placement="top">
           <i
             aria-hidden="true"
             class="tim-icons icon-trash-simple text-warning option"
@@ -115,7 +122,7 @@
           ></i>
         </el-tooltip>
 
-        <el-tooltip :open-delay="300" content="Edit" placement="top">
+        <el-tooltip :open-delay="300" :content="$t('tooledit')" placement="top">
           <i
             aria-hidden="true"
             class="tim-icons icon-pencil text-warning option ml-2"
@@ -124,7 +131,7 @@
           ></i>
         </el-tooltip>
 
-        <el-tooltip :open-delay="300" content="Add Next" placement="top">
+        <el-tooltip :open-delay="300" :content="$t('tooladdnext')"  placement="top">
           <i
             aria-hidden="true"
             class="tim-icons icon-simple-add text-success option pull-right"
@@ -134,17 +141,14 @@
         </el-tooltip>
 
         <IotNumberchart
-          :ref="'widget_' + index"
           v-if="widget.widgetName === 'numberchart'"
           :config="widget"
         />
         <IotIndicator
-          :ref="'widget_' + index"
           v-if="widget.widgetName === 'indicator'"
           :config="widget"
         />
         <IotButton
-          :ref="'widget_' + index"
           v-if="widget.widgetName === 'button'"
           :config="widget"
         />
@@ -156,22 +160,23 @@
     <div class="row" v-if="widgets.length > 0">
       <card>
         <div slot="header">
-          <h4 class="card-title">Save Template</h4>
+          <h4 class="card-title">{{$t('newtemp')}}</h4>
         </div>
 
         <div class="row">
           <base-input
-            class="col-4"
+            class="col-12 col-md-4"
             v-model="templateName"
-            label="Template Name"
+            :label="$t('temname')"
             type="text"
           >
           </base-input>
 
           <base-input
-            class="col-8"
+            class="col-12 col-md-8"
             v-model="templateDescription"
-            label="Template Description (optional)"
+            :placeholder="$t('tempdescpl')"
+            :label="$t('tempdesc')"
             type="text"
           >
           </base-input>
@@ -188,8 +193,10 @@
               class="mb-3 pull-right"
               size="lg"
               @click="newTemplate()"
+              :loading="addLoadgin"
             >
-              Save Template
+              {{$t('savetemp')}}
+              <i class="tim-icons icon-check-2 ml-2"></i>
             </base-button>
           </div>
         </div>
@@ -200,10 +207,10 @@
 
 <script>
 import Card from "../Cards/Card.vue";
-import FromIndicator from "../Widgets/Forms/IotIndicator.vue";
-import FormButton from "../Widgets/Forms/IotButton.vue";
-import FromNumberchart from "../Widgets/Forms/GraficoRealtime.vue";
-import FromSwitch from "../Widgets/Forms/IotSwitch.vue";
+import FromIndicator from "../Widgets/Forms/FIotIndicator.vue";
+import FormButton from "../Widgets/Forms/FIotButton.vue";
+import FromNumberchart from "../Widgets/Forms/FGraficoRealtime.vue";
+import FromSwitch from "../Widgets/Forms/FIotSwitch.vue";
 import WidgetSelector from "../Widgets/WidgetSelector.vue";
 import BaseInput from "../Inputs/BaseInput.vue";
 import IotIndicator from "../Widgets/IotIndicator.vue";
@@ -212,6 +219,7 @@ import IotButton from "../Widgets/IotButton.vue";
 import IotSwitch from "../Widgets/IotSwitch.vue";
 import BaseButton from "../BaseButton.vue";
 import BaseAlert from "../BaseAlert.vue";
+
 export default {
   components: {
     Card,
@@ -252,7 +260,7 @@ export default {
         variableSendFreq: "5",
         unit: "ºC",
         class: "success",
-        column: "col-6",
+        column: "col-md-6",
         decimalPlaces: 2,
         widgetName: "numberchart",
         icon: "fa-thermometer",
@@ -276,7 +284,7 @@ export default {
         variableSendFreq: "5",
         widgetName: "indicator",
         icon: "fa-home",
-        column: "col-6"
+        column: "col-md-6"
       },
       switchConfig: {
         selectedDevice: {
@@ -288,7 +296,7 @@ export default {
         variableType: "output",
         widgetName: "switch",
         icon: "fa-lightbulb",
-        column: "col-6"
+        column: "col-md-6"
       },
       buttonConfig: {
         selectedDevice: {
@@ -302,9 +310,10 @@ export default {
         widgetName: "button",
         colorButton: "success",
         icon: "fa-home",
-        column: "col-6"
+        column: "col-md-6"
       },
-      oldConfig: {}
+      oldConfig: {},
+      addLoadgin:false,
     };
   },
   computed: {},
@@ -330,11 +339,11 @@ export default {
       this.scrollToTop();
     },
 
-    handleNewWidget({ widgetConfig, isCanceled, isValidForm }) {
+    async handleNewWidget({ widgetConfig, isCanceled, isValidForm }) {
       // INVALID INPUTS
       if (isValidForm === false) {
         this.$notify({
-          message: "Invalid inputs",
+          message: `${this.$t('inpinv')}`,
           type: "warning",
           icon: "tim-icons icon-alert-circle-exc"
         });
@@ -347,20 +356,18 @@ export default {
           // add widget at specific index
           widgetConfig.variable = this.makeid(15);
           widgetConfig.userId = this.$store.getters["auth/getUserId"];
-          console.log(this.indexToAdd);
           const firstHalf = this.widgets.slice(0, this.indexToAdd);
           const secondHalf = this.widgets.slice(this.indexToAdd); // hasta el final
           const newWidget = JSON.parse(JSON.stringify(widgetConfig));
           this.widgets = [...firstHalf, newWidget, ...secondHalf];
-          console.log(firstHalf, secondHalf, this.widgets);
 
           this.$notify({
-            message: `Widget added!`,
+            message: `${this.$t('notifaddwid')}`,
             type: "success",
             icon: "tim-icons icon-check-2"
           });
 
-          this.$refs["dashpreview"].scrollIntoView({
+          this.$refs.widgets[this.indexToAdd-1].scrollIntoView({
             behavior: "smooth"
           });
 
@@ -373,14 +380,19 @@ export default {
         widgetConfig.userId = this.$store.getters["auth/getUserId"];
         this.widgets.push(JSON.parse(JSON.stringify(widgetConfig)));
 
-        this.$refs["dashpreview"].scrollIntoView({
-          behavior: "smooth"
-        });
+        setTimeout(() => {
+          this.$refs.widgets[this.widgets.length-1].scrollIntoView({
+            behavior: "smooth"
+          });
+        }, 200);
+        
         this.$notify({
-          message: `Widget added!`,
+          message: `${this.$t('notifaddwid')}`,
           type: "success",
           icon: "tim-icons icon-check-2"
         });
+
+
         return;
       }
 
@@ -399,7 +411,7 @@ export default {
           JSON.parse(JSON.stringify(this.oldConfig))
         );
         this.$notify({
-          message: `Canceled!`,
+          message: `${this.$t('notifcancel')}`,
           type: "danger",
           icon: "tim-icons icon-check-2"
         });
@@ -414,11 +426,13 @@ export default {
         // delete the widget and replace it for another with the new data
         this.widgets.splice(index, 1, JSON.parse(JSON.stringify(widgetConfig)));
         // voy al elemento editado
-        this.$refs["widget_" + index][0]["$el"].scrollIntoView({
-          behavior: "smooth"
-        });
+        this.$refs.widgets[index].scrollIntoView({behavior: "smooth"});
+        // this.$refs["widget_" + index][0]["$el"].scrollIntoView({
+        //   behavior: "smooth"
+        // });
+
         this.$notify({
-          message: `Widget edited!`,
+          message: `${this.$t('notifeditwid')}`,
           type: "success",
           icon: "tim-icons icon-check-2"
         });
@@ -447,6 +461,7 @@ export default {
     
     async newTemplate() {
       try {
+        this.addLoadgin=true;
         if (!this.templateName) {
           this.$notify({
             message: "Template Name is required",
@@ -480,7 +495,9 @@ export default {
           this.$notify({
             type: "success",
             icon: "tim-icons icon-check-2",
-            message: `Template "${toSend.template.name.toUpperCase()}" created!`
+            // message: `Template "${toSend.template.name.toUpperCase()}" created!`
+            message: `${this.$t('notifnewtemp {templateName}',{templateName: toSend.template.name.toUpperCase()})}`
+            
           });
         }
       } catch (e) {
@@ -490,6 +507,8 @@ export default {
           icon: "tim-icons icon-alert-circle-exc",
           message: "Error creating template"
         });
+      }finally{
+        this.addLoadgin=false;
       }
     },
 

@@ -2,12 +2,12 @@
   <div class="row">
     <card>
       <div slot="header">
-        <h4 class="card-title">My Templates</h4>
+        <h4 class="card-title">{{ $t("listTitle") }}</h4>
       </div>
 
       <div class="row">
         <el-table :data="templates">
-          <el-table-column min-width="50" label="#">
+          <el-table-column min-width="50" label="#" align="center">
             <div class="photo" slot-scope="{ row, $index }">
               {{ $index + 1 }}
             </div>
@@ -28,7 +28,7 @@
           <el-table-column header-align="right" label="Actions">
             <div slot-scope="{ row, $index }" class="text-right table-actions">
               <el-tooltip
-                content="Edit"
+                :content="$t('tooledit')"
                 effect="light"
                 :open-delay="300"
                 placement="top"
@@ -45,7 +45,7 @@
               </el-tooltip>
 
               <el-tooltip
-                content="Delete"
+                :content="$t('tooldelete')"
                 effect="light"
                 :open-delay="300"
                 placement="top"
@@ -71,16 +71,11 @@
         <h5 class="modal-title" id="exampleModalLabel">Atention!</h5>
       </template>
       <div v-if="!templateInUse">
-        Are you sure you wanna
-        <a class="text-danger"
-          >DELETE "{{ templateToDelete.name.toUpperCase() }}"</a
-        >
-        template?
+        {{ $t('templates.list.deletemodal {templateToDelete}',{templateToDelete:templateToDelete.name.toUpperCase()}) }}
       </div>
       <div v-else>
-        <a class="text-danger"
-          >YOU CAN NOT DELETE "{{ templateToDelete.name.toUpperCase() }}" </a
-        >TEMPLATE BECAUSE IT IS BEING USED BY OTHER DEVICES
+        
+          {{ $t('templates.list.tempinuse {templateToDelete}',{templateToDelete:templateToDelete.name.toUpperCase()}) }}
       </div>
 
       <template slot="footer" v-if="!templateInUse">
@@ -95,13 +90,10 @@
       </template>
 
       <template slot="footer" v-else>
-        <base-button type="secondary" @click="closeModalTemplate()"
+        <base-button type="secondary"  @click="closeModalTemplate()"
           >OK</base-button
         >
 
-        <base-button type="info" @click="$router.push('/app/devices')"
-          >GO TO DEVICES</base-button
-        >
       </template>
     </modal>
   </div>
@@ -163,10 +155,14 @@ export default {
           message: "Error deleting template"
         });
       }
-        },
-        goEditTemplate(template) {
-        this.$router.push({name:'app-templates-id', params:{id:template._id}})
     },
+      goEditTemplate(template) {
+        const locale = this.$store.getters['locale/getLocale'];
+        // si es "en" o "" (es)
+        locale ? this.$router.push(`/${locale}/app/templates/${template._id}`)
+          : this.$router.push(`${locale}/app/templates/${template._id}`);
+
+        },
     closeModalTemplate() {
       this.templateToDelete = null;
     },
