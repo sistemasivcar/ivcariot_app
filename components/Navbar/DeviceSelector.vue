@@ -59,12 +59,28 @@ export default {
         console.log(e)
       }
     },
+    chechDisconnectedDevices(){
+      this.devices.forEach(device => {
+        console.log('disconnected',device.status)
+        if(device.status=='offline'){
+          this.$notify({
+            type: "danger",
+            icon: "tim-icons icon-bell-55",
+            message: `ATENCIÓN: ${device.name} Fuera de Línea` 
+          });
+        }
+      });
+    }
+    
   },
   created() {
     this.getDevices()
   },
   mounted(){
     this.$nuxt.$on("selectedDeviceIndex", this.setSelectedDeviceIndex);
+    setTimeout(()=>{
+      this.chechDisconnectedDevices()
+    },2000)
     
   },
   beforeDestroy() {

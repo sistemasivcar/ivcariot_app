@@ -58,7 +58,6 @@ router.post('/', checAuth, asyncMiddleware(async (req, res) => {
     
     const userId = req.userData._id;
     const newDevice = req.body.newDevice;
-    console.log(newDevice);
     const createdTime = Date.now();
     const whpassword = makeid(10);
 

@@ -1,11 +1,11 @@
 <template>
-  <card >
+  <card>
     <!-- header-card -->
-    <template slot="header">
+    <div slot="header">
       <h4 class="card-title">
         {{ deviceName }} - {{ variableFullName }}
       </h4>
-    </template>
+    </div>
 
     <!-- body-card -->
     <template #default >
@@ -14,8 +14,6 @@
         </div>
     </template>
 
-    <!-- footer-card -->
-    <template slot="raw-content"> </template>
   </card>
 </template>
 

@@ -119,7 +119,14 @@ export default {
           this.templates = res.data.data;
         }
       } catch (e) {
-        console.log(e);
+        if(!e.response){
+          this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: "Network Error"
+        });
+          return
+        }
         this.$notify({
           type: "danger",
           icon: "tim-icons icon-alert-circle-exc",
@@ -150,7 +157,7 @@ export default {
         const newDevice = {
           name: this.deviceName,
           dId: this.deviceId,
-          status:false,
+          status:"offline",
           templateId: templateSelected._id,
           templateName: templateSelected.name
         };

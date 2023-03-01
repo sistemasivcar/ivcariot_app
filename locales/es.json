@@ -42,6 +42,7 @@
     "toolswitch":"Cambiar estado alarma",
     "toolstatus":"Indicador de Estado",
     "notifupdaterule":"Alarma",
+    "notifdeleterule":"Alarma Eliminada!",
     "--------TRADUCIONES-TEMPLATES PAGE-----------":"------TEMPLATES PAGE--------",
     "newTitle": "Crear Nueva Plantilla",
     "newsubtitle":"Agregá una colección de widgets para crear una plantilla",

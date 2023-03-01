@@ -44,6 +44,7 @@
     "toolswitch":"Change alarm status",
     "toolstatus":"Status indicator",
     "notifupdaterule":"Alarm",
+    "notifdeleterule":"Alarm Deleted!",
     "--------TRADUCIONES-TEMPLATES PAGE-----------":"------TEMPLATES PAGE--------",
     "newTitle": "Create New Template",
     "newsubtitle":"Add a collection of widgets to create a template",

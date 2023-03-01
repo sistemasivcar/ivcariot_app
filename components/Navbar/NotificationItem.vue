@@ -2,12 +2,24 @@
   <li>
     <a href="#" class="nav-item dropdown-item"
     @click="setNotifReaded()">
-      <b style="color:orangered">{{ unixToDate(time) }}</b>
-      <div style="margin-left:50px">
-        <b>{{ $t('dashboardnavbar.notifications.notif.device') }}: </b> {{ getNameDevice(dId) }} <br />
-        <b>{{ $t('dashboardnavbar.notifications.notif.variable') }}: </b> {{ varName.toUpperCase() }} <br />
-        <b>{{ $t('dashboardnavbar.notifications.notif.with') }}:</b> {{ value }}
-        <b>{{ $t('dashboardnavbar.notifications.notif.condition') }}: </b> {{ condition }} {{ valueToMatch }}<br />
+      <div v-if="type=='regular'">
+        <b style="color:orangered">{{ unixToDate(time) }}</b>
+        <div style="margin-left:50px">
+          <b>{{ $t('dashboardnavbar.notifications.notif.device') }}: </b> {{ getNameDevice(dId) }} <br />
+          <b>{{ $t('dashboardnavbar.notifications.notif.variable') }}: </b> {{ varName.toUpperCase() }} <br />
+          <b>{{ $t('dashboardnavbar.notifications.notif.with') }}:</b> {{ value }}
+          <b>{{ $t('dashboardnavbar.notifications.notif.condition') }}: </b> {{ condition }} {{ valueToMatch }}<br />
+          <b>Mensaje:</b> <span style="color:blue">{{ message }}</span>
+        </div>
+      </div>
+      <div v-else>
+        <b style="color:orangered">{{ unixToDate(time) }}</b>
+        <div style="margin-left:50px">
+          <b>{{ $t('dashboardnavbar.notifications.notif.device') }}: </b> {{ getNameDevice(dId) }} <br />
+          <b>{{ $t('dashboardnavbar.notifications.notif.variable') }}: </b> {{ varName.toUpperCase() }} <br />
+          <b>Mensaje:</b> <span style="color:blue">{{ message }}</span>
+         
+        </div>
       </div>
     </a>
   </li>
@@ -15,7 +27,7 @@
 
 <script>
 export default {
-  props: ["time", "varName", "condition", "valueToMatch", "dId", 'idNotif','value'],
+  props: ["time", "varName", "condition", "valueToMatch", "dId", 'idNotif','value',"message", "type"],
   data() {
     return {};
   },
@@ -24,6 +36,7 @@ export default {
         this.$emit('setNotifReaded',this.idNotif)
     },
     getNameDevice(dId) {
+      if(!dId) return;
       try {
         const devices = this.$store.getters["devices/getDevices"];
         const device = devices.find(d => (d.dId == dId));

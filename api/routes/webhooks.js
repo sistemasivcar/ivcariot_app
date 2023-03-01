@@ -58,20 +58,45 @@ router.post('/alarm-webhook', async (req, res) => {
         console.log(incomingAlarm)
 
         updateAlarmCounter(incomingAlarm.emqxRuleId)
+
+        if (typeof incomingAlarm.condition == 'undefined') {
+            
+            if (incomingAlarm.payload.value) {
+                //send notif ON
+                sendMqttNotif(incomingAlarm.userId, incomingAlarm.messageOn);
+                const notifToSave = {
+                    ...incomingAlarm,
+                    type:'change',
+                    message:incomingAlarm.messageOn
+                }
+                saveNotifToMongo(notifToSave);
+            } else if (!incomingAlarm.payload.value) {
+                //send notif OFF
+                sendMqttNotif(incomingAlarm.userId, incomingAlarm.messageOff);
+                const notifToSave = {
+                    ...incomingAlarm,
+                    type:'change',
+                    message:incomingAlarm.messageOff
+                }
+                saveNotifToMongo(notifToSave);
+            }
+            return;
+        }
+
         const lastNotif = await Notification.find({ dId: incomingAlarm.dId, emqxRuleId: incomingAlarm.emqxRuleId }).sort({ createdTime: -1 }).limit(1);
 
         if (lastNotif == 0) {
             console.log("FIRST TIME ALARM");
-            sendMqttNotif(incomingAlarm);
-            saveNotifToMongo(incomingAlarm);
+            sendMqttNotif(incomingAlarm.userId, incomingAlarm.message);
+            saveNotifToMongo({...incomingAlarm, message:incomingAlarm.message});
         } else {
 
             const lastNotifToNowMins = (Date.now() - lastNotif[0].createdTime) / 1000 / 60;
 
             if (lastNotifToNowMins > incomingAlarm.triggerTime) {
                 console.log("TRIGGERED");
-                sendMqttNotif(incomingAlarm);
-                saveNotifToMongo(incomingAlarm);
+                sendMqttNotif(incomingAlarm.userId, incomingAlarm.message);
+                saveNotifToMongo({...incomingAlarm, message:incomingAlarm.message});
             }
 
         }
@@ -144,7 +169,7 @@ router.post("/getdevicecredentials", async (req, res) => {
         console.log(error);
         res.sendStatus(500);
     }
-}); 
+});
 
 
 module.exports = router;
@@ -185,8 +210,21 @@ function startMqttClient() {
 
     client.on('connect', function () {
         console.log("MQTT CONNECTION -> SUCCESS;".green);
-        console.log("\n");
+        const statusTopicSubscribe = '+/+/+/status';
+        client.subscribe(statusTopicSubscribe, { qos: 0 }, () => {
+            console.log('SUBSCRIPTION "status" SUCCESS'.green)
+        })
     });
+
+    client.on('message', (topic, message) => {
+        const splittedTopic = topic.split("/");
+        const typeMessage = splittedTopic[3];
+        if (typeMessage == 'status') {
+            const userId = splittedTopic[0];
+            const dId = splittedTopic[1];
+            processStatusMessage(dId, userId, message.toString())
+        }
+    })
 
     client.on('reconnect', (error) => {
         console.log('RECONNECTING MQTT');
@@ -201,13 +239,23 @@ function startMqttClient() {
 
 }
 
-
-function sendMqttNotif(notif) {
+async function processStatusMessage(dId, userId, status) {
+    // whatsApp notification
+    // message -> "online","offline"
     try {
-        const topic = notif.userId + '/dummy-did/dummy-var/notif';
-        console.log(notif)
-        const msg = notif.message;
+        await DeviceModel.updateOne({ dId, userId }, { status })
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+function sendMqttNotif(userId, message) {
+    try {
+
+        const topic = userId + '/dummy-did/dummy-var/notif';
+        const msg = message;
         client.publish(topic, msg);
+        console.log('send!',topic,msg)
     } catch (error) {
         console.log(error)
 
@@ -221,7 +269,7 @@ async function getDeviceMqttCredentials(dId, userId) {
         if (!credentials) {
             const newRule = {
                 userId: userId,
-                dId:dId,
+                dId: dId,
                 username: makeid(10),
                 password: makeid(10),
                 publish: [userId + "/" + dId + "/+/sdata"],
@@ -245,7 +293,7 @@ async function getDeviceMqttCredentials(dId, userId) {
         const newusername = makeid(10);
         const newpassword = makeid(10);
 
-        const result = await EmqxAuthModel.updateOne({ type: "device", dId: dId,  userId: userId, }, { $set: { username: newusername, password: newpassword, updatedTime: Date.now() } });
+        const result = await EmqxAuthModel.updateOne({ type: "device", dId: dId, userId: userId, }, { $set: { username: newusername, password: newpassword, updatedTime: Date.now() } });
 
         if (result.n == 1 && result.ok == 1) {
             return {

@@ -4,7 +4,7 @@ const mutations = {
     },
     setUser(state, user) {
         state.auth.userData = user;
-    }
+    },
 }
 
 export default mutations

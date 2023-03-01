@@ -6,10 +6,12 @@ const alarmRuleSchema = new Schema({
     emqxRuleId: { type: String, required: [true] },
     variableFullName: { type: String },
     message: { type: String },
+    messageOn:{ type: String },
+    messageOff:{ type: String },
     variable: { type: String },
     value: { type: Number },
     condition: { type: String },
-    triggerTime: { type: Number, default: 30 },
+    triggerTime: { type: Number },
     status: { type: Boolean, default: true },
     counter: { type: Number, default: 0 },
     createdTime: { type: Number }

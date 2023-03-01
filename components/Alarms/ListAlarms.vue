@@ -5,7 +5,7 @@
       :title="$t('listalarms')"
       :subTitle="$t('sublistalarms {selectedDevice}',{selectedDevice:hasSelectedDevice.name.toUpperCase()})">
         
-        <el-table v-if="hasAlarmRules" :data="alarmRules">
+        <el-table v-if="hasAlarmRules" :data="alarmRules" >
           <el-table-column min-width="50" label="#" align="center">
             <div class="photo" slot-scope="{ row, $index }">
               {{ $index + 1 }}
@@ -30,7 +30,7 @@
 
           <el-table-column prop="counter" label="Matches"></el-table-column>
 
-          <el-table-column header-align="right" align="right" label="Actions">
+          <el-table-column header-align="right" label="Actions">
             <div slot-scope="{ row, $index }" class="text-right table-actions">
               <el-tooltip :content="$t('tooldelete')" effect="light" placement="top">
                 <base-button
@@ -151,7 +151,7 @@ export default {
           this.$notify({
             type: "success",
             icon: "tim-icons icon-check-2",
-            message: `Rule deleted!`
+            message: `${this.$t('notifupdaterule')}`
           });
         }
       } catch (e) {

@@ -63,7 +63,7 @@ const actions = {
                 
             }
 
-        } catch (err) {
+        } catch (e) {
             console.log(e)
         }
         

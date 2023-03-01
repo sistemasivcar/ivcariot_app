@@ -10,6 +10,7 @@
     
 const state = () => ({
     auth: null,
+    online:true,
 })
 
 export default state;

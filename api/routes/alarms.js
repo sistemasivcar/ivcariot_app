@@ -43,6 +43,7 @@ router.post('/', checkAuth, asyncMiddleware(async (req, res) => {
         userId,
         status: true
     };
+    console.log(newRule)
 
     if (await createAlarmRule(newRule)) {
         console.log('ALARM-RULE CREATED'.green);
@@ -98,11 +99,66 @@ ______ _   _ _   _ _____ _____ _____ _____ _   _  _____
 
 
 
-async function createAlarmRule({ userId, dId, variable, value, condition, status, triggerTime, variableFullName ,message}) {
+async function createAlarmRule({ userId, dId, variable, value, condition, status, triggerTime, variableFullName, message, messageOn, messageOff }) {
 
     try {
         const url_post = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules`;
         const topic = `${userId}/${dId}/${variable}/sdata`;
+        if (!message) {
+            /* // CREATE ALARMA FOR STATUS CHANGES */
+            const rawsql_for_change = `SELECT username, topic, payload FROM "${topic}" `;
+            var newRule = {
+                rawsql: rawsql_for_change,
+                actions: [{
+                    name: "data_to_webserver",
+                    params: {
+                        $resource: global.alarmResource.id,
+                        payload_tmpl: '"payload":${payload},"topic":"${topic}"}'
+                    }
+                }],
+                description: "ALARM-RULE",
+                enabled: status
+            }
+            const res_change = await axios.post(url_post, newRule, auth);
+            const emqxRuleId = res_change.data.data.id;
+            if (res_change.data.data && res_change.status === 200) {
+                //grabo alarm-rule en mongo
+                const mongoAlarmRule = await AlarmRuleModel.create({
+                    userId,
+                    dId,
+                    variable,
+                    status,
+                    messageOn,
+                    messageOff,
+                    variableFullName,
+                    emqxRuleId,
+                    createdTime: Date.now(),
+                });
+    
+                // actualizo las alarmRules del device
+                var alarmRules = [];
+                const device = await DeviceModel.findOne({ dId: dId });
+                alarmRules = [...device.alarmRules, mongoAlarmRule._id]
+                await DeviceModel.updateOne({ dId: dId }, { alarmRules: alarmRules });
+    
+                // actualizo la regla eqmx
+    
+                const url_put = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
+                const payload_templ = '{"userId":"' + userId + '","dId":"' + dId + '","payload":${payload},"topic":"${topic}","emqxRuleId":"' + emqxRuleId + '","messageOn":"' + messageOn + '","messageOff":"' + messageOff + '","variable":"' + variable + '","variableFullName":"' + variableFullName + '"}';
+                newRule.actions[0].params.payload_tmpl = payload_templ;
+    
+                // actualizo la regla
+                const rest = await axios.put(url_put, newRule, auth);
+                console.log(rest)
+    
+                return true;
+            } else {
+                return false;
+            }
+
+        }
+
+        /* // CREATE A REGULAR ALARM RULE */
         const rawsql = `SELECT username, topic, payload FROM "${topic}" WHERE payload.value ${condition} ${value} AND is_not_null(payload.value)`;
 
         var newRule = {
@@ -147,7 +203,6 @@ async function createAlarmRule({ userId, dId, variable, value, condition, status
 
             const url_put = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
             const payload_templ = '{"userId":"' + userId + '","dId":"' + dId + '","payload":${payload},"topic":"${topic}","emqxRuleId":"' + emqxRuleId + '","value":' + value + ',"condition":"' + condition + '","message":"' + message + '","variable":"' + variable + '","variableFullName":"' + variableFullName + '","triggerTime":' + triggerTime + '}';
-            console.log(payload_templ)
             newRule.actions[0].params.payload_tmpl = payload_templ;
 
             // actualizo la regla
@@ -158,12 +213,12 @@ async function createAlarmRule({ userId, dId, variable, value, condition, status
             return false;
         }
     } catch (e) {
-        //console.log(e)
+        console.log(e)
         console.log('error creating or updating alarm-rule')
         return false
 
     }
-} 
+}
 
 
 async function updateAlarmRuleStatus(emqxRuleId, status) {

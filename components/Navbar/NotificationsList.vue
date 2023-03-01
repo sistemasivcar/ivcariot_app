@@ -21,6 +21,8 @@
             :key="notif._id"
             :condition="notif.condition"
             :dId="notif.dId"
+            :type="notif.type"
+            :message="notif.message"
             :time="notif.createdTime"
             :idNotif="notif._id"
             :valueToMatch="notif.value"
@@ -72,8 +74,23 @@ export default {
         console.log(e)
       }
     },
+    async getNotifications() {
+      try {
+        await this.$store.dispatch("notif/fetchNotifications");
+        await this.$store.dispatch("notif/fetchNotificationsForDevice",1);
+      } catch (e) {
+        this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: e
+        });
+      }
+    },
     
   },
+  created(){
+    this.getNotifications();
+  }
  
 };
 </script>

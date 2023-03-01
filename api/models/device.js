@@ -9,7 +9,7 @@ const deviceSchema = new Schema({
     templateId: { type: Schema.Types.ObjectId, required: [true], ref:'Template' },
     templateName: { type: String, required: [true] },
     whpassword: { type: String, required: [true] },
-    status: { type: Boolean, default:false },
+    status: { type: String, default:'offline' }, // offline, online
     createdTime: { type: Number },
     saverRule: { type: Schema.Types.ObjectId, ref: 'SaverRule' },
     alarmRules: [{ type: Schema.Types.ObjectId, ref:'AlarmRule'}]

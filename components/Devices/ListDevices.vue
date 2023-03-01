@@ -40,10 +40,10 @@
             label="Status"
           ><template slot-scope="{ row }">
               <el-tooltip
-                :content="row.status ? $t('devices.list.online') : $t('devices.list.offline')"
+                :content="row.status =='online' ? $t('devices.list.online') : $t('devices.list.offline')"
                 :open-delay="300"
                 placement="top"
-                ><i class="fa fa-circle" :class="{'text-danger':!row.status, 'text-success':row.status}"></i> 
+                ><i class="fa fa-circle" :class="{'text-danger':row.status=='offline', 'text-success':row.status=='online'}"></i> 
               </el-tooltip>
             </template>
           </el-table-column>
@@ -190,6 +190,7 @@ export default {
           message: `${device.saverRule.status ? this.$t('devices.list.saver') + " OFF" : this.$t('devices.list.saver')+" ON"}`
         });
       } catch (e) {
+        
         this.$notify({
           type: "danger",
           icon: "tim-icons icon-check-2",
@@ -214,10 +215,6 @@ export default {
     devices() {
       return this.$store.getters["devices/getDevices"];
     },
-    checkStatus(device){
-
-    }
-    
   },
   created() {}
 };
