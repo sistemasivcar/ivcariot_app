@@ -133,7 +133,7 @@
             "name":"Device Name",
             "id":"Device Id",
             "template":"Select template",
-             "templateinp":"Plantilla",
+             "templateinp":"Template",
              "btn":"Add Device",
              "notemplatesbtn":"Create new Template",
              "notemplatestxt":"You need first create a Template to create a Device",

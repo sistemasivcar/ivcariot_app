@@ -16,13 +16,14 @@
           <el-table-column prop="name" label="Name"></el-table-column>
 
           <el-table-column
-            prop="description"
             label="Description"
-          ></el-table-column>
+            
+          ><div slot-scope="{row}" class="">{{ row.description }}</div></el-table-column>
 
           <el-table-column
-            prop="widgets.length"
-            label="Widgets"
+          header-align="right"
+            label="Widgets">
+            <div slot-scope="{row}" class="text-right">{{ row.widgets.length }}</div>
           ></el-table-column>
 
           <el-table-column header-align="right" label="Actions">

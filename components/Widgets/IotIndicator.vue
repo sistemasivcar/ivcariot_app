@@ -22,7 +22,7 @@ export default {
   props:['config'],
   data() {
     return {
-      value: null,
+      value: 0,
     };
   },
   methods:{
@@ -59,7 +59,7 @@ export default {
 
       if(!this.config.isBoolean){
         if(this.config.condition === '=') return this.value == +this.config.value ?  'text-'+this.config.color : 'text-dark';
-        if(this.config.condition === '=>') return this.value >= +this.config.value ?  'text-'+this.config.color : 'text-dark'
+        if(this.config.condition === '>=') return this.value >= +this.config.value ?  'text-'+this.config.color : 'text-dark'
         if(this.config.condition === '<=') return this.value <= +this.config.value ?  'text-'+this.config.color : 'text-dark'
         if(this.config.condition === '>') return this.value > +this.config.value ?  'text-'+this.config.color : 'text-dark'
         if(this.config.condition === '<') return this.value < +this.config.value ?  'text-'+this.config.color : 'text-dark'

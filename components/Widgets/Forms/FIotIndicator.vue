@@ -24,10 +24,47 @@
           ></BaseInput>
         </div>
     </div>
+    <!-- TURN ON THE ICON WHEN -->
+    <div class="row" v-if="!config.isBoolean">
+      <div class="col-12">
+        <label class="">{{
+          $t("lblturnon {variableFullName}", {
+            variableFullName: config.variableFullName.toUpperCase()
+          }) 
+        }}  <strong style="color: brown;" for="">{{ config.condition + '  '}} {{ config.condition=='=' ? 'a' : 'que  ' }} {{ config.value }}</strong></label>
+      </div>
+
+      <div class="col-6">
+        <label for="condition">Condición</label>
+        <el-select
+          required
+          class="select-info"
+          :placeholder="$t('selcond')"
+          v-model="config.condition"
+          style="margin-top: 0px; width:100%"
+        >
+          <el-option class="text-dark" value="=" label="="></el-option>
+          <el-option class="text-dark" value=">" label=">"></el-option>
+          <el-option class="text-dark" value=">=" label=">="></el-option>
+          <el-option class="text-dark" value="<" label="<"></el-option>
+          <el-option class="text-dark" value="<=" label="<="></el-option>
+          <el-option class="text-dark" value="!=" label="!="></el-option>
+        </el-select>
+      </div>
+
+      <div class="col-6 mt-1">
+        <base-input
+          v-model.number="config.value"
+          :label="$t('lblvalu')"
+          type="number"
+        >
+        </base-input>
+      </div>
+    </div>
     <!-- IS BOOLEAN -->
     <div class="row">
       <div class="col-12">
-        <label for="send_method">¿Es variable Booleana? Ej: Luz, Bomba, Estado Alarma, etc...</label>
+        <label for="send_method">¿Es variable Booleana? Ej: Estado de Luz, Bomba, Alarma, etc...</label>
       </div>
     </div>
 
@@ -73,68 +110,7 @@
     </div>
 
 
-    <div class="row" v-if="!config.isBoolean">
-      <div class="col-12">
-        <label class="text-success mt-3 ">{{
-          $t("lblturnon {variableFullName}", {
-            variableFullName: config.variableFullName
-          })
-        }}</label>
-      </div>
-
-      <div class="col-6">
-        <el-select
-          required
-          class="select-info pull-left"
-          :placeholder="$t('selcond')"
-          v-model="config.condition"
-          style="margin-top: 30px; width:100%"
-        >
-          <el-option class="text-dark" value="=" label="="></el-option>
-          <el-option class="text-dark" value=">" label=">"></el-option>
-          <el-option class="text-dark" value=">=" label=">="></el-option>
-          <el-option class="text-dark" value="<" label="<"></el-option>
-          <el-option class="text-dark" value="<=" label="<="></el-option>
-          <el-option class="text-dark" value="!=" label="!="></el-option>
-        </el-select>
-      </div>
-
-      <div class="col-6">
-        <base-input
-          v-model.number="config.value"
-          :label="$t('lblvalu')"
-          type="number"
-        >
-        </base-input>
-      </div>
-    </div>
-
-    <!-- <div class="row" v-if="config.isBoolean">
-      <div class="col-12">
-        <label class="text-success mt-3">{{ $t("lblnotif") }} </label>
-        <el-tooltip :content="$t('toolwarn')" :open-delay="300" placement="top"
-          ><label class="" for="">⚠️</label></el-tooltip
-        >
-      </div>
-
-      <div class="col-6 ">
-        <base-input
-          v-model.trim="config.messageOn"
-          :label="$t('lblmesgon')"
-          type="text"
-        >
-        </base-input>
-      </div>
-
-      <div class="col-6 ">
-        <base-input
-          v-model="config.messageOff"
-          :label="$t('lblmesgoff')"
-          type="text"
-        >
-        </base-input>
-      </div>
-    </div> -->
+    
 
     <div class="row mt-2">
       <div class="col-6">
