@@ -52,13 +52,14 @@
           class="mt-3"
           size="lg"
           >{{ textButton }}
-          <i class="fa fa-plus"></i></base-button
+          <i class="fa fa-plus" v-if="!isEdition"></i>
+          <i v-else class="tim-icons icon-check-2"></i></base-button
         >
       </div>
 
       <div class="col-6" v-if="isEdition">
         <base-button type="danger" @click="cancel" class="mt-3 pull-right" size="lg"
-          >{{$t('btncan')}}</base-button
+          >{{$t('btncan')}} <i class="tim-icons icon-simple-remove"></i></base-button
         >
       </div>
     </div>

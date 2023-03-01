@@ -32,7 +32,7 @@
     "selvar":"Seleccionar variable",
     "newalarmsub {selectedDevice}":"La nueva alarma sera añadida al dispositivo {selectedDevice}",
     "palcetriggertime":"¿En cuanto tiempo vuelvo a notificar?", 
-    "inpvalue":"valor",
+    "inpvalue":"Valor",
     "inptriggertime":"Trigger Time (minutos)",
     "inpmesg":"¿Qué mensaje querés recibir?",
     "btnaddalarm":"Crear Alarma",
@@ -68,7 +68,7 @@
 
     "inpinv":"Hay campos inválidos",
     "widchart":"Gráfico en timepo real",
-    "widindicator":"Indicador",
+    "widindicator":"Indicador de Estado",
     "widbutton":"Activador",
     "listTitle":"Mis Plantillas",
     "templates":{
@@ -102,7 +102,7 @@
     "btnadd":"Agregar",
     "btnedit":"Aceptar",
     "--------TRADUCIONES-BUTTON FROM-COMP-----------":"------BUTTON FROM-COMP--------",
-    "lblmesgsend":"Mensage a Notificar",
+    "lblmesgsend":"Mensaje a Notificar",
     "lblbtntext":"Texto del Botón",
     "--------TRADUCIONES-GRAFICO FROM-COMP-----------":"------GRAFICO FROM-COMP--------",
     "lblunit":"Unidad",

@@ -27,7 +27,7 @@
     <!-- IS BOOLEAN -->
     <div class="row">
       <div class="col-12">
-        <label for="send_method">Es variable Booleana? Luz, Bomba, Estado Alarma, etc...</label>
+        <label for="send_method">¿Es variable Booleana? Ej: Luz, Bomba, Estado Alarma, etc...</label>
       </div>
     </div>
 
@@ -46,7 +46,7 @@
     <!-- SEND METHOD -->
     <div class="row">
       <div class="col-12 mt-3">
-        <label for="send_method">Cómo enviará datos el dispositivo?</label>
+        <label for="send_method">¿Cómo enviará datos el dispositivo?</label>
       </div>
     </div>
 
@@ -159,8 +159,10 @@
           @click="addWidget"
           class="mt-3"
           size="lg"
-          >{{ textButton }} <i class="fa fa-plus"></i
-        ></base-button>
+          >{{ textButton }} 
+          <i class="fa fa-plus" v-if="!isEdition"></i>
+          <i v-else class="tim-icons icon-check-2"></i></base-button
+        >
       </div>
 
       <div class="col-6" v-if="isEdition">
@@ -169,8 +171,8 @@
           @click="cancel"
           class="mt-3 pull-right"
           size="lg"
-          >{{ $t("btncan") }}</base-button
-        >
+          >{{ $t("btncan") }}
+          <i class="tim-icons icon-simple-remove"></i></base-button>
       </div>
     </div>
   </div>

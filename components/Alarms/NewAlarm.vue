@@ -30,7 +30,6 @@
           <div class="row">
             <div class="col-12 col-md-4">
               <el-select
-                required
                 class="select-info mb-2"
                 :placeholder="$t('selvar')"
                 v-model="selectedWidgetIndex"
@@ -144,7 +143,6 @@
 </template>
 
 <script>
-import { throws } from "assert";
 import { Select, Option } from "element-ui";
 export default {
   components: {
@@ -285,7 +283,9 @@ export default {
       const variable = this.widgets[this.selectedWidgetIndex].variable;
       if(this.showMesaggesInputs){
         this.newRule.message=null;
-        
+        this.newRule.triggerTime=null;
+        this.newRule.condition=null;
+        this.newRule.value = null;
       }else{
         this.newRule.messageOn=null;
         this.newRule.messageOff=null;

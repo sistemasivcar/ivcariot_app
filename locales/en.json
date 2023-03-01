@@ -69,7 +69,7 @@
     "notifupdatedtemp {templateName}":"Template '{templateName}' updated!",
     "inpinv":"There are invalid inputs",
     "widchart":"Realtime number-chart",
-    "widindicator":"Indicator",
+    "widindicator":"Status Indicator",
     "widbutton":"Activator",
     "listTitle":"My Temlpates",
     "templates":{

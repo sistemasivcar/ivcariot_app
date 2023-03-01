@@ -34,7 +34,7 @@
           </slot>
 
           <el-select
-            value="1"
+            
             v-model="templateSelectedIndex"
             :placeholder="$t('devices.new.template')"
             class="select-info"

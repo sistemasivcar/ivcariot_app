@@ -23,6 +23,7 @@
           :value="value"
           v-bind="$attrs"
           v-on="listeners"
+          :class="{'text-dark':textdark}"
           class="form-control"
           aria-describedby="addon-right addon-left"
         />
@@ -49,6 +50,9 @@ export default {
     label: {
       type: String,
       description: 'Input label'
+    },
+    textdark:{
+      type:Boolean
     },
     error: {
       type: String,
@@ -79,6 +83,7 @@ export default {
     };
   },
   computed: {
+
     hasIcon() {
       return this.hasLeftAddon || this.hasRightAddon
     },
