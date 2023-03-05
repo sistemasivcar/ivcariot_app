@@ -53,8 +53,8 @@ export default {
   },
   methods: {
     setLocale(locale) {
+      this.$store.dispatch('auth/fetchUserData')
       const oldLocal = this.$store.state.locale.locale;
-      console.log(oldLocal);
       this.$store.commit("locale/setLocale", locale);
 
       const actualPathSplitted = this.$route.path.split("/");

@@ -87,7 +87,6 @@ router.get('/', checkAuth, asyncMiddleware(async (req, res) => {
 router.put('/', checkAuth, asyncMiddleware(async (req, res) => {
     const userId = req.userData._id;
     const userUpdated = req.body.updatedUser;
-    console.log(userUpdated.config.usePublicTemplates)
 
     const resp = await UserModel.updateOne({ _id: userId }, {
         name: userUpdated.name,
@@ -97,7 +96,8 @@ router.put('/', checkAuth, asyncMiddleware(async (req, res) => {
         city: userUpdated.city,
         codezip: userUpdated.codezip,
         config:{
-            usePublicTemplates:userUpdated.config.usePublicTemplates
+            usePublicTemplates:userUpdated.config.usePublicTemplates,
+            locale:userUpdated.config.locale
         }
         
     });

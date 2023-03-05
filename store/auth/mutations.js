@@ -7,7 +7,7 @@ const mutations = {
     },
     usePublicTemplates(state, newValue){
         state.auth.userData.config.usePublicTemplates=newValue;
-    }
+    },
 }
 
 export default mutations

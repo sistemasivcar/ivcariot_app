@@ -15,7 +15,10 @@ const getters = {
 
     isAuth(state) {
         return state.auth != null
-    }
+    },
+    usePublicTemplates(state){
+        return state.auth.userData.config.usePublicTemplates;
+    },
 }
 
 export default getters;

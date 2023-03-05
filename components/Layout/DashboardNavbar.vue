@@ -47,7 +47,7 @@
           >
         </li>
         <li class="nav-link">
-          <a href="#" class="nav-item dropdown-item">{{$t('dashboardnavbar.user.settings')}}</a>
+          <nuxt-link :to="`${locale}/app/config`" class="nav-item dropdown-item">{{$t('dashboardnavbar.user.settings')}}</nuxt-link>
         </li>
         <li class="nav-link">
           <nuxt-link class="nav-item dropdown-item" :to="`${locale}/app/docs`"
