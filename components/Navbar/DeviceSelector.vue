@@ -39,6 +39,7 @@ export default {
     },
     async selectDevice() {
       try {
+        this.$nuxt.$emit('selectedDeviceIndex', this.selectedDeviceIndex)
         const devices = this.$store.getters["devices/getDevices"];
         const deviceSelected = devices[this.selectedDeviceIndex];
         await this.$store.dispatch("devices/updateSelected", deviceSelected);

@@ -70,12 +70,12 @@
 
     <div class="row">
       <div class="col-2">
-        <BaseRadio v-model="config.isBoolean" :name="true" id="true" :value="true"
+        <BaseRadio v-model="config.isBoolean" :name="true" id="si" :value="true"
           >SI</BaseRadio
         >
       </div>
       <div class="col-2">
-        <BaseRadio v-model="config.isBoolean" :name="false" id="false" :value="false"
+        <BaseRadio v-model="config.isBoolean" :name="false" id="no" :value="false"
           >NO</BaseRadio
         >
       </div>
@@ -134,7 +134,7 @@
           :type="getTypeButton"
           @click="addWidget"
           class="mt-3"
-          size="lg"
+          size="md"
           >{{ textButton }} 
           <i class="fa fa-plus" v-if="!isEdition"></i>
           <i v-else class="tim-icons icon-check-2"></i></base-button
@@ -146,7 +146,7 @@
           type="danger"
           @click="cancel"
           class="mt-3 pull-right"
-          size="lg"
+          size="md"
           >{{ $t("btncan") }}
           <i class="tim-icons icon-simple-remove"></i></base-button>
       </div>

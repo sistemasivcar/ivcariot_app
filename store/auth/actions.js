@@ -42,9 +42,9 @@ const actions = {
 
         } catch (err) {
             if (err.response && err.response.data.status == "error" && err.response.data.message == 'Invalid credentials') {
-                throw new Error('Invalid credentials');
+                throw new Error('Credenciales Inválidas');
             }
-            throw new Error('Something was wrong! Try later');
+            throw new Error('Ups, algo salió mal. Intentá más tarde!');
         }
     },
 
@@ -86,7 +86,7 @@ const actions = {
             }
 
         } catch (e) {
-            throw new Error('The email may already exists')
+            throw new Error('El email ya existe!')
         }
 
     }

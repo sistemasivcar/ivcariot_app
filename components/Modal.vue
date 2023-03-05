@@ -3,6 +3,7 @@
     <div
       ref="modal"
       class="modal fade"
+      style="margin-top: 0px;"
       @click.self="closeModal"
       :class="[
         { 'show d-block': show },
@@ -18,6 +19,7 @@
         class="modal-dialog"
         role="document"
         :class="[
+          {'top':top},
           { 'modal-notice': type === 'notice' },
           { 'modal-dialog-centered': centered },
           modalClasses
@@ -63,7 +65,7 @@
   </SlideYUpTransition>
 </template>
 <script>
-import { SlideYUpTransition } from 'vue2-transitions';
+import { SlideYUpTransition, CollapseTransition } from 'vue2-transitions';
 
 export default {
   name: 'modal',
@@ -71,6 +73,10 @@ export default {
     SlideYUpTransition
   },
   props: {
+    top:{
+      type: Boolean,
+      default: false
+    },
     show: Boolean,
     showClose: {
       type: Boolean,
@@ -166,5 +172,9 @@ export default {
 <style>
 .modal.show {
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+.top{
+  margin-top: 0px;
 }
 </style>

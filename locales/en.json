@@ -1,4 +1,50 @@
 {
+    "auth":{
+        "emailinp":"Email",
+        "passwordinp":"Password",
+        "phoneinp":"Phone Number",
+        "fullnameinp":"Full Name",
+        "loginbtn":"Login",
+        "registerbtn":"Register",
+        "loginlink":"I have an account",
+        "registerlink":"CREATE AN ACCOUNT",
+        "helplink":"forgot password",
+        "emailinv":"The email is invalid",
+        "phoneinv":"The phone number is invalid",
+        "passwordinv":"The password is invalid",
+        "invfullname":"The name is invalid"
+
+    },
+    "icons":{
+        "sun":"Sun",
+        "bath":"Bath",
+        "person":"Person",
+        "home":"Home",
+        "light":"Light",
+        "key":"Key",
+        "tint":"Tint",
+        "thermometer":"Thermometer",
+        "cloud":"Cloud",
+        "sirena":"Bulhorn",
+        "bell":"Bell",
+        "unlock":"Unlock",
+        "lock":"Lock",
+        "bolt":"Bolt"
+    },
+
+    "linestyles":{
+        "line":"Line",
+        "spline":"Spline",
+        "area":"Area",
+        "dispersion":"Scatter"
+    },
+
+
+    "dashboard":{
+        "nodevices":"You first need to add a divice!",
+        "noseldevice":"Seleccioná un dispositivo desde el selector",
+        "linkdevices":"Agregar Dispositivo"
+    },
 
     "dashboardnavbar":{
         "selectorDevice":"Select device",
@@ -42,7 +88,8 @@
     "sublistalarms {selectedDevice}":"The list of alarm rules belonging to {selectedDevice} device",
     "listalarms":"Device Alarms",
     "toolswitch":"Change alarm status",
-    "toolstatus":"Status indicator",
+    "toolstatus_on":"This alarm is ACTIVE",
+    "toolstatus_off":"This alarm is INACTIVE",
     "notifupdaterule":"Alarm",
     "notifdeleterule":"Alarm Deleted!",
     "--------TRADUCIONES-TEMPLATES PAGE-----------":"------TEMPLATES PAGE--------",
@@ -148,7 +195,10 @@
             "saver":"Saver",
             "online":"Your device is Online",
             "offline":"Your device is Offline",
+            "onsaver":"Your device is saving the data in database",
+            "offsaver":"Your device is not saving the data in database",
             "deletemodal {deviceName}":"Are you sure to DELETE '{deviceName}' device?",
+            "notifdeleted {deviceName}":"Device {deviceName} deleted!",
             "hasalarms":"The ALARM-RULES associates will be deleted!"
         }
 

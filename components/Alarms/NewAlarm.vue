@@ -1,24 +1,13 @@
 <template>
   <div>
-    <card v-if="!hasDevices">
-      {{ $t("nohasdev") }}
-      <base-button :link="true" @click="godevices" type="info">{{
-        $t("newdev")
-      }}</base-button>
-    </card>
-
-    <card v-else-if="!hasSelectedDevice">
-      You need to select a device to create an Alarm
-    </card>
-
-    <div class="row" v-else-if="hasDevices && hasSelectedDevice !== null">
+    <div class="row" v-if="hasDevices && hasSelectedDevice !== null">
       <div class="col-12 col-md-12">
         <card>
           <div slot="header">
             <h4 class="card-title">
               {{ $t("newalarm") }}
             </h4>
-            <p class="card-category inline">
+            <p class="card-category">
               {{
                 $t("newalarmsub {selectedDevice}", {
                   selectedDevice: hasSelectedDevice.name
@@ -28,32 +17,36 @@
           </div>
 
           <div class="row">
+            <!-- VARIABLE -->
             <div class="col-12 col-md-4">
+              <label for="condition"
+                >Variable de: {{ hasSelectedDevice.name }}</label
+              >
               <el-select
                 class="select-info mb-2"
                 :placeholder="$t('selvar')"
                 v-model="selectedWidgetIndex"
                 @change="getSelectedWidgetIndex()"
-                style="margin-top: 25px; width:100%"
+                style="width:100%"
               >
                 <el-option
                   v-for="(widget, index) in widgets"
                   :key="index"
                   class="text-dark"
                   :value="index"
-                  :label="widget.variableFullName"
+                  :label="widget.variableFullName.toUpperCase()"
                 ></el-option>
               </el-select>
             </div>
-
-            <div class="col-12 col-md-4">
+            <!-- CONDITION -->
+            <div class="col-12 col-md-4" v-if="typeAlarm == 'regular'">
+              <label for="condition">Condición</label>
               <el-select
-                v-if="!showMesaggesInputs"
                 required
                 class="select-warning mb-2"
                 :placeholder="$t('selcondition')"
                 v-model="newRule.condition"
-                style="margin-top: 25px; width:100%"
+                style="width:100%"
               >
                 <el-option class="text-dark" value="=" label="="></el-option>
                 <el-option class="text-dark" value=">" label=">"></el-option>
@@ -63,35 +56,45 @@
                 <el-option class="text-dark" value="!=" label="!="></el-option>
               </el-select>
             </div>
-
-            <div class="col-12 col-md-4">
+            <!-- VALUE -->
+            <div class="col-12 col-md-4" v-if="typeAlarm == 'regular'">
               <base-input
-                v-if="!showMesaggesInputs"
                 :label="$t('inpvalue')"
+                :class="{ 'has-danger': !inputs.value }"
                 v-model="newRule.value"
                 type="number"
               ></base-input>
             </div>
 
-            <div class="col-12 col-8-md mt-1 mb-1" v-if="showMesaggesInputs">
-              <p>Configuraste esta variable como booleana y el dispositivo la envía por cada cambio de estado. Ahora podés ingresar qué mensajes querés recibir según cada estado de la variable.</p>
+            <div
+              class="col-12 col-12-md mt-1 mb-1"
+              v-if="typeAlarm == 'change'"
+            >
+              <p>
+                Configuraste esta variable como booleana y el dispositivo la
+                envía por cada cambio de estado. Ahora podés ingresar qué
+                mensajes querés recibir según cada estado de la variable.
+              </p>
             </div>
           </div>
 
           <div class="row">
-            <div class="col-12 col-md-4">
+            <!-- MESSAGE ON -->
+            <div class="col-12 col-md-4" v-if="typeAlarm == 'change'">
               <base-input
-              v-if="showMesaggesInputs"
                 v-model.trim="newRule.messageOn"
+                :class="{ 'has-danger': !inputs.messageOn }"
                 :label="$t('lblmesgon')"
                 type="text"
               >
               </base-input>
             </div>
-            <div class="col-12 col-md-4">
+
+            <!-- MESSAGE OFF -->
+            <div class="col-12 col-md-4" v-if="typeAlarm == 'change'">
               <base-input
-              v-if="showMesaggesInputs"
                 v-model="newRule.messageOff"
+                :class="{ 'has-danger': !inputs.messageOff }"
                 :label="$t('lblmesgoff')"
                 type="text"
               >
@@ -100,34 +103,46 @@
           </div>
 
           <div class="row">
-            <div class="col-12 col-md-6">
+            <!-- TRIGGER TIME -->
+            <div class="col-12 col-md-6" v-if="typeAlarm == 'regular'">
               <base-input
-                v-if="!showMesaggesInputs"
                 :label="$t('inptriggertime')"
+                :class="{ 'has-danger': !inputs.triggerTime }"
                 v-model="newRule.triggerTime"
                 type="number"
                 :placeholder="$t('palcetriggertime')"
               ></base-input>
             </div>
 
-            <div class="col-12 col-md-6">
+            <!-- MESSAGE -->
+            <div class="col-12 col-md-6" v-if="typeAlarm == 'regular'">
               <base-input
-                v-if="!showMesaggesInputs"
                 :label="$t('lblmesgsend')"
                 v-model="newRule.message"
+                :class="{ 'has-danger': !inputs.message }"
                 :placeholder="$t('inpmesg')"
                 type="text"
               ></base-input>
             </div>
           </div>
-          <br /><br />
+
+          <div class="row">
+            <div class="col-12" v-if="typeAlarm == 'regular'">
+              <p class="text-danger">¿QUÉ ES EL TRIGGER TIME?</p>
+              <p>
+                Es la cantidad de minutos que deben pasar antes de que el sistma
+                vuelva a notificar por más que la condición se siga cumpliendo.
+                Es requerido para evitar ráfagas de notificaciones indeseadas.
+              </p>
+            </div>
+          </div>
           <div class="row pull-right">
             <div class="col-12">
               <base-button
                 @click="createNewRule()"
                 native-type="submit"
                 type="info"
-                class="mb-3"
+                class="pull-right"
                 size="lg"
                 :loading="addLoading"
               >
@@ -135,36 +150,50 @@
                 <i class="tim-icons icon-bell-55 ml-2"></i>
               </base-button>
             </div>
+
+          
           </div>
         </card>
       </div>
     </div>
+    <div v-else>SELECCIONÁ UN DISPOSITIVO</div>
   </div>
 </template>
 
 <script>
 import { Select, Option } from "element-ui";
 export default {
+  props: ["first"],
   components: {
     [Option.name]: Option,
     [Select.name]: Select
   },
   data() {
     return {
+      isValidForm: true,
       addLoading: false,
+      inputs: {
+        messageOn: true,
+        messageOff: true,
+        value: true,
+        message: true,
+        condition: true,
+        triggerTime: true
+      },
       newRule: {
         dId: null,
         status: null,
         variableFullName: null,
         variable: null,
-        messageOn:null,
-        messageOff:null,
+        messageOn: null,
+        messageOff: null,
         value: null,
         message: null,
         condition: null,
         triggerTime: null
       },
-      selectedWidgetIndex: null
+      selectedWidgetIndex: null,
+      typeAlarm: null
     };
   },
   computed: {
@@ -181,72 +210,54 @@ export default {
     }
   },
   methods: {
-    getSelectedWidgetIndex() {
-      const widget = this.widgets[this.selectedWidgetIndex];
-      if (
-        widget.variableType == "input" &&
-        widget.isBoolean &&
-        widget.sendMethod == "change_status"
-      ) {
-        this.showMesaggesInputs = true;
-      }
-    },
+    getSelectedWidgetIndex() {},
     validNewRule() {
-      if(!this.showMesaggesInputs){
-      if (this.selectedWidgetIndex == null) {
+      if(this.selectedWidgetIndex == null){
+        this.isValidForm=false;
         this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: " Variable must be selected"
-        });
+            message: `Seleccioná una variable`,
+            type: "warning",
+            icon: "tim-icons icon-alert-circle-exc"
+        })
         return;
       }
-      if (this.newRule.condition == null) {
-        this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: " Condition must be selected"
-        });
-        return false;
+      if (this.typeAlarm == "regular") {
+        if (
+          this.selectedWidgetIndex == null ||
+          this.newRule.condition == null ||
+          this.newRule.value == null ||
+          this.newRule.triggerTime == null ||
+          this.newRule.message == null ||
+          this.newRule.triggerTime <= 0
+        ) {
+          this.isValidForm = false;
+          this.$notify({
+            message: `${this.$t("inpinv")}`,
+            type: "warning",
+            icon: "tim-icons icon-alert-circle-exc"
+          });
+          return;
+        } else {
+          this.isValidForm = true;
+          return;
+        }
       }
-      if (this.newRule.value == null) {
-        this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: " Value is empty"
-        });
-        return false;
+      if (this.typeAlarm == "change") {
+        // change alarm form
+
+        if (!this.newRule.messageOn || !this.newRule.messageOff) {
+          this.isValidForm = false;
+          this.$notify({
+            message: `${this.$t("inpinv")}`,
+            type: "warning",
+            icon: "tim-icons icon-alert-circle-exc"
+          });
+          return;
+        } else {
+          this.isValidForm = true;
+          return;
+        }
       }
-      if (this.newRule.triggerTime == null) {
-        this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: " Trigger Time is empty"
-        });
-        return false;
-      }
-      if (this.newRule.message == null) {
-        this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: " Message is empty"
-        });
-        return false;
-      }
-      if (this.newRule.triggerTime <= 0) {
-        this.$notify({
-          type: "warning",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: " Trigger Time must be >= than 5"
-        });
-        return false;
-      }
-    }else{
-      if(this.showMesaggesInputs && (!this.newRule.messageOn || !this.newRule.messageOff)){
-        return false;
-      }
-    }
-      return true;
     },
 
     async getDevices() {
@@ -274,27 +285,28 @@ export default {
     },
 
     async createNewRule() {
-      const isValidForm = this.validNewRule();
-      if (!isValidForm) return;
+      this.validNewRule();
+      if (!this.isValidForm) return;
 
       const variableFullName = this.widgets[this.selectedWidgetIndex]
         .variableFullName;
       const dId = this.hasSelectedDevice.dId;
       const variable = this.widgets[this.selectedWidgetIndex].variable;
-      if(this.showMesaggesInputs){
-        this.newRule.message=null;
-        this.newRule.triggerTime=null;
-        this.newRule.condition=null;
+      if (this.typeAlarm == "change") {
+        this.newRule.message = null;
+        this.newRule.triggerTime = null;
+        this.newRule.condition = null;
         this.newRule.value = null;
-      }else{
-        this.newRule.messageOn=null;
-        this.newRule.messageOff=null;
+      } else if (this.typeAlarm == "regular") {
+        this.newRule.messageOn = null;
+        this.newRule.messageOff = null;
       }
       const newRule = {
         ...this.newRule,
         variableFullName,
         variable,
-        dId
+        dId,
+        typeAlarm: this.typeAlarm
       };
 
       try {
@@ -306,7 +318,7 @@ export default {
           icon: "tim-icons icon-check-2",
           message: `${this.$t("notifalarm")}`
         });
-        this.emptyInputs();
+        this.$emit('new-alarm')
       } catch (e) {
         this.$notify({
           type: "danger",
@@ -319,7 +331,55 @@ export default {
     },
     godevices() {
       this.$router.push("/app/devices");
+    },
+    setVariable() {
+      this.selectedWidgetIndex = null;
     }
+  },
+  watch: {
+    selectedWidgetIndex(index) {
+      const widget = this.widgets[index];
+      if (widget != null) {
+        if (
+          widget.widgetName === "indicator" &&
+          widget.isBoolean &&
+          widget.sendMethod == "change_status"
+        ) {
+          this.typeAlarm = "change";
+        } else {
+          this.typeAlarm = "regular";
+        }
+      } else {
+        this.typeAlarm = null;
+      }
+    },
+    "newRule.value"(value) {
+      value == "" ? (this.inputs.value = false) : (this.inputs.value = true);
+    },
+    "newRule.triggerTime"(triggerTime) {
+      triggerTime <= 0 || triggerTime === null
+        ? (this.inputs.triggerTime = false)
+        : (this.inputs.triggerTime = true);
+    },
+    "newRule.message"(message) {
+      !message ? (this.inputs.message = false) : (this.inputs.message = true);
+    },
+    "newRule.messageOn"(messageOn) {
+      !messageOn
+        ? (this.inputs.messageOn = false)
+        : (this.inputs.messageOn = true);
+    },
+    "newRule.messageOff"(messageOff) {
+      !messageOff
+        ? (this.inputs.messageOff = false)
+        : (this.inputs.messageOff = true);
+    }
+  },
+  mounted() {
+    this.$nuxt.$on("selectedDeviceIndex", this.setVariable);
+  },
+  beforeDestroy() {
+    this.$nuxt.$off("selectedDeviceIndex");
   }
 };
 </script>

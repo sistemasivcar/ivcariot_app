@@ -2,11 +2,27 @@
   <div>
     <div class="row">
       <div class="col-sm-12">
-        <card v-if="hasSelectedDevice!==null"
-        :title="$t('listalarms')"
-        :subTitle="$t('sublistalarms {selectedDevice}',{selectedDevice:hasSelectedDevice.name.toUpperCase()})">
-    
-          <el-table v-if="hasAlarmRules" :data="alarmRules" >
+        <card v-if="hasSelectedDevice && alarmRules.length > 0">
+        <template slot="header">
+          <h4 class="card-title pull-left">{{$t('listalarms')}}</h4>
+          <BaseDropdown
+          title-tag="a"
+          class="nav-item pull-right"
+          :menuOnRight="true"
+        >
+          <template slot="title">
+            <i class="tim-icons icon-bullet-list-67"></i>
+          </template>
+          <li @click="$emit('create-alarm')">
+            <a class="text-dark ml-2"
+              >Nueva<i class="fa fa-plus ml-2 text-success"></i
+            ></a>
+          </li>
+        </BaseDropdown>
+        </template>
+
+        
+          <el-table v-if="hasAlarmRules" :data="alarmRules">
             <el-table-column min-width="50" label="#" align="center">
               <div class="photo" slot-scope="{ row, $index }">
                 {{ $index + 1 }}
@@ -14,36 +30,49 @@
             </el-table-column>
             <el-table-column
               prop="variableFullName"
-              label="Var Name"
+              label="Variable"
             ></el-table-column>
-            <el-table-column prop="condition" label="Condition">
+            <el-table-column prop="condition" label="Condición">
               <div slot-scope="{ row, $index }">
-                {{ row.condition || '=' }}
+                {{ row.condition || "=" }}
               </div>
             </el-table-column>
             <el-table-column prop="value" label="Value">
               <div slot-scope="{ row, $index }">
-                {{ (row.value || row.value==0) ? row.value : '0/1'}}
+                {{ row.value || row.value == 0 ? row.value : "0/1" }}
               </div>
             </el-table-column>
-            <el-table-column prop="message" label="Message/s">
-
+            <el-table-column prop="message" label="Mensaje/s">
               <div slot-scope="{ row, $index }">
                 {{ row.message }}
                 {{ row.messageOn }} -
                 {{ row.messageOff }}
               </div>
-            
             </el-table-column>
             <el-table-column prop="triggerTime" label="Trigger Time">
               <div slot-scope="{ row, $index }">
-                {{ row.triggerTime || 'cada cambio'}}
+                {{ row.triggerTime || "cada cambio" }}
               </div>
             </el-table-column>
             <el-table-column prop="counter" label="Matches"></el-table-column>
 
+            <el-table-column
+            label="Estado"
+          ><template slot-scope="{ row }">
+              <el-tooltip
+                :content="row.status ? $t('toolstatus_on') : $t('toolstatus_off')"
+                :open-delay="300"
+                placement="top"
+                ><i class="fa fa-circle" :class="{'text-danger':!row.status, 'text-success':row.status}"></i> 
+              </el-tooltip>
+            </template>
+          </el-table-column>
+
             <el-table-column header-align="right" label="Actions">
-              <div slot-scope="{ row, $index }" class="text-right table-actions">
+              <div
+                slot-scope="{ row, $index }"
+                class="text-right table-actions"
+              >
                 <!-- <el-tooltip content="Ver/Editar" effect="light" placement="top">
                   <base-button
                     @click="openModalAlarmRule(row)"
@@ -55,7 +84,11 @@
                     <i class="tim-icons icon-settings"></i>
                   </base-button>
                 </el-tooltip> -->
-                <el-tooltip :content="$t('tooldelete')" effect="light" placement="top">
+                <el-tooltip
+                  :content="$t('tooldelete')"
+                  effect="light"
+                  placement="top"
+                >
                   <base-button
                     @click="deleteAlarmRule(row)"
                     type="danger"
@@ -66,16 +99,20 @@
                     <i class="tim-icons icon-simple-remove "></i>
                   </base-button>
                 </el-tooltip>
-                <el-tooltip :content="$t('toolstatus')" style="margin-left: 20px;">
+
+                <!-- <el-tooltip
+                  :content="$t('toolstatus')"
+                  style="margin-left: 20px;"
+                >
                   <i
                     class="fas fa-exclamation-triangle"
                     :class="{ 'text-warning': row.status }"
                   ></i>
-                </el-tooltip>
+                </el-tooltip> -->
                 <!-- no ato row.status al v model porque al cambiar de status cambiaria directo sobre store lo que daría error en
                         cambio uso el value, al accionar el switch no cambiará el objeto, pero podré cambiar el valor en la función -->
                 <el-tooltip
-                :content="$t('toolswitch')"
+                  :content="$t('toolswitch')"
                   style="margin-left: 5px;"
                 >
                   <base-switch
@@ -93,13 +130,11 @@
           <h4
             v-else-if="!hasAlarmRules && hasDevices && hasSelectedDevice"
             class="card-title"
-          >
-    
-          </h4>
+          ></h4>
         </card>
       </div>
     </div>
-    <Modal @close="closeModalAlarm" :animationDuration="1000" :show="isModalOpen" :centered="true" :appendToBody="true" gradient="">
+    <!-- <Modal @close="closeModalAlarm" :animationDuration="1000" :show="isModalOpen" :centered="true" :appendToBody="true" gradient="">
       <template name="header">
         Alarma de variable: <strong> {{ alarmRule.variableFullName }} </strong>
       </template>
@@ -212,9 +247,8 @@
               </base-button>
             </div>
           </div>
-    </Modal>
+    </Modal> -->
   </div>
-
 </template>
 
 <script>
@@ -234,17 +268,17 @@ export default {
   },
   data() {
     return {
-      isModalOpen:false,
-      alarmRule:{
-        createdAt:null,
-        variableFullName:null,
-        counter:null,
-        message:null,
-        messageOn:null,
-        messageOff:null,
-        triggerTime:null,
-        condition:null,
-        value:null,
+      isModalOpen: false,
+      alarmRule: {
+        createdAt: null,
+        variableFullName: null,
+        counter: null,
+        message: null,
+        messageOn: null,
+        messageOff: null,
+        triggerTime: null,
+        condition: null,
+        value: null
       }
     };
   },
@@ -271,7 +305,9 @@ export default {
           this.$notify({
             type: "success",
             icon: "tim-icons icon-check-2",
-            message: `${this.$t('notifupdaterule')} ${newStatus == true ? "ON" : "OFF"}!`
+            message: `${this.$t("notifupdaterule")} ${
+              newStatus ? "ON" : "OFF"
+            }!`
           });
         }
       } catch (e) {
@@ -283,44 +319,41 @@ export default {
         });
       }
     },
-    closeModalAlarm(){
-      this.isModalOpen=false;
-      this.alarmRule.type = null
+    closeModalAlarm() {
+      this.isModalOpen = false;
+      this.alarmRule.type = null;
 
-      this.alarmRule.variableFullName=null;
-      this.alarmRule.counter=null;
-      this.alarmRule.createdAt=null;
-      this.alarmRule.messageOn=null;
-      this.alarmRule.messageOff=null;
-      this.alarmRule.condition=null;
-      this.alarmRule.value=null;
-      this.alarmRule.triggerTime=null;
+      this.alarmRule.variableFullName = null;
+      this.alarmRule.counter = null;
+      this.alarmRule.createdAt = null;
+      this.alarmRule.messageOn = null;
+      this.alarmRule.messageOff = null;
+      this.alarmRule.condition = null;
+      this.alarmRule.value = null;
+      this.alarmRule.triggerTime = null;
     },
-    openModalAlarmRule(alarm){
-      this.alarmRule.type = 'regular'
-      this.isModalOpen=true;
+    openModalAlarmRule(alarm) {
+      this.alarmRule.type = "regular";
+      this.isModalOpen = true;
 
-      this.alarmRule.variableFullName=alarm.variableFullName;
-      this.alarmRule.counter=alarm.counter;
-      this.alarmRule.createdAt=alarm.createdAt;
+      this.alarmRule.variableFullName = alarm.variableFullName;
+      this.alarmRule.counter = alarm.counter;
+      this.alarmRule.createdAt = alarm.createdAt;
 
-      if(!alarm.message){
-        this.alarmRule.type='change';
-        this.alarmRule.messageOn=alarm.messageOn;
-        this.alarmRule.messageOff=alarm.messageOff;
-        return
+      if (!alarm.message) {
+        this.alarmRule.type = "change";
+        this.alarmRule.messageOn = alarm.messageOn;
+        this.alarmRule.messageOff = alarm.messageOff;
+        return;
       }
-      this.alarmRule.message=alarm.message;
-      this.alarmRule.condition=alarm.condition;
-      this.alarmRule.value=alarm.value;
-      this.alarmRule.triggerTime=alarm.triggerTime;
-
+      this.alarmRule.message = alarm.message;
+      this.alarmRule.condition = alarm.condition;
+      this.alarmRule.value = alarm.value;
+      this.alarmRule.triggerTime = alarm.triggerTime;
     },
 
-    editAlarm(){
-      
-    },
-    
+    editAlarm() {},
+
     async deleteAlarmRule(rule) {
       const token = this.$store.getters["auth/getToken"];
       const axiosHeader = {
@@ -340,7 +373,7 @@ export default {
           this.$notify({
             type: "success",
             icon: "tim-icons icon-check-2",
-            message: `${this.$t('notifupdaterule')}`
+            message: `${this.$t("notifdeleterule")}`
           });
         }
       } catch (e) {
@@ -357,6 +390,7 @@ export default {
     alarmRules() {
       return this.$store.getters["devices/getAlarmRulesSelectedDevice"];
     },
+
     hasAlarmRules() {
       return this.$store.getters["devices/hasAlarmRules"];
     },

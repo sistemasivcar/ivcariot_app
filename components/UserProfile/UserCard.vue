@@ -204,7 +204,8 @@ export default {
           city: this.user.city,
           country: this.user.country,
           codezip: this.user.postalCode,
-          phones
+          phones,
+          config:this.$store.state.auth.auth.userData.config,
         };
         await this.$store.dispatch("auth/updateProfile", userUpdated);
         await this.getUser();

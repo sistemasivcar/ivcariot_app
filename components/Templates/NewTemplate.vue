@@ -101,6 +101,11 @@
             </div>
           </div>
         </template>
+
+        <template name="raw-content">
+          <BaseButton v-if="templates.length>0" class="pull-right" @click="$emit('cancel-creation')" type="danger" size="md">Cancelar Creación<i class="tim-icons icon-simple-remove ml-2"></i></BaseButton>
+          <BaseButton v-if="!$store.state.auth.auth.userData.config.usePublicTemplates" class="pull-right mr-3"  @click="usePublicTemplates" type="success" size="md">Usar Plantillas Públicas<i class="fa fa-download ml-2"></i></BaseButton>
+        </template>
       </card>
     </div>
 
@@ -221,6 +226,7 @@ import BaseButton from "../BaseButton.vue";
 import BaseAlert from "../BaseAlert.vue";
 
 export default {
+  props:['templates'],
   components: {
     Card,
     BaseInput,
@@ -320,6 +326,23 @@ export default {
   },
   computed: {},
   methods: {
+    async usePublicTemplates() {
+      try {
+        this.$store.commit('auth/usePublicTemplates',true);
+        const userUpdated = this.$store.state.auth.auth.userData;
+        await this.$store.dispatch("auth/updateProfile",userUpdated);
+        this.$notify({
+            type: "success",
+            icon: "tim-icons icon-check-2",
+            message: `Plantillas Importadas! Para usarlas deberás volverte a loguear`
+          });
+        this.$store.dispatch("auth/fetchUserData");
+
+
+      }catch(e){
+
+        }
+      },
     getSelectedWidgetName(name) {
       this.selectedWidgetName = name;
     },
@@ -503,12 +526,21 @@ export default {
           });
         }
       } catch (e) {
-        console.log(e);
+        console.dir(e);
+        if(e.response.data.status=='error' && e.response.data.err.errors.name.kind=='unique'){
+          this.$notify({
+          type: "danger",
+          icon: "tim-icons icon-alert-circle-exc",
+          message: "Lo sentimos, ese nombre ya está en uso!"
+        });
+        return
+        }
         this.$notify({
           type: "danger",
           icon: "tim-icons icon-alert-circle-exc",
           message: "Error creating template"
         });
+
       }finally{
         this.addLoadgin=false;
       }

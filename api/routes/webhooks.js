@@ -59,7 +59,9 @@ router.post('/alarm-webhook', async (req, res) => {
 
         updateAlarmCounter(incomingAlarm.emqxRuleId)
 
-        if (typeof incomingAlarm.condition == 'undefined') {
+        if (incomingAlarm.typeAlarm == 'change') {
+
+            /* CHANGE ALARM */
             
             if (incomingAlarm.payload.value) {
                 //send notif ON
@@ -83,26 +85,29 @@ router.post('/alarm-webhook', async (req, res) => {
             return;
         }
 
-        const lastNotif = await Notification.find({ dId: incomingAlarm.dId, emqxRuleId: incomingAlarm.emqxRuleId }).sort({ createdTime: -1 }).limit(1);
+        if (incomingAlarm.typeAlarm == 'change'){
+            /* REGULAR ALARM */
 
-        if (lastNotif == 0) {
-            console.log("FIRST TIME ALARM");
-            sendMqttNotif(incomingAlarm.userId, incomingAlarm.message);
-            saveNotifToMongo({...incomingAlarm, message:incomingAlarm.message});
-        } else {
+            const lastNotif = await Notification.find({ dId: incomingAlarm.dId, emqxRuleId: incomingAlarm.emqxRuleId }).sort({ createdTime: -1 }).limit(1);
 
-            const lastNotifToNowMins = (Date.now() - lastNotif[0].createdTime) / 1000 / 60;
-
-            if (lastNotifToNowMins > incomingAlarm.triggerTime) {
-                console.log("TRIGGERED");
+            if (lastNotif == 0) {
+                console.log("FIRST TIME ALARM");
                 sendMqttNotif(incomingAlarm.userId, incomingAlarm.message);
                 saveNotifToMongo({...incomingAlarm, message:incomingAlarm.message});
-            }
+            } else {
 
+                const lastNotifToNowMins = (Date.now() - lastNotif[0].createdTime) / 1000 / 60;
+
+                if (lastNotifToNowMins > incomingAlarm.triggerTime) {
+                    console.log("TRIGGERED");
+                    sendMqttNotif(incomingAlarm.userId, incomingAlarm.message);
+                    saveNotifToMongo({...incomingAlarm, message:incomingAlarm.message});
+                }
+
+            }
         }
 
     } catch (e) {
-        console.log(e);
         res.sendStatus(200);
     }
 

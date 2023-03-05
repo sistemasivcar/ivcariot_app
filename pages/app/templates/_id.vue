@@ -449,7 +449,7 @@ export default {
           await this.getWidgets();
           this.$notify({
             type: "success",
-            icon: "tim-icons icon-simple-check",
+            icon: "tim-icons icon-check-2",
             message:`${this.$t('notifupdatedtemp {templateName}',{templateName:this.templateName.toUpperCase()})}`
           });
         }

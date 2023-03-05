@@ -50,7 +50,7 @@
           :type="getTypeButton"
           @click="addWidget"
           class="mt-3"
-          size="lg"
+          size="md"
           >{{ textButton }}
           <i class="fa fa-plus" v-if="!isEdition"></i>
           <i v-else class="tim-icons icon-check-2"></i></base-button
@@ -58,7 +58,7 @@
       </div>
 
       <div class="col-6" v-if="isEdition">
-        <base-button type="danger" @click="cancel" class="mt-3 pull-right" size="lg"
+        <base-button type="danger" @click="cancel" class="mt-3 pull-right" size="md"
           >{{$t('btncan')}} <i class="tim-icons icon-simple-remove"></i></base-button
         >
       </div>

@@ -5,6 +5,7 @@ const alarmRuleSchema = new Schema({
     dId: { type: String, required: [true] },
     emqxRuleId: { type: String, required: [true] },
     variableFullName: { type: String },
+    typeAlarm:{type:String, required:[true]},
     message: { type: String },
     messageOn:{ type: String },
     messageOff:{ type: String },

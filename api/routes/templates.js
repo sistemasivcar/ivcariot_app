@@ -13,6 +13,7 @@ import asyncMiddleware from '../middleware/async';
 */
 
 import templateModel from '../models/template.js';
+import DeviceModel from '../models/device';
 /* 
   ___  ______ _____ 
  / _ \ | ___ \_   _|
@@ -25,15 +26,33 @@ const router = Router();
 
 router.get('/', checAuth, asyncMiddleware(async (req, res) => {
     const userId = req.userData._id;
-    console.log(req.query)
+    const publics = req.userData.config.usePublicTemplates;
+    console.log(publics)
 
-    const templates = await templateModel.find({ userId: userId });
-    const toSend = {
+    const userTemplates = await templateModel.find({ userId: userId });
+    var toSend = {
         status: 'success',
-        data:templates
+        data:userTemplates
     }
 
-    res.status(200).json(toSend);
+    if(!publics) return res.status(200).json(toSend);
+    const publicTemplates = await templateModel.find({ isPublic: true });
+    
+    //merge userTemplates and publicTemplates without repeted tempaltes in the final array
+    userTemplates.forEach((userTemp,i)=>{
+        publicTemplates.forEach((pubTemp,j)=>{
+            if(pubTemp.userId==userTemp.userId){
+                publicTemplates.splice(j,1)
+            }
+        })
+    })
+
+    toSend = {
+        status: 'success',
+        data:[...userTemplates,...publicTemplates]
+    }
+    
+    return res.status(200).json(toSend);
 }))
 
 router.get('/:id', checAuth, asyncMiddleware(async (req, res) => {
@@ -64,14 +83,29 @@ router.post('/', checAuth, asyncMiddleware(async (req, res) => {
 router.put('/', checAuth, asyncMiddleware(async (req,res)=>{
     const userId = req.userData._id;
     const template = req.body.template
+    if(template.widgets){
+        await templateModel.updateOne({userId, _id:template.id},{widgets:template.widgets});
+        return res.json({status:'success'})
+    }
 
-    await templateModel.updateOne({userId, _id:template.id},{widgets:template.widgets});
-    res.json({status:'success'})
+    await templateModel.updateOne({userId, _id:template.id},{isPublic:template.isPublic});
+    return res.json({status:'success'})
+
+
 
 }))
 
 router.delete('/', checAuth, asyncMiddleware(async (req, res) => {
+
     const templateId = req.query._id;
+
+    // por si la plantilla es publica y la están usando 
+    // otros dispositivos, los elimino a todos  
+    const devices = await DeviceModel.find({templateId})
+    asyncForEach(devices,async device => {
+        await DeviceModel.deleteOne({dId:device.dId})
+    });
+    
     const result = await templateModel.deleteOne({ _id: templateId });
 
     if (result.n == 0) {
@@ -91,3 +125,9 @@ router.delete('/', checAuth, asyncMiddleware(async (req, res) => {
 
 }))
 module.exports= router;
+
+async function asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+        await callback(array[index], index, array);
+    }
+}

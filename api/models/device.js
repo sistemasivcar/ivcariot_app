@@ -15,7 +15,7 @@ const deviceSchema = new Schema({
     alarmRules: [{ type: Schema.Types.ObjectId, ref:'AlarmRule'}]
 });
 
-deviceSchema.plugin(mongooseUniqueValidator, { message: 'Error, device already exists.' });
+deviceSchema.plugin(mongooseUniqueValidator, { message: 'Error, device already exists!!.' });
 
 // Schema to model.
 const Device = model('Device', deviceSchema);

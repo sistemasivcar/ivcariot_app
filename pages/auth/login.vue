@@ -7,11 +7,11 @@
           <h1 class="card-title">IvcarIoT</h1>
         </template>
 
-        <div>
+        <div @keyup.enter="login()">
           <base-input
             name="email"
             v-model="user.email"
-            placeholder="Email"
+            :placeholder="$t('auth.emailinp')"
             addon-left-icon="tim-icons icon-email-85"
           >
           </base-input>
@@ -20,7 +20,7 @@
             name="password"
             v-model="user.password"
             type="password"
-            placeholder="Password"
+            :placeholder="$t('auth.passwordinp')"
             addon-left-icon="tim-icons icon-lock-circle"
           >
           </base-input>
@@ -40,13 +40,13 @@
           <div class="pull-left">
             <h6>
               <nuxt-link class="link footer-link text-info" to="/auth/register">
-                Create Account
+                {{$t('auth.registerlink')}}
               </nuxt-link>
             </h6>
           </div>
 
           <div class="pull-right">
-            <h6><a href="#help!!!" class="link footer-link text-info">Need Help?</a></h6>
+            <h6><a href="#help!!!" class="link footer-link text-info">{{ $t('auth.helplink') }}</a></h6>
           </div>
         </div>
       </card>
@@ -76,7 +76,7 @@ export default {
           this.$notify({
           type: "warning",
           icon:'tim-icons icon-alert-circle-exc',
-          message:'There are empty fields!'
+          message:'Campos inválidos!'
         });
         return;
         }
@@ -85,7 +85,7 @@ export default {
         this.$notify({
           type: "success",
           icon: "tim-icons icon-check-2",
-          message: "Welcome back, " + this.$store.getters['auth/getUserName'] + "!"
+          message: "Hola, " + this.$store.getters['auth/getUserName'] + "!"
         });
         $nuxt.$router.push("/app/dashboard");
 

@@ -53,12 +53,11 @@ router.post('/login', async (req, res) => {
 // REGISTER
 router.post('/register', asyncMiddleware(async (req, res) => {
 
-    console.log(req.body)
-
     const password = req.body.password;
     const name = req.body.name;
     const email = req.body.email;
     const phones = req.body.phones;
+    const config = req.body.config;
 
     const encryptedPassword = bcrypt.hashSync(password, 10);
 
@@ -66,7 +65,8 @@ router.post('/register', asyncMiddleware(async (req, res) => {
         name,
         email,
         password: encryptedPassword,
-        phones
+        phones,
+        config
     };
     const user = await UserModel.create(newUser)
     const toSend = {
@@ -87,6 +87,7 @@ router.get('/', checkAuth, asyncMiddleware(async (req, res) => {
 router.put('/', checkAuth, asyncMiddleware(async (req, res) => {
     const userId = req.userData._id;
     const userUpdated = req.body.updatedUser;
+    console.log(userUpdated.config.usePublicTemplates)
 
     const resp = await UserModel.updateOne({ _id: userId }, {
         name: userUpdated.name,
@@ -95,6 +96,9 @@ router.put('/', checkAuth, asyncMiddleware(async (req, res) => {
         country: userUpdated.country,
         city: userUpdated.city,
         codezip: userUpdated.codezip,
+        config:{
+            usePublicTemplates:userUpdated.config.usePublicTemplates
+        }
         
     });
     if (resp.n === 1 && resp.ok === 1) {
@@ -104,6 +108,8 @@ router.put('/', checkAuth, asyncMiddleware(async (req, res) => {
         res.json({ status: 'error' })
     }
 }))
+
+
 
 //GET MQTT CREDENTIALS
 router.post('/getmqttcredentials', checkAuth, asyncMiddleware(async (req, res) => {

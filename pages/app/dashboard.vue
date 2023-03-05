@@ -2,11 +2,12 @@
 <div>
   
     <Card v-if="!hasDevices">
-      You need first create a device to create an Alarm <base-button :link="true"  @click="godevices" type="info">Create new Device</base-button>
+      {{$t('dashboard.nodevices')}} <base-button :link="true"  @click="godevices" type="info">{{ $t('dashboard.linkdevices') }}</base-button>
     </Card>
+    
 
     <Card v-else-if="!hasSelectedDevice">
-      You need to select a device to create an Alarm
+      {{ $t('dashboard.noseldevice') }}
     </Card>
 
     <div class="row" v-if="hasDevices"> <!-- el v-if es para que no de error al refrescar -->

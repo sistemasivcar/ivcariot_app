@@ -1,7 +1,6 @@
 <template>
   <div class="wrapper">
     <notifications></notifications>
-
     <router-view name="header"></router-view>
 
     <div :class="{ content: true }" style="margin-top: 100px;">
@@ -33,12 +32,14 @@ function initScrollbar(className) {
 }
 
 import { SlideYDownTransition, ZoomCenterTransition } from "vue2-transitions";
+import BaseNav from "../components/Navbar/BaseNav.vue";
 
 export default {
   name: "auth",
   components: {
-    ZoomCenterTransition
-  },
+    ZoomCenterTransition,
+    BaseNav
+},
   data() {
     return {
       sidebarBackground: "primary" //vue|blue|orange|green|red|primary

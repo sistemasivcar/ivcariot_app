@@ -1,4 +1,49 @@
 {
+    "auth":{
+        "emailinp":"Correo Electrónico",
+        "passwordinp":"Contraseña",
+        "phoneinp":"Número de Celular",
+        "fullnameinp":"Nombre Completo",
+        "loginbtn":"Ingresar",
+        "registerbtn":"Registrarme",
+        "registerlink":"No tengo cuenta",
+        "helplink":"Olvidé mi contraseña",
+        "loginlink":"Ya tengo cuenta",
+        "emailinv":"El email es inválido",
+        "phoneinv":"El número de celular es inválido",
+        "passwordinv":"La contraseña es inválida",
+        "invfullname":"El nombre es inválido"   
+    },
+    
+    "icons":{
+        "sun":"Sol",
+        "bath":"Bañera",
+        "person":"Persona",
+        "home":"Hogar",
+        "light":"Lampara",
+        "key":"Llave",
+        "tint":"Gota",
+        "thermometer":"Termómetro",
+        "cloud":"Nube",
+        "sirena":"Sirena",
+        "bell":"Campana",
+        "unlock":"Candado Abierto",
+        "lock":"Candado Cerrado",
+        "bolt":"Rayo"
+    },
+
+    "linestyles":{
+        "line":"Linea Recta",
+        "spline":"Linea Curva",
+        "area":"Area",
+        "dispersion":"Disersión de puntos"
+    },
+
+    "dashboard":{
+        "nodevices":"No tenés dispositivos registrados!",
+        "noseldevice":"Seleccioná un dispositivo desde el selector",
+        "linkdevices":"Agregar Dispositivo"
+    },
     "dashboardnavbar":{
         "locales":{
             "title":"Lenguaje"
@@ -24,13 +69,13 @@
     },
 
     "--------TRADUCIONES-ALARMS PAGE-----------":"------ALARMS PAGE--------",
-    "nohasdev":"Primero necesitás crear un dispositivo para luego crearle una alama",
-    "newdev":"Nuevo Dispositivo",
+    "nohasdev":"No tenés dispositivos registrados! Primero agregá dispositivos y luego podrás configurar alarmas a sus variables",
+    "newdev":"Agregar Dispositivo",
     "nohasseldev":"Seleccioná un dispositivo",
     "newalarm":"Crear Nueva Alarma",
     "selcondition":"Seleccionar condición",
     "selvar":"Seleccionar variable",
-    "newalarmsub {selectedDevice}":"La nueva alarma sera añadida al dispositivo {selectedDevice}",
+    "newalarmsub {selectedDevice}":"Creá alarmas para recibir notificaciones en tiempo real acerca de los valores que toman las variables de tu dispsitivo: {selectedDevice}",
     "palcetriggertime":"¿En cuanto tiempo vuelvo a notificar?", 
     "inpvalue":"Valor",
     "inptriggertime":"Trigger Time (minutos)",
@@ -40,7 +85,8 @@
     "sublistalarms {selectedDevice}":"Lista de alarmas pertenecientes al dispositivo {selectedDevice}",
     "listalarms":"Alarmas Del Dispositivo",
     "toolswitch":"Cambiar estado alarma",
-    "toolstatus":"Indicador de Estado",
+    "toolstatus_on":"Esta alarma está ACTIVA",
+    "toolstatus_off":"Esta alarma está INACTIVA",
     "notifupdaterule":"Alarma",
     "notifdeleterule":"Alarma Eliminada!",
     "--------TRADUCIONES-TEMPLATES PAGE-----------":"------TEMPLATES PAGE--------",
@@ -76,7 +122,7 @@
 
         },
         "list":{
-            "tempinuse {templateToDelete}":"NO PODÉS ELIMINAR LA PLANTILLA '{templateToDelete} PORQUE ESTÁ SIENDO USADA POR DISPOSITIVOS",
+            "tempinuse {templateToDelete}":"NO PODÉS ELIMINAR LA PLANTILLA '{templateToDelete}' PORQUE ESTÁ SIENDO USADA POR ALGUNO DE TUS DISPOSITIVOS",
             "deletemodal {templateToDelete}":"¿Estás seguro de eliminar la plantilla {templateToDelete}?"
         }
     },
@@ -102,7 +148,7 @@
     "btnadd":"Agregar",
     "btnedit":"Aceptar",
     "--------TRADUCIONES-BUTTON FROM-COMP-----------":"------BUTTON FROM-COMP--------",
-    "lblmesgsend":"Mensaje a Notificar",
+    "lblmesgsend":"Mensaje a Publicar",
     "lblbtntext":"Texto del Botón",
     "--------TRADUCIONES-GRAFICO FROM-COMP-----------":"------GRAFICO FROM-COMP--------",
     "lblunit":"Unidad",
@@ -133,9 +179,9 @@
             "id":"Número de Serie",
             "template":"Seleccionar Plantilla",
             "templateinp":"Plantilla",
-            "btn":"Agregar Dispositivo",
+            "btn":"Agregar",
             "notemplatesbtn":"Crear Plantilla",
-            "notemplatestxt":"Antes de agregar dispostivos necesitas tener plantillas creadas",
+            "notemplatestxt":"Un dispositivo necesita estar asociado a una plantilla",
             "invalidinp":"Hay campos inválidos",
             "ok {device}":"Dispositivo {device} creado con éxito!"
         },
@@ -147,7 +193,10 @@
             "saver":"Grabador",
             "online":"Tu dispositivo está En Linea",
             "offline":"Tu dispositivo está Fuera de Línea",
+            "onsaver":"El dispositivo guarda en Base de Datos!",
+            "offsaver":"Los datos del dispositivo NO están siendo persistentes!",
             "deletemodal {deviceName}":"¿Estás seguro de ELIMINAR el dispositivo '{deviceName}'?",
+            "notifdeleted {deviceName}":"Dispositivo {deviceName} eliminado!",
             "hasalarms":"Sus alarmas creadas también serán removidas!"
             
         }
@@ -165,7 +214,7 @@
         "notifications":"Esta página es solo una tabla simple que enumera todas las notificaciones históricas que recibió para el DISPOSITIVO SELECCIONADO",
         "profile":"En la página de perfil verás tus datos ingresados ​​cuando te registraste. La página te permite modificar la información y agregar alguna otra pero debes tener un correo electrónico, un nombre y al menos un número de teléfono registrado (debe ser el CELULAR Nº 1). Puedes tener hasta tres números de teléfono y estos serán utilizados por el sistema para notificar cuando una alarma sea disparada.",
         "howtouse":"CÓMO USAR LA PLATAFORMA",
-        "howtousetext":"Para empezar, tenés que definir una plantilla. Una plantilla es genérica y reutilizable para varios dispositivos. Ahora podés empezar a crear dispositivos y vincularlos a esta plantilla (asumimos que el dispositivo maneja las variables que se definieron en la plantilla). Si deseás recibir notificaciones en tiempo real acerca de los valores que toman tus variables , debés crear una alarma."
+        "howtousetext":"Para empezar, tenés que definir una plantilla. Una plantilla es genérica y reutilizable para varios dispositivos. Una vez creada, podés empezar a crear dispositivos y vincularlos a esta plantilla (asumimos que el dispositivo maneja las variables que se definieron en la plantilla). Si deseás recibir notificaciones en tiempo real acerca de los valores que toman tus variables , debés crear una alarma."
 
     },
 

@@ -4,7 +4,21 @@
     <div v-else-if="devices.length > 0" class="row">
       <card>
         <template slot="header">
-          <h4 class="card-title">{{$t('devices.list.title')}}</h4>
+          <h4 class="card-title pull-left">{{$t('devices.list.title')}}</h4>
+          <BaseDropdown
+          title-tag="a"
+          class="nav-item pull-right"
+          :menuOnRight="true"
+        >
+          <template slot="title">
+            <i class="tim-icons icon-bullet-list-67"></i>
+          </template>
+          <li @click="$emit('create-device')">
+            <a class="text-dark ml-2"
+              >Nuevo<i class="fa fa-plus ml-2 text-success"></i
+            ></a>
+          </li>
+        </BaseDropdown>
         </template>
 
         <el-table :data="devices">
@@ -16,9 +30,9 @@
 
           <el-table-column prop="name" label="Name"></el-table-column>
 
-          <el-table-column prop="dId" label="Device Id"></el-table-column>
+          <el-table-column prop="dId" label="Id"></el-table-column>
 
-          <el-table-column label="Password">
+          <el-table-column label="Clave">
             <template slot-scope="{ row }">
               <el-tooltip
                 :content="$t('devices.list.secret')"
@@ -33,11 +47,11 @@
 
           <el-table-column
             prop="templateName"
-            label="Template"
+            label="Plantilla"
           ></el-table-column>
 
           <el-table-column
-            label="Status"
+            label="Estado"
           ><template slot-scope="{ row }">
               <el-tooltip
                 :content="row.status =='online' ? $t('devices.list.online') : $t('devices.list.offline')"
@@ -47,6 +61,26 @@
               </el-tooltip>
             </template>
           </el-table-column>
+
+          <el-table-column
+            label="Persistencia"
+          ><template slot-scope="{ row }">
+              <el-tooltip
+                :content="row.saverRule.status ? $t('devices.list.onsaver') : $t('devices.list.offsaver')"
+                :open-delay="300"
+                placement="top"
+                ><i
+                  class="fas fa-database "
+                  :class="{
+                    'text-success': row.saverRule.status,
+                    'text-dark': !row.saverRule.status
+                  }"
+                ></i>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+
+
 
 
           <el-table-column header-align="right" label="Actions" >
@@ -70,7 +104,7 @@
                 </base-button>
               </el-tooltip>
               
-              <el-tooltip
+             <!--  <el-tooltip
                 :content="$t('devices.list.dbsaverindic')"
                 style="margin-right:10px"
               >
@@ -81,7 +115,7 @@
                     'text-dark': !row.saverRule.status
                   }"
                 ></i>
-              </el-tooltip>
+              </el-tooltip> -->
               
               <el-tooltip
                 :content="$t('devices.list.dbsaver')"
@@ -155,7 +189,8 @@ export default {
         this.$notify({
           type: "success",
           icon: "tim-icons icon-check-2",
-          message: `Device "${device.name.toUpperCase()}" deleted!`
+          message: `${this.$t('devices.list.notifdeleted {deviceName}',{deviceName:device.name.toUpperCase()})}`
+          
         });
         this.deviceToDelete = null;
       } catch (e) {

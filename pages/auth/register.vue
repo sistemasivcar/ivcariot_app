@@ -7,49 +7,56 @@
           <h1 class="card-title">IvcarIoT</h1>
         </template>
 
-        <div>
-
-
+        <div @keyup.enter="register()">
           <base-input
             name="name"
             v-model="user.name"
-            placeholder="Full Name"
+            class="info"
+            :class="{'has-danger':!nameValidity}"
+            :placeholder="$t('auth.fullnameinp')"
             addon-left-icon="tim-icons icon-badge"
           >
           </base-input>
-          <p v-if="!nameValidity" class="text-danger">invalid Name</p>
-            
- 
-
+          <p v-if="!nameValidity" class="text-danger">
+            {{ $t("auth.invfullname") }}
+          </p>
 
           <base-input
             name="phone"
             v-model="user.phones"
-            placeholder="Phone Number"
+            :class="{'has-danger':!phonenumberValidity}"
+            :placeholder="$t('auth.phoneinp')"
             addon-left-icon="tim-icons icon-mobile"
           >
           </base-input>
-          <p v-if="!phonenumberValidity" class="text-danger">invalid Phone Number</p>
-
+          <p v-if="!phonenumberValidity" class="text-danger">
+            {{ $t("auth.phoneinv") }}
+          </p>
 
           <base-input
             name="email"
             v-model="user.email"
-            placeholder="Email"
+            :placeholder="$t('auth.emailinp')"
+            :class="{'has-danger':!emailValidity}"
             addon-left-icon="tim-icons icon-email-85"
           >
           </base-input>
-          <p v-if="!emailValidity" class="text-danger">invalid Email Address</p>
+          <p v-if="!emailValidity" class="text-danger">
+            {{ $t("auth.emailinv") }}
+          </p>
 
           <base-input
             name="password"
             v-model="user.password"
             type="password"
-            placeholder="Password"
+            :class="{'has-danger':!passwordValidity}"
+            :placeholder="$t('auth.passwordinp')"
             addon-left-icon="tim-icons icon-lock-circle"
           >
           </base-input>
-          <p v-if="!passwordValidity" class="text-danger">invalid password</p>
+          <p v-if="!passwordValidity" class="text-danger">
+            {{ $t("auth.passwordinv") }}
+          </p>
         </div>
 
         <div slot="footer">
@@ -61,19 +68,19 @@
             @click="register"
             block
           >
-            Register
+            {{ $t("auth.registerbtn") }}
           </base-button>
 
-          <div class="pull-left">
+          <div class="">
             <h6>
               <nuxt-link class="link footer-link text-info" to="/auth/login">
-                login
+                {{ $t("auth.loginlink") }}
               </nuxt-link>
             </h6>
           </div>
 
           <div class="pull-right">
-            <h6><a href="#help!!!" class="link footer-link text-info">Need Help?</a></h6>
+            <!-- <h6><a href="#help!!!" class="link footer-link text-info">{{ $t('auth.helplink') }}</a></h6> -->
           </div>
         </div>
       </card>
@@ -86,18 +93,18 @@ export default {
   layout: "auth",
   data() {
     return {
-      phones:[],
+      phones: [],
       user: {
-        name:'',
+        name: "",
         email: "",
         password: "",
-        phones:null
+        phones: ""
       },
       isValidForm: false,
       nameValidity: true,
       emailValidity: true,
       passwordValidity: true,
-      phonenumberValidity:true
+      phonenumberValidity: true
     };
   },
   methods: {
@@ -108,6 +115,16 @@ export default {
     },
 
     validateForm() {
+      var phonesValidos = /^[0-9]+$/;
+
+      if (!this.user.phones || !this.user.phones.match(phonesValidos)) {
+        this.phonenumberValidity = false;
+        this.isValidForm = false;
+      } else {
+        this.phonenumberValidity = true;
+        this.isValidForm = true;
+      }
+
       if (!this.user.name || this.user.name.length < 3) {
         this.isValidForm = false;
         this.nameValidity = false;
@@ -132,12 +149,15 @@ export default {
     },
     register() {
       this.validateForm();
-  
-      console.log(this.nameValidity, this.emailValidity, this.passwordValidity);
+
       if (!this.isValidForm) return;
 
       this.phones.push(this.user.phones);
-      this.user.phones=this.phones;
+      this.user.phones = this.phones;
+      this.user.config={
+        usePublicTemplates:false,
+        notifDesconnectedDevices:false, 
+      }
 
       this.$axios
         .post("/user/register", this.user)
@@ -159,13 +179,13 @@ export default {
             this.$notify({
               type: "danger",
               icon: "tim-icons icon-alert-circle-exc",
-              message: "Ups, the email already exists"
+              message: "El email ya existe!"
             });
           } else {
             this.$notify({
               type: "danger",
               icon: "tim-icons icon-alert-circle-exc",
-              message: "Ups, something was wrong. Try later"
+              message: "Ups, algo salió mal. Intentá más tarde!"
             });
           }
         });

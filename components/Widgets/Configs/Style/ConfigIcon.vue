@@ -5,21 +5,19 @@
     placeholder="Select Icon"
     style="width: 100%;"
   >
-    <el-option value="fa-sun" class="text-info" label="Sun"> </el-option>
-
-    <el-option value="fa-bath" class="text-info" label="Bath"> </el-option>
-    <el-option value="fa-male" class="text-info" label="Person"> </el-option>
-    <el-option value="fa-home" class="text-info" label="Home"> </el-option>
-    <el-option value="fa-lightbulb" class="text-info" label="Light"></el-option>
-    <el-option value="fa-key" class="text-info" label="Key"> </el-option>
-    <el-option value="fa-tint" class="text-info" label="Tint"> </el-option>
-    <el-option value="fa-thermometer" class="text-info" label="Thermometer"> </el-option>
-    <el-option value="fa-cloud" class="text-info" label="Cloud"> </el-option>
-    <el-option value="fa-bullhorn" class="text-info" label="Bullhorn"></el-option>
-    <el-option value="fa-bell" class="text-info" label="Bell"> </el-option>
-    <el-option value="fa-unlock" class="text-info" label="Unlock"> </el-option>
-    <el-option value="fa-lock" class="text-info" label="Lock"> </el-option>
-    <el-option value="fa-bolt" class="text-info" label="Bolt"> </el-option>
+    <el-option value="fa-sun" class="text-info" :label="$t('icons.sun')"> </el-option>
+    <el-option value="fa-bath" class="text-info" :label="$t('icons.bath')"> </el-option>
+    <el-option value="fa-person" class="text-info" :label="$t('icons.person')"> </el-option>
+    <el-option value="fa-home" class="text-info" :label="$t('icons.home')"></el-option>
+    <el-option value="fa-light" class="text-info" :label="$t('icons.light')"> </el-option>
+    <el-option value="fa-tint" class="text-info" :label="$t('icons.tint')"> </el-option>
+    <el-option value="fa-thermometer" class="text-info" :label="$t('icons.thermometer')"> </el-option>
+    <el-option value="fa-cloud" class="text-info" :label="$t('icons.cloud')"> </el-option>
+    <el-option value="fa-bullhorn" class="text-info" :label="$t('icons.sirena')"></el-option>
+    <el-option value="fa-bell" class="text-info" :label="$t('icons.bell')"> </el-option>
+    <el-option value="fa-unlock" class="text-info" :label="$t('icons.unlock')"> </el-option>
+    <el-option value="fa-lock" class="text-info" :label="$t('icons.lock')"> </el-option>
+    <el-option value="fa-bolt" class="text-info" :label="$t('icons.bolt')"> </el-option>
    
   </el-select>
 </template>
