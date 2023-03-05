@@ -6,7 +6,7 @@ export default {
   ** Headers of the page
   */
   head: {
-    title: 'Ivcar App',
+    title: 'Ivcar IoT',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -63,7 +63,13 @@ export default {
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
-    baseURL: "http://127.0.0.1:3001/api"
+    baseURL: process.env.AXIOS_BASE_URL,
+  },
+  
+  env:{
+    mqtt_prefix:process.env.MQTT_PREFIX,
+    mqtt_host:process.env.MQTT_HOST,
+    mqtt_port:process.env.MQTT_PORT,
   },
 
   /*

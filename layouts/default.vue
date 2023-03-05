@@ -142,8 +142,8 @@ export default {
       sidebarBackground: "blue", //vue|blue|orange|green|red|primary
       client: null,
       options: {
-        host: "localhost",
-        port: 8083,
+        host: process.env.mqtt_host,
+        port: process.env.mqtt_port,
         keepalive:60,
         endpoint: "/mqtt",
         clean: true,
@@ -156,12 +156,6 @@ export default {
         )}`,
         username: null,
         password: null,
-/*      will:{
-          topic:`${userId}/+/+/status`,
-          payload:'{"status":"offline"}',
-          qos:1,
-          retain:true
-        } */
       }
     };
   },
@@ -187,7 +181,7 @@ export default {
       const notifSubscribeTopic = `${this.userId}/+/+/notif`;
       const statusSubscribeTopic = `${this.userId}/+/+/status`;
       // ex. topic: "userId/dId/variableid/sdata"
-      const connectUrl = `ws://${this.options.host}:${this.options.port}${this.options.endpoint}`;
+      const connectUrl = `${process.env.mqtt_prefix}://${this.options.host}:${this.options.port}${this.options.endpoint}`;
       console.log(connectUrl);
 
       try {
@@ -217,10 +211,6 @@ export default {
         this.getMqttCredentialsForReconnection();
 
       });
-
-      this.client.on('offline',()=>{
-        console.log('OFFLINE')
-      })
 
       this.client.on("message", (topic, message) => {
         console.log("Message MQTT from topic -> ", topic);

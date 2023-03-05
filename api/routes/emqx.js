@@ -6,7 +6,7 @@ require('colors');
 const auth = {
     auth: {
         username: 'admin',
-        password: process.env.EMQX_MANAGMENT_PASSWORD
+        password: process.env.EMQX_DEFAULT_APPLICATION__SECRET
     }
 };
 
