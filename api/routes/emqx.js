@@ -23,6 +23,7 @@ async function listResources() {
 
 
     try {
+        console.log('TRYING TO LISTING RESOURSES!!'.magenta)
         const url = `http://${process.env.EMQX_NODE_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/resources/`;
         const res = await axios.get(url, auth);
         const size = res.data.data.length
@@ -68,9 +69,11 @@ async function listResources() {
                 printWarning();
             }
         } else {
+            
             console.log("Error in EMQX API");
         }
     } catch (e) {
+        console.log('ERROR GETTING RESOURSES'.magenta)
         console.log(e)
     }
 
