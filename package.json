@@ -1,8 +1,8 @@
 {
-  "name": "iot_gl_app",
+  "name": "ivcar",
   "version": "1.0.0",
-  "description": "IOT_GL_APP",
-  "author": "IoTicos.org",
+  "description": "Plataforma IvcarIoT",
+  "author": "ivcar.com",
   "scripts": {
     "dev": "nuxt",
     "devn": "nodemon api/index.js --exec babel-node",

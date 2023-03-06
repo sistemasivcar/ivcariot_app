@@ -5,6 +5,7 @@ export default {
   /*
   ** Headers of the page
   */
+
   head: {
     title: 'Ivcar IoT',
     meta: [
@@ -13,7 +14,10 @@ export default {
       { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/img/myimgs/logo.png' },
+
+      /* { rel: 'icon', type: 'image/x-icon', href: '/favicon.icon' }, */
+      { rel: 'shortcut icon', type: '', href: '/logo-ivcar.png' },
+      
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800' },
       { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css' }
     ],
@@ -59,7 +63,13 @@ export default {
   ],
 
   i18n,
-
+  
+  pwa: {
+    icon:{
+      source: '/static/logo-ivcar.png',
+      fileName: 'logo-ivcar.png'
+    },
+  },
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
