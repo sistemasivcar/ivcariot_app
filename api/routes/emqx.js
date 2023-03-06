@@ -22,7 +22,7 @@ async function listResources() {
 
 
     try {
-        const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/resources/`;
+        const url = `http://${process.env.EMQX_NODE_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/resources/`;
         const res = await axios.get(url, auth);
         const size = res.data.data.length
 
@@ -81,12 +81,12 @@ async function listResources() {
 async function createResources() {
 
     try {
-        const url = `http://localhost:${process.env.EMQX_MANAGMENT_PORT}/api/v4/resources`;
+        const url = `http://${process.env.EMQX_NODE_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/resources`;
 
         const dataSaverWebhook = {
             "type": "web_hook",
             "config": {
-                url: `http://localhost:${process.env.API_PORT}/api/webhook/saver-webhook`,
+                url: `http://${process.env.EMQX_NODE_HOST}:${process.env.API_PORT}/api/webhook/saver-webhook`,
                 headers: {
                     token: process.env.EMQX_MANAGMENT_TOKEN
                 },
@@ -98,7 +98,7 @@ async function createResources() {
         const dataAlarmWebhook = {
             "type": "web_hook",
             "config": {
-                url: `http://localhost:${process.env.API_PORT}/api/webhook/alarm-webhook`,
+                url: `http://${process.env.EMQX_NODE_HOST}:${process.env.API_PORT}/api/webhook/alarm-webhook`,
                 headers: {
                     token: process.env.EMQX_MANAGMENT_TOKEN
                 },
@@ -133,6 +133,6 @@ async function createResources() {
 
 setTimeout(() => {
     listResources();
-}, 1000);
+}, process.env.EMQX_RESOURSES_DELAY);
 
 module.exports = router;
