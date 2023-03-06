@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 import checAuth from '../middleware/auth.js';
 import asyncMiddleware from '../middleware/async';
 import axios from 'axios'
@@ -181,8 +181,6 @@ router.delete('/', checAuth, asyncMiddleware(async (req, res) => {
     return res.status(200).json(toSend);
 
 }));
-
-module.exports = router;
 
 /* 
 ______ _   _ _   _ _____ _____ _____ _____ _   _  _____ 
@@ -386,3 +384,5 @@ function makeid(length) {
     }
     return result;
 }
+
+module.exports = router;
