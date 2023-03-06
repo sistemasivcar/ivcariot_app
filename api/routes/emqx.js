@@ -129,7 +129,39 @@ async function createResources() {
     }
 
 }
+//check if superuser exist if not we create one
+global.check_mqtt_superuser = async function checkMqttSuperUser(){
 
+    try {
+      const superusers = await EmqxAuthRule.find({type:"superuser"});
+  
+      if (superusers.length > 0 ) {
+    
+        return;
+    
+      }else if ( superusers.length == 0 ) {
+    
+        await EmqxAuthRule.create(
+          {
+            publish: ["#"],
+            subscribe: ["#"],
+            userId: "emqxmqttsuperuser",
+            username: process.env.EMQX_NODE_SUPERUSER_USERNAME,
+            password: process.env.EMQX_NODE_SUPERUSER_PASSWORD,
+            type: "superuser",
+            time: Date.now(),
+            updatedTime: Date.now()
+          }
+        );
+    
+        console.log("Mqtt super user created".green)
+    
+      }
+    } catch (error) {
+      console.log("error creating mqtt superuser".red);
+      console.log(error);
+    }
+  }
 
 setTimeout(() => {
     listResources();

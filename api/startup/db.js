@@ -26,6 +26,8 @@ module.exports = function () {
             console.log("✔ Mongo Successfully Connected!".green);
             console.log("*******************************".green);
             console.log("\n");
+            
+            global.check_mqtt_superuser()
     
         })
         .catch(err => {
