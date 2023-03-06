@@ -1,4 +1,4 @@
-module.exports = function asyncMiddleware(handler) {
+export default function asyncMiddleware(handler) {
 
     return async (req, res, next) => {
         try {

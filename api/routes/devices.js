@@ -2,6 +2,7 @@ import express from 'express';
 import checAuth from '../middleware/auth.js';
 import asyncMiddleware from '../middleware/async';
 import axios from 'axios'
+const router = express.Router();
 /*
 ___  ______________ _____ _      _____ 
 |  \/  |  _  |  _  \  ___| |    /  ___|
@@ -23,8 +24,6 @@ const auth = {
         password: process.env.EMQX_DEFAULT_APPLICATION__SECRET
     }
 };
-
-const router = express.Router();
 
 /* 
   ___  ______ _____ 
@@ -350,6 +349,8 @@ async function deleteSaverRule(dId) {
 
 }
 
+
+
 async function deleteAlarmRule(emqxRuleId) {
     try {
 
@@ -385,4 +386,5 @@ function makeid(length) {
     return result;
 }
 
-module.exports = router;
+module.exports=router;
+

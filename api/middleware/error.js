@@ -1,4 +1,4 @@
-module.exports = function (err, req, res, next) {
+export default function (err, req, res, next) {
     
     console.log(err);
     const toSend = {

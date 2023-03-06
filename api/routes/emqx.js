@@ -1,6 +1,7 @@
 import { Router } from "express";
-const router = Router();
-const axios = require('axios');
+const router = Router()
+import EmqxAuthRule from "../models/emqx_auth";
+import axios from 'axios';
 require('colors');
 
 const auth = {
@@ -136,7 +137,7 @@ global.check_mqtt_superuser = async function checkMqttSuperUser(){
       const superusers = await EmqxAuthRule.find({type:"superuser"});
   
       if (superusers.length > 0 ) {
-    
+        console.log('superuser is already created')
         return;
     
       }else if ( superusers.length == 0 ) {
@@ -167,4 +168,4 @@ setTimeout(() => {
     listResources();
 }, process.env.EMQX_RESOURSES_DELAY);
 
-module.exports = router;
+module.exports=router;
