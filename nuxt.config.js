@@ -72,14 +72,14 @@ export default {
     mqtt_port:process.env.MQTT_PORT,
   },
 
+  
   server: {
     port: 3000, // default: 3000
-    host: '0.0.0.0', // default: localhost
+    host: process.env.environment === 'production' ? '0.0.0.0' : 'localhost'
   },
-
-  serverMiddleware: {
+  serverMiddleware: process.env.environment === 'production' ? {
     '/api': '~/api'
-  },
+  }:{},
 
   /*
   ** Build configuration
