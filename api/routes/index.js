@@ -1,11 +1,11 @@
-const devices = require('./devices');
-const users = require('./users');
-const templates = require('./templates');
-const webhooks = require('./webhooks');
-const emqx = require('./emqx');
-const alarms = require('./alarms');
-const notifications = require('./notifications');
-const datas = require('./data_provider')
+import devices from './devices';
+import users from './users';
+import templates from './templates';
+import webhooks from './webhooks';
+import emqx from './emqx';
+import alarms from './alarms';
+import notifications from './notifications';
+import datas from './data_provider';
 
 
 const routes = {
@@ -21,4 +21,4 @@ const routes = {
     
 }
 
-module.exports = routes;
+export default routes;
