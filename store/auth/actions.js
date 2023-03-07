@@ -24,6 +24,7 @@ const actions = {
 
     async login(context, user) {
         try {
+            
             const res = await this.$axios.post("/user/login", user);
 
             if (res.data.status == 'success') {

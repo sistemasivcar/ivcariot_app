@@ -167,8 +167,8 @@ global.check_mqtt_superuser = async function checkMqttSuperUser(){
     }
   }
 
-setTimeout(() => {
-    listResources();
-}, process.env.EMQX_RESOURSES_DELAY);
+// setTimeout(() => {
+//     listResources();
+// }, process.env.EMQX_RESOURSES_DELAY);
 
 module.exports=router;

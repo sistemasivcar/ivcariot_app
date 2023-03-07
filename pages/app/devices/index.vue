@@ -1,12 +1,12 @@
 <template>
   <div>
     
-    <NewDevice
+    <LazyNewDevice
       v-if="showViewCreate || devices.length == 0"
       @cancel-creation="cancelCreation()"
       @device-created="deviceCreated()"
       :templates="templates"
-    ></NewDevice>
+    ></LazyNewDevice>
 
     <ListDevices
       v-if="showViewList"

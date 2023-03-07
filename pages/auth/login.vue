@@ -70,6 +70,7 @@ export default {
   },
   methods: {
     async login() {
+      console.log(process.env.axios_base);
       try {
 
         if(!this.user.email || !this.user.password){

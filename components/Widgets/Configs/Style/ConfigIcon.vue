@@ -9,7 +9,7 @@
     <el-option value="fa-bath" class="text-info" :label="$t('icons.bath')"> </el-option>
     <el-option value="fa-person" class="text-info" :label="$t('icons.person')"> </el-option>
     <el-option value="fa-home" class="text-info" :label="$t('icons.home')"></el-option>
-    <el-option value="fa-light" class="text-info" :label="$t('icons.light')"> </el-option>
+    <el-option value="fa-lightbulb" class="text-info" :label="$t('icons.light')"> </el-option>
     <el-option value="fa-tint" class="text-info" :label="$t('icons.tint')"> </el-option>
     <el-option value="fa-thermometer" class="text-info" :label="$t('icons.thermometer')"> </el-option>
     <el-option value="fa-cloud" class="text-info" :label="$t('icons.cloud')"> </el-option>
