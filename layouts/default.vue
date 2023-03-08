@@ -190,6 +190,7 @@ export default {
       }
 
       this.client.on("connect", () => {
+        console.log('conectaado')
 
         this.client.subscribe([deviceSubscribeTopic, notifSubscribeTopic], err => {
           if (err) return err;
@@ -209,8 +210,7 @@ export default {
       });
 
       this.client.on("message", (topic, message) => {
-        
-
+        console.log('mensaje de recibido', message.toString())
         const splittedTopic = topic.split("/");
         const msgType = splittedTopic[3]; // sdata, notif
 

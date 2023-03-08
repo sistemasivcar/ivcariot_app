@@ -85,7 +85,7 @@ router.post('/alarm-webhook', async (req, res) => {
             return;
         }
 
-        if (incomingAlarm.typeAlarm == 'change'){
+        if (incomingAlarm.typeAlarm == 'regular'){
             /* REGULAR ALARM */
 
             const lastNotif = await Notification.find({ dId: incomingAlarm.dId, emqxRuleId: incomingAlarm.emqxRuleId }).sort({ createdTime: -1 }).limit(1);

@@ -166,7 +166,7 @@ export default {
             this.$notify({
               type: "success",
               icon: "tim-icons icon-check-2",
-              message: "Success!, now you can login"
+              message: "Registro exitoso! Ahora te podés loguar"
             });
 
             this.$router.push("/auth/login");
