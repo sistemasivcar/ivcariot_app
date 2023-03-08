@@ -311,7 +311,7 @@ export default {
           });
         }
       } catch (e) {
-        console.log(e);
+        console.log('ERROR UPDATING ALARM-RULE');
         this.$notify({
           type: "danger",
           icon: "tim-icons icon-alert-circle-exc",
@@ -377,7 +377,7 @@ export default {
           });
         }
       } catch (e) {
-        console.log(e);
+        console.log('ERROR DELETING ALARMRULE');
         this.$notify({
           type: "danger",
           icon: "tim-icons icon-alert-circle-exc",

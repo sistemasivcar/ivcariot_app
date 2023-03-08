@@ -71,7 +71,7 @@ export default {
         await this.$store.dispatch("notif/setReaded", notifId);
         await this.$store.dispatch('notif/fetchNotifications');
       } catch (e) {
-        console.log(e)
+        console.log('ERROR SETTING READED')
       }
     },
     async getNotifications() {

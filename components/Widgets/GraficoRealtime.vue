@@ -234,7 +234,7 @@ export default {
           return;
         })
         .catch(e => {
-          console.log(e);
+          console.log('ERROR GET CHART DATA');
           return;
         });
     },

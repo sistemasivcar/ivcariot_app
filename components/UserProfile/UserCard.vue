@@ -243,7 +243,7 @@ export default {
         this.user.postalCode =
           this.capitalizeWords(this.$store.state.auth.auth.userData.codezip) || "";
       } catch (e) {
-        console.log(e);
+        console.log('ERROR FETCHING DATA USER');
       }
     }
   }

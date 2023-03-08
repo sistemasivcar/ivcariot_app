@@ -34,9 +34,6 @@ export default {
     }
   },
   methods:{
-    selectDevice(){
-        console.log(this.selectedDeviceIndex);
-    },
     async selectDevice() {
       try {
         this.$nuxt.$emit('selectedDeviceIndex', this.selectedDeviceIndex)
@@ -46,7 +43,7 @@ export default {
         await this.$store.dispatch("devices/fetchDevices");
         await this.$store.dispatch("notif/fetchNotificationsForDevice", 1);
       } catch (e) {
-        console.log(e);
+        console.log('ERROR SELECTING DEVICE');
       }
     },
     setSelectedDeviceIndex(device) {
@@ -57,12 +54,11 @@ export default {
         await this.$store.dispatch("devices/fetchDevices");
         await this.$store.dispatch("notif/fetchNotificationsForDevice",1);
       } catch (e) {
-        console.log(e)
+        console.log('ERROR GETTING DEVICES')
       }
     },
     chechDisconnectedDevices(){
       this.devices.forEach(device => {
-        console.log('disconnected',device.status)
         if(device.status=='offline'){
           this.$notify({
             type: "danger",

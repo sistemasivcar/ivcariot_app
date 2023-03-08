@@ -23,7 +23,6 @@ async function listResources() {
 
 
     try {
-        console.log('TRYING TO LISTING RESOURSES!!'.magenta)
         const url = `http://${process.env.EMQX_NODE_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/resources/`;
         const res = await axios.get(url, auth);
         const size = res.data.data.length
@@ -167,8 +166,8 @@ global.check_mqtt_superuser = async function checkMqttSuperUser(){
     }
   }
 
-// setTimeout(() => {
-//     listResources();
-// }, process.env.EMQX_RESOURSES_DELAY);
+setTimeout(() => {
+    listResources();
+}, 300);
 
 module.exports=router;

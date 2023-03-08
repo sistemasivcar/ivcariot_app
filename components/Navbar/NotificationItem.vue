@@ -42,7 +42,7 @@ export default {
         const device = devices.find(d => (d.dId == dId));
         return device.name;
       } catch (e) {
-        console.log(e)
+        console.log('ERROR GET device.name NOTIF ITEM')
       }
     },
     unixToDate(ms) {

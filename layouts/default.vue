@@ -182,7 +182,6 @@ export default {
       const statusSubscribeTopic = `${this.userId}/+/+/status`;
       // ex. topic: "userId/dId/variableid/sdata"
       const connectUrl = `${process.env.mqtt_prefix}://${this.options.host}:${this.options.port}${this.options.endpoint}`;
-      console.log(connectUrl);
 
       try {
         this.client = mqtt.connect(connectUrl, this.options);
@@ -191,7 +190,6 @@ export default {
       }
 
       this.client.on("connect", () => {
-        console.log("MQTT CONNECTION SUCCESS!");
 
         this.client.subscribe([deviceSubscribeTopic, notifSubscribeTopic], err => {
           if (err) return err;
@@ -203,18 +201,15 @@ export default {
       });
 
       this.client.on("error", err => {
-        console.log("connection failed");
       });
 
       this.client.on("reconnect", err => {
-        console.log("reconnecting...", err);
         this.getMqttCredentialsForReconnection();
 
       });
 
       this.client.on("message", (topic, message) => {
-        console.log("Message MQTT from topic -> ", topic);
-        console.log("message: ", message.toString());
+        
 
         const splittedTopic = topic.split("/");
         const msgType = splittedTopic[3]; // sdata, notif
@@ -280,7 +275,7 @@ export default {
         await this.$store.dispatch("devices/fetchDevices");
         await this.$store.dispatch("notif/fetchNotificationsForDevice",1);
       } catch (e) {
-        console.log(e)
+        console.log('ERROR GET DEVICES (default.vue)')
       }
     },
     async getMqttCredentials() {
@@ -300,7 +295,7 @@ export default {
         this.options.username = credentials.data.username;
         this.options.password = credentials.data.password;
       } catch (e) {
-        console.log(e);
+        console.log('ERROR GETMQTTCREDENTIALS');
         if(e.response.status === 400){
           localStorage.clear();
           this.$store.commit('auth/setAuth',null);

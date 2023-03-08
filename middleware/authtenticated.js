@@ -4,7 +4,6 @@ export default function ({ store, redirect }) {
     store.dispatch("auth/autologin");
 
     if (!store.getters['auth/isAuth']) {
-        console.log('no auth')
         return redirect("/auth/login");
     }
 }

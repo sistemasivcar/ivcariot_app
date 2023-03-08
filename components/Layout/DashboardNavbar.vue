@@ -120,7 +120,6 @@ export default {
 
   methods: {   
     logout() {
-      console.log("salir");
       this.$store.dispatch("auth/logout");
     },
     

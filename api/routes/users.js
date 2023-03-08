@@ -25,10 +25,10 @@ router.post('/login', async (req, res) => {
     }
     // email and password are valids
     if (bcrypt.compareSync(password, user.password)) {
-
+        
         user.set('password', undefined, { strict: false });
 
-        const token = jwt.sign({ userData: user }, 'securePasswordHere', { expiresIn: 60 * 60 * 24 * 30 });
+        const token = jwt.sign({ userData: user }, process.env.SECURE_JWT_KEY, { expiresIn: 60 * 60 * 24 * 30 });
 
         const toSend = {
             status: 'success',
