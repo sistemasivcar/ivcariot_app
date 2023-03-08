@@ -103,7 +103,7 @@ async function createAlarmRule({ userId, dId, variable, value, condition, status
 
     try {
         
-        const url_post = `http://${process.env.EMQX_NODE_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules`;
+        const url_post = `http://${process.env.EMQX_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules`;
         const topic = `${userId}/${dId}/${variable}/sdata`;
         
         if (typeAlarm == 'change') {
@@ -146,7 +146,7 @@ async function createAlarmRule({ userId, dId, variable, value, condition, status
     
                 // actualizo la regla eqmx
     
-                const url_put = `http://${process.env.EMQX_NODE_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
+                const url_put = `http://${process.env.EMQX_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
                 const payload_templ = '{"userId":"' + userId + '","dId":"' + dId + '","payload":${payload},"topic":"${topic}","emqxRuleId":"' + emqxRuleId + '","messageOn":"' + messageOn + '","messageOff":"' + messageOff + '","variable":"' + variable + '","variableFullName":"' + variableFullName + '","typeAlarm":"' + typeAlarm + '"}';
                 newRule.actions[0].params.payload_tmpl = payload_templ;
     
@@ -205,7 +205,7 @@ async function createAlarmRule({ userId, dId, variable, value, condition, status
 
                 // actualizo la regla eqmx
 
-                const url_put = `http://${process.env.EMQX_NODE_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
+                const url_put = `http://${process.env.EMQX_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
                 const payload_templ = '{"userId":"' + userId + '","dId":"' + dId + '","payload":${payload},"topic":"${topic}","emqxRuleId":"' + emqxRuleId + '","value":' + value + ',"condition":"' + condition + '","message":"' + message + '","variable":"' + variable + '","variableFullName":"' + variableFullName + '","triggerTime":' + triggerTime + ',"typeAlarm":"' + typeAlarm + '"}';
                 newRule.actions[0].params.payload_tmpl = payload_templ;
 
@@ -228,7 +228,7 @@ async function createAlarmRule({ userId, dId, variable, value, condition, status
 
 async function updateAlarmRuleStatus(emqxRuleId, status) {
 
-    const url = `http://${process.env.EMQX_NODE_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
+    const url = `http://${process.env.EMQX_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
 
     const newRule = {
         enabled: status
@@ -249,7 +249,7 @@ async function updateAlarmRuleStatus(emqxRuleId, status) {
 async function deleteAlarmRule(emqxRuleId) {
     try {
 
-        const url = `http://${process.env.EMQX_NODE_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
+        const url = `http://${process.env.EMQX_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
 
         await axios.delete(url, auth);
 

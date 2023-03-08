@@ -244,7 +244,7 @@ SAVER RULES FUNCTIONS
 // create a rule 
 async function createSaverRuleInEMQX(userId, dId, status) {
     try {
-        const url = `http://${process.env.EMQX_NODE_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules`;
+        const url = `http://${process.env.EMQX_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules`;
         const topic = userId + "/" + dId + "/+/sdata";
 
         const rawsql = "SELECT topic, payload FROM \"" + topic + "\" WHERE payload.save = 1";
@@ -309,7 +309,7 @@ async function createSaverRuleInMongo(dId, status, emqxRuleId) {
 
 async function updateSaverRule(emqxRuleId, status) {
     try {
-        const url = `http://${process.env.EMQX_NODE_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
+        const url = `http://${process.env.EMQX_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
         const newRule = {
             enabled: status
         };
@@ -334,7 +334,7 @@ async function deleteSaverRule(dId) {
     try {
         const mongoRule = await SaverRuleModel.findOne({ dId: dId });
 
-        const url = `http://${process.env.EMQX_NODE_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${mongoRule.emqxRuleId}`
+        const url = `http://${process.env.EMQX_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${mongoRule.emqxRuleId}`
 
         await SaverRuleModel.deleteOne({ dId: dId });
         await axios.delete(url, auth);
@@ -354,7 +354,7 @@ async function deleteSaverRule(dId) {
 async function deleteAlarmRule(emqxRuleId) {
     try {
 
-        const url = `http://${process.env.EMQX_NODE_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
+        const url = `http://${process.env.EMQX_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
 
         await axios.delete(url, auth);
 
