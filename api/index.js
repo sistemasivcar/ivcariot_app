@@ -24,16 +24,15 @@ require('./startup/db.js')()
 const port = process.env.API_PORT || 3001;
 app.listen(port, () => console.log(`\nListening on port ${port}...`.bgGreen));
 
-if(process.env.environment != "development"){
+if(process.env.environment != "a"){
     const app2 = express();
-    app.listen(3002,function (){
+    app2.listen(3002,function (){
         console.log("Listening on port 3002 (to redirect to ssl)")
     })
 
-    app2.all('/app.ivcariot/',function(req, res){
+    app2.all('*',function(req, res){
         console.log("NO SSL ACCESS... redirecting");
         return res.redirect(`https://${req.headers['host']}${req.url}`);
-
     })
 }
 
