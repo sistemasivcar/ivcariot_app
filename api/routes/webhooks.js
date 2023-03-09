@@ -361,7 +361,7 @@ function sendWhatsappNotif(phones, text) {
     try {
         phones.forEach(phone => {
             var data = qs.stringify({
-                "token": "jef8azzfwwpfca5k",
+                "token": process.env.WPP_TOKEN,
                 "to": `+549${phone}@c.us`,
                 "body": text,
             });
