@@ -43,7 +43,6 @@ router.post('/', checkAuth, asyncMiddleware(async (req, res) => {
         userId,
         status: true
     };
-    console.log(newRule)
 
     if (await createAlarmRule(newRule)) {
         console.log('ALARM-RULE CREATED'.green);
@@ -99,13 +98,14 @@ ______ _   _ _   _ _____ _____ _____ _____ _   _  _____
 
 
 
-async function createAlarmRule({ userId, dId, variable, value, condition, status, triggerTime, variableFullName, message, messageOn, messageOff, typeAlarm }) {
+async function createAlarmRule({ userId, dId, variable, value, condition, status, triggerTime,
+    variableFullName, message, messageOn, messageOff, typeAlarm, notifMethods }) {
 
     try {
-        
+
         const url_post = `http://${process.env.EMQX_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules`;
         const topic = `${userId}/${dId}/${variable}/sdata`;
-        
+
         if (typeAlarm == 'change') {
             /* // CREATE ALARMA FOR STATUS CHANGES */
             const rawsql_for_change = `SELECT username, topic, payload FROM "${topic}" WHERE is_not_null(payload.value)`;
@@ -132,27 +132,28 @@ async function createAlarmRule({ userId, dId, variable, value, condition, status
                     typeAlarm,
                     status,
                     messageOn,
+                    notifMethods,
                     messageOff,
                     variableFullName,
                     emqxRuleId,
                     createdTime: Date.now(),
                 });
-    
+
                 // actualizo las alarmRules del device
                 var alarmRules = [];
                 const device = await DeviceModel.findOne({ dId: dId });
                 alarmRules = [...device.alarmRules, mongoAlarmRule._id]
                 await DeviceModel.updateOne({ dId: dId }, { alarmRules: alarmRules });
-    
+
                 // actualizo la regla eqmx
-    
+
                 const url_put = `http://${process.env.EMQX_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
-                const payload_templ = '{"userId":"' + userId + '","dId":"' + dId + '","payload":${payload},"topic":"${topic}","emqxRuleId":"' + emqxRuleId + '","messageOn":"' + messageOn + '","messageOff":"' + messageOff + '","variable":"' + variable + '","variableFullName":"' + variableFullName + '","typeAlarm":"' + typeAlarm + '"}';
+                const payload_templ = '{"userId":"' + userId + '","dId":"' + dId + '","payload":${payload},"topic":"${topic}","emqxRuleId":"' + emqxRuleId + '","messageOn":"' + messageOn + '","messageOff":"' + messageOff + '","variable":"' + variable + '","variableFullName":"' + variableFullName + '","typeAlarm":"' + typeAlarm + '","notifMethods":"' + notifMethods + '"}';
                 newRule.actions[0].params.payload_tmpl = payload_templ;
-    
+
                 // actualizo la regla
                 const rest = await axios.put(url_put, newRule, auth);
-    
+
                 return true;
             } else {
                 return false;
@@ -160,7 +161,7 @@ async function createAlarmRule({ userId, dId, variable, value, condition, status
 
         }
 
-        if(typeAlarm=='regular'){
+        if (typeAlarm == 'regular') {
             /* // CREATE A REGULAR ALARM RULE */
             const rawsql = `SELECT username, topic, payload FROM "${topic}" WHERE payload.value ${condition} ${value} AND is_not_null(payload.value)`;
 
@@ -190,6 +191,7 @@ async function createAlarmRule({ userId, dId, variable, value, condition, status
                     value,
                     condition,
                     status,
+                    notifMethods,
                     message,
                     triggerTime,
                     variableFullName,
@@ -206,7 +208,7 @@ async function createAlarmRule({ userId, dId, variable, value, condition, status
                 // actualizo la regla eqmx
 
                 const url_put = `http://${process.env.EMQX_HOST}:${process.env.EMQX_MANAGMENT_PORT}/api/v4/rules/${emqxRuleId}`;
-                const payload_templ = '{"userId":"' + userId + '","dId":"' + dId + '","payload":${payload},"topic":"${topic}","emqxRuleId":"' + emqxRuleId + '","value":' + value + ',"condition":"' + condition + '","message":"' + message + '","variable":"' + variable + '","variableFullName":"' + variableFullName + '","triggerTime":' + triggerTime + ',"typeAlarm":"' + typeAlarm + '"}';
+                const payload_templ = '{"userId":"' + userId + '","dId":"' + dId + '","payload":${payload},"topic":"${topic}","emqxRuleId":"' + emqxRuleId + '","value":' + value + ',"condition":"' + condition + '","message":"' + message + '","variable":"' + variable + '","variableFullName":"' + variableFullName + '","triggerTime":' + triggerTime + ',"typeAlarm":"' + typeAlarm + '","notifMethods":"' + notifMethods + '"}';
                 newRule.actions[0].params.payload_tmpl = payload_templ;
 
                 // actualizo la regla

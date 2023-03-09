@@ -10,6 +10,7 @@ import { Router } from "express";
 import DataModel from "../models/data";
 import TemplateModel from '../models/template';
 import DeviceModel from "../models/device";
+import UserModel from '../models/user';
 import Notification from "../models/notification";
 import AlarmRuleModel from "../models/emqx_alarm_rule";
 import EmqxAuthModel from '../models/emqx_auth'
@@ -18,7 +19,18 @@ import mqtt from "mqtt";
 const router = Router();
 const axios = require('axios');
 const colors = require('colors');
+const qs = require('qs');
 var client;
+
+// WHATSAPP API CONFIG
+var config = {
+    method: 'post',
+    url: 'https://api.ultramsg.com/instance21265/messages/chat',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    data: null
+};
 
 // SAVER RULE WEBHOOK
 router.post('/saver-webhook', async (req, res) => {
@@ -55,59 +67,69 @@ router.post('/alarm-webhook', async (req, res) => {
         res.sendStatus(200);
         if (!req.headers.token === process.env.EMQX_MANAGMENT_TOKEN) return res.sendStatus(404);
         const incomingAlarm = req.body;
-        console.log(incomingAlarm)
+        //console.log(incomingAlarm)
 
         updateAlarmCounter(incomingAlarm.emqxRuleId)
+        const sendWpp = incomingAlarm.notifMethods.includes('wpp');
+        const sendEmail = incomingAlarm.notifMethods.includes('sms');
+        const sendSMS = incomingAlarm.notifMethods.includes('email');
+        const { phones } = await UserModel.findOne({ _id: incomingAlarm.userId })
+        console.log(incomingAlarm.notifMethods, sendWpp)
 
         if (incomingAlarm.typeAlarm == 'change') {
 
             /* CHANGE ALARM */
-            
+
             if (incomingAlarm.payload.value) {
                 //send notif ON
                 sendMqttNotif(incomingAlarm.userId, incomingAlarm.messageOn);
+                sendWpp ? sendWhatsappNotif(phones, incomingAlarm.messageOn) : null
                 const notifToSave = {
                     ...incomingAlarm,
-                    type:'change',
-                    message:incomingAlarm.messageOn
+                    type: 'change',
+                    message: incomingAlarm.messageOn
                 }
                 saveNotifToMongo(notifToSave);
             } else if (!incomingAlarm.payload.value) {
                 //send notif OFF
                 sendMqttNotif(incomingAlarm.userId, incomingAlarm.messageOff);
+                sendWpp ? sendWhatsappNotif(phones, incomingAlarm.messageOff) : null
                 const notifToSave = {
                     ...incomingAlarm,
-                    type:'change',
-                    message:incomingAlarm.messageOff
+                    type: 'change',
+                    message: incomingAlarm.messageOff
                 }
                 saveNotifToMongo(notifToSave);
             }
             return;
         }
 
-        if (incomingAlarm.typeAlarm == 'regular'){
+        if (incomingAlarm.typeAlarm == 'regular') {
             /* REGULAR ALARM */
 
             const lastNotif = await Notification.find({ dId: incomingAlarm.dId, emqxRuleId: incomingAlarm.emqxRuleId }).sort({ createdTime: -1 }).limit(1);
 
             if (lastNotif == 0) {
-                console.log("FIRST TIME ALARM");
+
                 sendMqttNotif(incomingAlarm.userId, incomingAlarm.message);
-                saveNotifToMongo({...incomingAlarm, message:incomingAlarm.message});
+                sendWpp ? sendWhatsappNotif(phones, '⚠️'+incomingAlarm.message) : null
+                saveNotifToMongo({ ...incomingAlarm, message: incomingAlarm.message });
             } else {
 
                 const lastNotifToNowMins = (Date.now() - lastNotif[0].createdTime) / 1000 / 60;
 
                 if (lastNotifToNowMins > incomingAlarm.triggerTime) {
-                    console.log("TRIGGERED");
+
                     sendMqttNotif(incomingAlarm.userId, incomingAlarm.message);
-                    saveNotifToMongo({...incomingAlarm, message:incomingAlarm.message});
+                    sendWpp ? sendWhatsappNotif(phones, '⚠️'+incomingAlarm.message) : null
+                    saveNotifToMongo({ ...incomingAlarm, message: incomingAlarm.message });
                 }
 
             }
         }
 
     } catch (e) {
+        console.log(e)
         res.sendStatus(200);
     }
 
@@ -227,7 +249,7 @@ function startMqttClient() {
         if (typeMessage == 'status') {
             const userId = splittedTopic[0];
             const dId = splittedTopic[1];
-            processStatusMessage(dId, userId, message.toString())
+            processStatusMessage(dId, userId, JSON.parse(message.toString()))
         }
     })
 
@@ -244,14 +266,25 @@ function startMqttClient() {
 
 }
 
-async function processStatusMessage(dId, userId, status) {
+async function processStatusMessage(dId, userId, message) {
     // whatsApp notification
-    // message -> "online","offline"
+    // message -> {
+    //     status:"online",
+    //     name:"devicename"
+    // }
     try {
-        await DeviceModel.updateOne({ dId, userId }, { status })
+        await DeviceModel.updateOne({ dId, userId }, { status:message.status })
+        const {phones} = await UserModel.findOne({_id:userId})
+        if(message.status=="offline"){
+            sendWhatsappNotif(phones, `"${message.name.toUpperCase()}" FUERA DE LINEA 🔴`)
+        }
+        if(message.status=="online"){
+            sendWhatsappNotif(phones, `"${message.name.toUpperCase()}" EN LÍNEA 🔵`)
+        }
     } catch (e) {
         console.log(e)
     }
+    
 }
 
 function sendMqttNotif(userId, message) {
@@ -260,7 +293,6 @@ function sendMqttNotif(userId, message) {
         const topic = userId + '/dummy-did/dummy-var/notif';
         const msg = message;
         client.publish(topic, msg);
-        console.log('send!',topic,msg)
     } catch (error) {
         console.log(error)
 
@@ -323,6 +355,30 @@ function makeid(length) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+}
+
+function sendWhatsappNotif(phones, text) {
+    try {
+        phones.forEach(phone => {
+            var data = qs.stringify({
+                "token": "jef8azzfwwpfca5k",
+                "to": `+549${phone}@c.us`,
+                "body": text,
+            });
+
+            config.data = data;
+
+            axios(config)
+                .then(function (response) {
+                    console.log(JSON.stringify(response.data));
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        })
+    } catch (e) {
+        console.log(e)
+    }
 }
 setTimeout(function () {
     startMqttClient()

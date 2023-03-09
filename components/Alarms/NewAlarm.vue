@@ -139,7 +139,7 @@
           <div class="row pull-right">
             <div class="col-12">
               <base-button
-                @click="createNewRule()"
+                @click="showModalNotifsMethodsSelection()"
                 native-type="submit"
                 type="info"
                 class="pull-right"
@@ -157,25 +157,69 @@
       </div>
     </div>
     <div v-else>SELECCIONÁ UN DISPOSITIVO</div>
+
+    <Modal
+      :animationDuration="2000"
+      type="notice"
+      :show="modalNotifsMethodsVisibility"
+      :scrollToBottom="true"
+      :appendToBody="true"
+      gradient=""
+      @close="modalNotifsMethodsVisibility=false"
+    >
+
+    <template slot="header">
+        <h5 class="modal-title" id="exampleModalLabel">Por último, ¿Por donde quéres que te notifiquemos?</h5>
+    </template>
+
+    <template name="dafult">
+      <input class="mycheck" type="checkbox" value="wpp" v-model="newRule.notifMethods">
+      <label for="notifMethods">WhatsApp</label><br>
+
+      <input disabled class="mycheck" type="checkbox" value="email" v-model="newRule.notifMethods">
+      <label for="notifMethods">Email <span class="text-danger"> (Próximamente)</span></label><br>
+
+      <input disabled class="mycheck" type="checkbox" value="sms" v-model="newRule.notifMethods">
+      <label for="notifMethods">SMS<span class="text-danger"> (Próximamente)</span></label><br>
+
+      <p v-if="!inputs.notifMethods" class="text-danger">Seleccioná al menos un método de notificación!</p>
+      <BaseButton
+              size="md"
+              type="info"
+              @click="createNewRule()"
+              class="pull-right"
+              >Listo, crear!</BaseButton
+            >
+    </template>
+
+  
+  </Modal>
   </div>
 </template>
 
 <script>
 import { Select, Option } from "element-ui";
+import BaseCheckbox from '../Inputs/BaseCheckbox.vue'
+import IconCheckbox from '../Inputs/IconCheckbox.vue'
+
 export default {
   props: ["first"],
   components: {
     [Option.name]: Option,
-    [Select.name]: Select
-  },
+    [Select.name]: Select,
+    BaseCheckbox,
+    IconCheckbox
+},
   data() {
     return {
+      modalNotifsMethodsVisibility:false,
       isValidForm: true,
       addLoading: false,
       inputs: {
         messageOn: true,
         messageOff: true,
         value: true,
+        notifMethods:true,
         message: true,
         condition: true,
         triggerTime: true
@@ -186,6 +230,7 @@ export default {
         variableFullName: null,
         variable: null,
         messageOn: null,
+        notifMethods:[],
         messageOff: null,
         value: null,
         message: null,
@@ -220,6 +265,14 @@ export default {
             icon: "tim-icons icon-alert-circle-exc"
         })
         return;
+      }
+      if(this.newRule.notifMethods.length==0){
+        this.inputs.notifMethods=false;
+        this.isValidForm=false;
+        return;
+      }else{
+        this.inputs.notifMethods=true;
+        this.isValidForm=true;
       }
       if (this.typeAlarm == "regular") {
         if (
@@ -284,6 +337,10 @@ export default {
       this.selectedWidgetIndex = null;
     },
 
+    showModalNotifsMethodsSelection(){
+      this.modalNotifsMethodsVisibility=true;
+    },
+
     async createNewRule() {
       this.validNewRule();
       if (!this.isValidForm) return;
@@ -305,12 +362,14 @@ export default {
         ...this.newRule,
         variableFullName,
         variable,
+        notifMethods:this.newRule.notifMethods,
         dId,
         typeAlarm: this.typeAlarm
       };
 
       try {
         this.addLoading = true;
+        this.modalNotifsMethodsVisibility=false;
         await this.$store.dispatch("devices/crateAlarmRule", newRule);
         await this.$store.dispatch("devices/fetchDevices");
         this.$notify({
@@ -319,6 +378,7 @@ export default {
           message: `${this.$t("notifalarm")}`
         });
         this.$emit('new-alarm')
+
       } catch (e) {
         this.$notify({
           type: "danger",
@@ -383,3 +443,21 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.mycheck {
+    cursor: pointer;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+    width: 20px;
+    height: 20px;
+    appearance: none;
+    border: 2px solid #888;
+    transition: background-color 0.3s ease-in-out;
+}
+.mycheck:checked {
+  background-color: rgb(75, 156, 13);
+  color: rgb(75, 156, 13);
+  background-position: 0 0;
+} 
+</style>

@@ -81,7 +81,8 @@ export default {
     mqtt_prefix:process.env.MQTT_PREFIX,
     mqtt_host:process.env.MQTT_HOST,
     mqtt_port:process.env.MQTT_PORT,
-    axios_base:process.env.AXIOS_BASE_URL
+    axios_base:process.env.AXIOS_BASE_URL,
+    environment:process.env.environment
   },
 
   

@@ -77,7 +77,7 @@
     </side-bar>
     
 
-    <sidebar-share :background-color.sync="sidebarBackground"></sidebar-share>
+    <sidebar-share v-if="dev=='development'" :background-color.sync="sidebarBackground"></sidebar-share>
 
     <div class="main-panel" :data="sidebarBackground">
       <dashboard-navbar></dashboard-navbar>
@@ -141,6 +141,7 @@ export default {
     return {
       sidebarBackground: "blue", //vue|blue|orange|green|red|primary
       client: null,
+      dev:process.env.environment,
       options: {
         host: process.env.mqtt_host,
         port: process.env.mqtt_port,
@@ -224,24 +225,24 @@ export default {
         }else if (msgType == "sdata") {
           this.$nuxt.$emit(topic, JSON.parse(message.toString()));
         }else if(msgType=='status'){
+          const msg = JSON.parse(message.toString());
           setTimeout(()=>{
             this.getDevices(); // update the view
           },5000)
-          const dId = splittedTopic[1];
-          const deviceName = this.findDevice(dId);
-          const status = message.toString()
+          const deviceName = msg.name;
+          const status = msg.status;
           if(status=='offline'){
             this.$notify({
             type: "danger",
             icon: "tim-icons icon-bell-55",
-            message: `ATENCIÓN: ${deviceName} Fuera de Línea` 
+            message: `ATENCIÓN: "${deviceName}" Fuera de Línea` 
           });
 
           }else if (status=='online'){
             this.$notify({
             type: "success",
             icon: "tim-icons icon-bell-55",
-            message: `ATENCIÓN: ${deviceName} En Línea` 
+            message: `ATENCIÓN: "${deviceName}" En Línea` 
           });
           }
           

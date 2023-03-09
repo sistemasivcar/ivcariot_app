@@ -8,6 +8,7 @@ const alarmRuleSchema = new Schema({
     typeAlarm:{type:String, required:[true]},
     message: { type: String },
     messageOn:{ type: String },
+    notifMethods:{type:Array, required:[true]}, // "wpp","email","sms"
     messageOff:{ type: String },
     variable: { type: String },
     value: { type: Number },
