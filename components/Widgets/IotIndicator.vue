@@ -40,7 +40,11 @@ export default {
     },
     porcessRecivedData(data){
         
-        this.value=data.value;
+        try {
+          this.value=data.value;
+        } catch (e) {
+          console.log(e)
+        }
     }
   },
 

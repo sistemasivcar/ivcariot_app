@@ -41,16 +41,15 @@ export default {
       time: Date.now(),
       nowTime: Date.now(),
       isMounted: false,
-
+      topic: "",
       chartOptions: {
         credits: {
           enabled: false
         },
         chart: {
-          zoomType:'x',
-          timezone:'America/Argentina/Buenos_Aires',
+          zoomType: "x",
           renderTo: "container",
-          defaultSeriesType:null,
+          defaultSeriesType: "line",
           backgroundColor: "rgba(0,0,0,0)"
         },
         title: {
@@ -58,16 +57,13 @@ export default {
         },
         xAxis: {
           type: "datetime",
-          zoomEnabled:true,
           labels: {
             style: {
               color: "#d4d2d2"
             }
           }
         },
-        
         yAxis: {
-          zoomEnabled:true,
           title: {
             text: ""
           },
@@ -78,7 +74,6 @@ export default {
             }
           }
         },
-
         plotOptions: {
           series: {
             label: {
@@ -124,11 +119,20 @@ export default {
       deep: true,
       handler() {
         setTimeout(() => {
-          this.chartOptions.series[0].name = this.config.variableFullName + " " + this.config.unit;
-
-
-          this.chartOptions.chart.defaultSeriesType=this.config.defaultSeriesType;
-
+          this.value = 0;
+          this.$nuxt.$off(this.topic + "/sdata");
+          this.topic =
+            this.config.userId +
+            "/" +
+            this.config.selectedDevice.dId +
+            "/" +
+            this.config.variable;
+          this.$nuxt.$on(this.topic + "/sdata", this.procesReceivedData);
+          this.chartOptions.series[0].data = [];
+          this.chartOptions.chart.defaultSeriesType = this.config.defaultSeriesType;
+          this.getChartData();
+          this.chartOptions.series[0].name =
+            this.config.variableFullName + " " + this.config.unit;
           this.updateColorClass();
           window.dispatchEvent(new Event("resize"));
         }, 300);
@@ -136,37 +140,15 @@ export default {
     }
   },
   mounted() {
-    this.$nuxt.$on(
-      this.config.userId +
-        "/" +
-        this.config.selectedDevice.dId +
-        "/" +
-        this.config.variable +
-        "/sdata",
-      this.procesReceivedData
-    );
-
     this.getNow();
-    this.getChartData();
     this.updateColorClass();
   },
   beforeDestroy() {
-    this.$nuxt.$on(
-      this.config.userId +
-        "/" +
-        this.config.selectedDevice.dId +
-        "/" +
-        this.config.variable +
-        "/sdata",
-      this.procesReceivedData
-    );
+    this.$nuxt.$off(this.topic + "/sdata");
   },
   methods: {
-
     updateColorClass() {
-
       var c = this.config.class;
-
       if (c == "success") {
         this.chartOptions.series[0].color = "#00f2c3";
       }
@@ -182,13 +164,9 @@ export default {
       if (c == "info") {
         this.chartOptions.series[0].color = "rgba(40, 150, 252, 0.7)";
       }
-
       this.chartOptions.series[0].name =
         this.config.variableFullName + " " + this.config.unit;
-
-       this.chartOptions.chart.defaultSeriesType=String(this.config.defaultSeriesType);
     },
-
     getChartData() {
       if (this.config.demo) {
         this.chartOptions.series[0].data = [
@@ -203,7 +181,7 @@ export default {
 
       const axiosHeaders = {
         headers: {
-          'x-auth-token': this.$store.getters['auth/getToken']
+          "x-auth-token": this.$store.getters["auth/getToken"]
         },
         params: {
           dId: this.config.selectedDevice.dId,
@@ -211,34 +189,28 @@ export default {
           chartTimeAgo: this.config.chartTimeAgo
         }
       };
-
       this.$axios
         .get("data/get-data-chart", axiosHeaders)
         .then(res => {
+          this.chartOptions.series[0].data = [];
           const data = res.data.data;
-
-
-          data.forEach(dato => {
-            var point = [];
-
-            point.push(
-              dato.time + new Date().getTimezoneOffset() * 60 * 1000 * -1
+          
+          data.forEach(element => {
+            var aux = [];
+            aux.push(
+              element.time + new Date().getTimezoneOffset() * 60 * 1000 * -1
             );
-            point.push(dato.value);
-
-            this.chartOptions.series[0].data.push(point);
+            aux.push(element.value);
+            this.chartOptions.series[0].data.push(aux);
           });
-
           this.isMounted = true;
-
           return;
         })
         .catch(e => {
-          console.log('ERROR GET CHART DATA');
+          console.log(e);
           return;
         });
     },
-
     getIconColorClass() {
       if (this.config.class == "success") {
         return "text-success";
@@ -256,43 +228,40 @@ export default {
         return "text-info";
       }
     },
-
     procesReceivedData(data) {
-      this.time = Date.now();
-      this.value = data.value;
-      if(data.save){
-        //pusheo al array
-        const point = [Date.now()-(new Date().getTimezoneOffset() * 60 * 1000),data.value]
-        this.chartOptions.series[0].data.push(point)
+      try {
+        this.time = Date.now();
+        this.value = data.value;
+        setTimeout(() => {
+          if (data.save == 1) {
+            this.getChartData();
+          }
+        }, 1000);
+      } catch (error) {
+        console.log(error);
       }
     },
-
     getNow() {
       this.nowTime = Date.now();
       setTimeout(() => {
         this.getNow();
       }, 1000);
     },
-
     getTimeAgo(seconds) {
       if (seconds < 0) {
         seconds = 0;
       }
-
       if (seconds < 59) {
         return seconds.toFixed() + " secs";
       }
-
       if (seconds > 59 && seconds <= 3600) {
         seconds = seconds / 60;
         return seconds.toFixed() + " min";
       }
-
       if (seconds > 3600 && seconds <= 86400) {
         seconds = seconds / 3600;
         return seconds.toFixed() + " hour";
       }
-
       if (seconds > 86400) {
         seconds = seconds / 86400;
         return seconds.toFixed() + " day";

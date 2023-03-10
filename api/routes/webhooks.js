@@ -141,14 +141,13 @@ router.post("/getdevicecredentials", async (req, res) => {
     try {
 
         const dId = req.body.dId;
-
         const whpassword = req.body.whpassword;
-
+        console.log(dId,whpassword)
         const device = await DeviceModel.findOne({ dId: dId });
+        if(!device) return res.status(401).json();
 
-        if (whpassword != device.whpassword) {
-            return res.status(401).json();
-        }
+        if (whpassword != device.whpassword) return res.status(401).json();
+        
 
         const userId = device.userId;
 

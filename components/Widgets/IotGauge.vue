@@ -118,8 +118,6 @@ export default {
       }
     };
   },
-  mounted(){
-    console.log(this.$highcharts.chartTypes)
-  }
+  
 };
 </script>

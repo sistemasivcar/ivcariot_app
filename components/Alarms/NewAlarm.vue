@@ -26,7 +26,6 @@
                 class="select-info mb-2"
                 :placeholder="$t('selvar')"
                 v-model="selectedWidgetIndex"
-                @change="getSelectedWidgetIndex()"
                 style="width:100%"
               >
                 <el-option
@@ -255,7 +254,16 @@ export default {
     }
   },
   methods: {
-    getSelectedWidgetIndex() {},
+    validSendMethods(){
+      if(this.newRule.notifMethods.length == 0){
+        this.inputs.notifMethods=false;
+        return false;
+      }else{
+        this.inputs.notifMethods=true;
+        return true;
+      }
+
+    },
     validNewRule() {
       if(this.selectedWidgetIndex == null){
         this.isValidForm=false;
@@ -265,14 +273,6 @@ export default {
             icon: "tim-icons icon-alert-circle-exc"
         })
         return;
-      }
-      if(this.newRule.notifMethods.length==0){
-        this.inputs.notifMethods=false;
-        this.isValidForm=false;
-        return;
-      }else{
-        this.inputs.notifMethods=true;
-        this.isValidForm=true;
       }
       if (this.typeAlarm == "regular") {
         if (
@@ -338,12 +338,14 @@ export default {
     },
 
     showModalNotifsMethodsSelection(){
+      this.validNewRule();
+      if (!this.isValidForm) return;
       this.modalNotifsMethodsVisibility=true;
     },
 
     async createNewRule() {
-      this.validNewRule();
-      if (!this.isValidForm) return;
+      const res= this.validSendMethods()
+      if(!res) return;
 
       const variableFullName = this.widgets[this.selectedWidgetIndex]
         .variableFullName;
