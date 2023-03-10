@@ -59,11 +59,17 @@ export default {
         this.sneding = false;
       }, 500);
 
+      const retain = this.config.retain || false;
+      const qos = this.config.retain ? 1 : 0;
       const toSend = {
         topic:`${this.config.userId}/${this.config.selectedDevice.dId}/${this.config.variable}/actdata`,
         msg:{
             value:this.config.message
-            }
+        },
+        flags:{
+          retain,
+          qos,
+        }
       };
       this.$nuxt.$emit('mqtt-sender',toSend);
 

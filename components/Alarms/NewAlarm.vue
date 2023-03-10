@@ -251,7 +251,8 @@ export default {
     },
     hasDevices() {
       return this.$store.getters["devices/hasDevices"];
-    }
+    },
+    
   },
   methods: {
     validSendMethods(){

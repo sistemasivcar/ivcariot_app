@@ -145,7 +145,7 @@ export default {
       options: {
         host: process.env.mqtt_host,
         port: process.env.mqtt_port,
-        keepalive:60,
+        keepalive:20,
         endpoint: "/mqtt",
         clean: true,
         protocolVersion:4, // MQTT 3.1.1
@@ -249,7 +249,10 @@ export default {
       });
 
       this.$nuxt.$on("mqtt-sender", toSend => {
-        this.client.publish(toSend.topic, JSON.stringify(toSend.msg));
+        console.log(toSend.flags.qos);
+        this.client.publish(toSend.topic, JSON.stringify(toSend.msg),{
+          qos:toSend.flags.qos,
+          retain:toSend.flags.retain});
       });
     },
     findDevice(dId){

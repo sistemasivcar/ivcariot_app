@@ -28,6 +28,24 @@
         </base-input>
       </div>
     </div>
+
+    <div class="row">
+      <div class="col-12">
+        <label for="retain">Mensaje Retenido:</label>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        
+      </div>
+
+      <div class="col-6">
+        
+      </div>
+    </div>
+
+
   </div>
 </template>
 

@@ -54,8 +54,7 @@ router.post('/saver-webhook', async (req, res) => {
             value,
             time: Date.now()
         })
-    }
-    console.log(data)
+    }    
     res.sendStatus(200);
 
 
@@ -74,7 +73,7 @@ router.post('/alarm-webhook', async (req, res) => {
         const sendEmail = incomingAlarm.notifMethods.includes('sms');
         const sendSMS = incomingAlarm.notifMethods.includes('email');
         const { phones } = await UserModel.findOne({ _id: incomingAlarm.userId })
-        console.log(incomingAlarm.notifMethods, sendWpp)
+       
 
         if (incomingAlarm.typeAlarm == 'change') {
 
@@ -142,7 +141,6 @@ router.post("/getdevicecredentials", async (req, res) => {
 
         const dId = req.body.dId;
         const whpassword = req.body.whpassword;
-        console.log(dId,whpassword)
         const device = await DeviceModel.findOne({ dId: dId });
         if(!device) return res.status(401).json();
 
@@ -164,12 +162,14 @@ router.post("/getdevicecredentials", async (req, res) => {
                 variable,
                 variableFullName,
                 variableType,
-                variableSendFreq
+                variableSendFreq,
+                sendMethod,
             }) => ({
                 variable,
                 variableFullName,
                 variableType,
-                variableSendFreq
+                variableSendFreq,
+                sendMethod
             }))(widget);
 
             variables.push(v);
@@ -179,6 +179,7 @@ router.post("/getdevicecredentials", async (req, res) => {
             username: credentials.username,
             password: credentials.password,
             topic: userId + "/" + dId + "/",
+            device_name:device.name,
             variables: variables
         };
 
@@ -221,14 +222,14 @@ function startMqttClient() {
     const options = {
         port: 1883,
         host: process.env.EMQX_HOST,
-        clientId: 'webhook_superuser' + Math.round(Math.random() * (0 - 10000) * -1),
+        clientId: 'ivcariot_webhook_superuser',
         username: process.env.EMQX_NODE_SUPERUSER_USERNAME,
         password: process.env.EMQX_NODE_SUPERUSER_PASSWORD,
         keepalive: 60,
         reconnectPeriod: 5000,
         protocolId: 'MQIsdp',
         protocolVersion: 3,
-        clean: true,
+        clean: false,
         encoding: 'utf8'
     }
 
@@ -238,11 +239,12 @@ function startMqttClient() {
         console.log("MQTT CONNECTION -> SUCCESS;".green);
         const statusTopicSubscribe = '+/+/+/status';
         client.subscribe(statusTopicSubscribe, { qos: 0 }, () => {
-            console.log('SUBSCRIPTION "status" SUCCESS'.green)
+            
         })
     });
-
+    
     client.on('message', (topic, message) => {
+        console.log(topic,message.toString());
         const splittedTopic = topic.split("/");
         const typeMessage = splittedTopic[3];
         if (typeMessage == 'status') {
@@ -272,13 +274,16 @@ async function processStatusMessage(dId, userId, message) {
     //     name:"devicename"
     // }
     try {
-        await DeviceModel.updateOne({ dId, userId }, { status:message.status })
         const {phones} = await UserModel.findOne({_id:userId})
-        if(message.status=="offline"){
+        const {status}=await DeviceModel.findOne({ dId, userId })
+        console.log(status,message.status)
+        if(message.status=="offline" && status == "online"){
             sendWhatsappNotif(phones, `"${message.name.toUpperCase()}" FUERA DE LINEA 🔴`)
+            await DeviceModel.updateOne({ dId, userId }, { status:message.status })
         }
-        if(message.status=="online"){
+        if(message.status=="online" && status == "offline"){
             sendWhatsappNotif(phones, `"${message.name.toUpperCase()}" EN LÍNEA 🔵`)
+            await DeviceModel.updateOne({ dId, userId }, { status:message.status })
         }
     } catch (e) {
         console.log(e)
@@ -293,6 +298,7 @@ function sendMqttNotif(userId, message) {
         const msg = message;
         client.publish(topic, msg);
     } catch (error) {
+
         console.log(error)
 
     }
@@ -308,7 +314,7 @@ async function getDeviceMqttCredentials(dId, userId) {
                 dId: dId,
                 username: makeid(10),
                 password: makeid(10),
-                publish: [userId + "/" + dId + "/+/sdata"],
+                publish: [userId + "/" + dId + "/+/sdata", userId + "/" + dId + "/+/status"],
                 subscribe: [userId + "/" + dId + "/+/actdata"],
                 type: "device",
                 createdTime: Date.now(),

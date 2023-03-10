@@ -1,14 +1,20 @@
 <template>
 <div>
-  
+
     <Card v-if="!hasDevices">
       {{$t('dashboard.nodevices')}} <base-button :link="true"  @click="godevices" type="info">{{ $t('dashboard.linkdevices') }}</base-button>
-    </Card>
-    
+    </Card>   
 
     <Card v-else-if="!hasSelectedDevice">
       {{ $t('dashboard.noseldevice') }}
     </Card>
+
+    <div v-else-if="showAlertOfflineDevice" class="alert alert-danger" >
+      <strong>¡Cuidado!</strong> Este dispositivo está OFFLINE!. Puede ser por varios motivos como falta de 
+      energía, conectividad WiFi, etc. No te fíes de los datos que ves en pantalla porque pueden no estar actualizados.
+      Si usás mensajes retenidos, los comandos que envíes desde el panel serán procesados por el dispositivo
+      cuando se recupere.
+    </div>
 
     <div class="row" v-if="hasDevices"> <!-- el v-if es para que no de error al refrescar -->
       <div
@@ -55,7 +61,7 @@ export default {
     middleware:'authtenticated',
     data(){
         return {
-
+          
         }
     },
     methods:{
@@ -81,8 +87,11 @@ export default {
         },
         hasSelectedDevice() {
       //retorna el objeto device seleccionado
-      return this.$store.getters["devices/getSelectedDevice"];
+        return this.$store.getters["devices/getSelectedDevice"];
     },
+    showAlertOfflineDevice(){
+      return this.hasSelectedDevice.status=="offline";
+    }
     },
     mounted(){
      
