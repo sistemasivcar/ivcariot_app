@@ -1,4 +1,5 @@
 <template>
+  
   <el-select
     class="select-info mr-3 mt-1"
     :placeholder="$t('dashboardnavbar.selectorDevice')"
@@ -14,6 +15,8 @@
     >
     </el-option>
   </el-select>
+
+
 </template>
 
 <script>
@@ -42,6 +45,10 @@ export default {
         await this.$store.dispatch("devices/updateSelected", deviceSelected);
         await this.$store.dispatch("devices/fetchDevices");
         await this.$store.dispatch("notif/fetchNotificationsForDevice", 1);
+        
+        // solo seria necesario si el dispositivo envia mensajes RETENIDOS
+        this.$nuxt.$emit('mqtt-reesubscribe');
+      
       } catch (e) {
         console.log('ERROR SELECTING DEVICE');
       }

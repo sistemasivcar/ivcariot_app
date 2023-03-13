@@ -94,7 +94,8 @@ export default {
     }
     },
     mounted(){
-     
+      // solo seria necesario si el dispositivo envia mensajes RETENIDOS
+      this.$nuxt.$emit('mqtt-reesubscribe');
     }
 }
 </script>

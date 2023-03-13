@@ -10,7 +10,7 @@
     <!-- body-card -->
     <template #default>
       <i
-        class="fa "
+        class=""
         :class="[config.icon, getColorIcon]"
         style="font-size:35px"
       ></i>

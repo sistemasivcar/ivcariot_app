@@ -16,7 +16,9 @@
           <span class="navbar-toggler-bar bar3"></span>
         </button>
       </div>
-      <a  @click="toggleSidebar" class="navbar-brand ml-xl-3 ml-5" href="#">{{ routeName }}</a>
+      <a @click="toggleSidebar" class="navbar-brand ml-xl-3 ml-5" href="#">{{
+        routeName
+      }}</a>
     </div>
 
     <ul class="navbar-nav" :class="$rtl.isRTL ? 'mr-auto' : 'ml-auto'">
@@ -42,25 +44,33 @@
           <p class="d-lg-none"></p>
         </template>
         <li class="nav-link">
-          <nuxt-link class="nav-item dropdown-item" :to="`${locale}/app/profile`"
-            >{{$t('dashboardnavbar.user.profile')}}</nuxt-link
+          <nuxt-link
+            class="nav-item dropdown-item"
+            :to="`${locale}/app/profile`"
+            >{{ $t("dashboardnavbar.user.profile") }}</nuxt-link
           >
         </li>
         <li class="nav-link">
-          <nuxt-link :to="`${locale}/app/config`" class="nav-item dropdown-item">{{$t('dashboardnavbar.user.settings')}}</nuxt-link>
+          <nuxt-link
+            :to="`${locale}/app/config`"
+            class="nav-item dropdown-item"
+            >{{ $t("dashboardnavbar.user.settings") }}</nuxt-link
+          >
         </li>
         <li class="nav-link">
-          <nuxt-link class="nav-item dropdown-item" :to="`${locale}/app/docs`"
-            >{{$t('dashboardnavbar.user.help')}}</nuxt-link
+          <nuxt-link
+            class="nav-item dropdown-item"
+            :to="`${locale}/app/docs`"
+            >{{ $t("dashboardnavbar.user.help") }}</nuxt-link
           >
         </li>
         <div class="dropdown-divider"></div>
         <li class="nav-link">
-          <a @click="logout()" class="nav-item dropdown-item">{{$t('dashboardnavbar.user.logout')}}</a>
+          <a @click="logout()" class="nav-item dropdown-item">{{
+            $t("dashboardnavbar.user.logout")
+          }}</a>
         </li>
       </base-dropdown>
-
-
     </ul>
   </base-nav>
 </template>
@@ -81,20 +91,19 @@ export default {
     DeviceSelector,
     NotificationsList,
     LanguajeSwitcher
-},
+  },
   data() {
     return {
       activeNotifications: false,
       showMenu: false,
       searchModalVisible: false,
-      searchQuery: "",
-      
+      searchQuery: ""
     };
   },
   computed: {
     locale() {
       const locale = this.$store.state.locale.locale;
-      if (locale == 'es') return '';
+      if (locale == "es") return "";
       return this.$store.state.locale.locale;
     },
 
@@ -104,13 +113,13 @@ export default {
       if (parts == ",") {
         return "Dashboard";
       }
-      
-      if (parts[1] == 'en') {
-        const page=parts.splice(3)
-      return page[0];
+
+      if (parts[1] == "en") {
+        const page = parts.splice(3);
+        return page[0];
       }
 
-      const page=parts.splice(2)
+      const page = parts.splice(2);
       return page[0];
     },
     isRTL() {
@@ -118,11 +127,11 @@ export default {
     }
   },
 
-  methods: {   
+  methods: {
     logout() {
       this.$store.dispatch("auth/logout");
     },
-    
+
     capitalizeFirstLetter(string) {
       if (!string || typeof string !== "string") {
         return "";
@@ -138,7 +147,7 @@ export default {
     toggleMenu() {
       this.showMenu = !this.showMenu;
     }
-  },
+  }
 };
 </script>
 <style scoped>

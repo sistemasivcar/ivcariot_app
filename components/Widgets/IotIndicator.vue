@@ -10,7 +10,7 @@
     <!-- body-card -->
     <template #default >
       <div class="text-center">
-        <i class="fa " :class="[config.icon, getColorIcon]" style="font-size:63px"></i>
+        <i class="" :class="[config.icon, getColorIcon]" style="font-size:63px"></i>
         </div>
     </template>
 
@@ -22,6 +22,7 @@ export default {
   props:['config'],
   data() {
     return {
+      topic: "",
       value: 0,
     };
   },
@@ -73,17 +74,39 @@ export default {
 
     },
   },
+
+  watch: {
+    config: {
+      immediate: true,
+      deep: true,
+      handler() {
+        setTimeout(() => {
+          // esto solo es necesario si el dispositivo manda mensajes retendios por cada  
+          // cambio de estado
+  
+          this.$nuxt.$off(this.topic + "/sdata");
+          
+          this.topic =
+          this.config.userId +
+          "/" +
+          this.config.selectedDevice.dId +
+          "/" +
+          this.config.variable;
+          
+
+          this.$nuxt.$on(this.topic + "/sdata", this.porcessRecivedData);
+
+        }, 300);
+      }
+    }
+  },
   
   mounted(){
-    
-    // topic format for reading data ->>  userId / dId / uniquevariablename / sdata
-    const topic = `${this.config.userId}/${this.config.selectedDevice.dId}/${this.config.variable}/sdata`
+    const topic = this.config.userId + "/" + this.config.selectedDevice.dId + "/" + this.config.variable + "/sdata";
     this.$nuxt.$on(topic, this.porcessRecivedData);
-  
   },
   beforeDestroy(){
-    const topic = `${this.config.userId}/${this.config.selectedDevice.dId}/${this.config.variable}/sdata`
-    this.$nuxt.$off(topic)
+    this.$nuxt.$off(this.topic);
   },
   
 };

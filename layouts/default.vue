@@ -10,7 +10,6 @@
       <template slot-scope="" slot="links">
         <sidebar-item
           :link="{
-
             name: `${$t('sidebar.dashboard')}`,
             icon: 'tim-icons tim-icons icon-laptop',
             path: `${defaultLocal}/app/dashboard`
@@ -36,7 +35,6 @@
         >
         </sidebar-item>
 
-
         <sidebar-item
           :link="{
             name: `${$t('sidebar.alarms')}`,
@@ -46,8 +44,7 @@
         >
         </sidebar-item>
 
-
-                <sidebar-item
+        <sidebar-item
           :link="{
             name: `${$t('sidebar.notifications')}`,
             icon: 'tim-icons icon-spaceship',
@@ -65,7 +62,7 @@
         >
         </sidebar-item>
 
-          <sidebar-item
+        <sidebar-item
           :link="{
             name: `${$t('sidebar.help')}`,
             icon: 'tim-icons icon-paper',
@@ -75,9 +72,11 @@
         </sidebar-item>
       </template>
     </side-bar>
-    
 
-    <sidebar-share v-if="dev=='development'" :background-color.sync="sidebarBackground"></sidebar-share>
+    <sidebar-share
+      v-if="dev == 'development'"
+      :background-color.sync="sidebarBackground"
+    ></sidebar-share>
 
     <div class="main-panel" :data="sidebarBackground">
       <dashboard-navbar></dashboard-navbar>
@@ -115,7 +114,6 @@ function initScrollbar(className) {
   }
 }
 
-
 import DashboardNavbar from "@/components/Layout/DashboardNavbar.vue";
 import ContentFooter from "@/components/Layout/ContentFooter.vue";
 import DashboardContent from "@/components/Layout/Content.vue";
@@ -124,8 +122,8 @@ import SideBar from "../components/SidebarPlugin/SideBar.vue";
 import mqtt from "mqtt";
 
 export default {
-  head () {
-    return 'Ivcar Application'
+  head() {
+    return "Ivcar Application";
   },
   components: {
     DashboardNavbar,
@@ -137,26 +135,25 @@ export default {
     SideBar
   },
   data() {
-
     return {
       sidebarBackground: "blue", //vue|blue|orange|green|red|primary
       client: null,
-      dev:process.env.environment,
+      dev: process.env.environment,
       options: {
         host: process.env.mqtt_host,
         port: process.env.mqtt_port,
-        keepalive:20,
+        keepalive: 20,
         endpoint: "/mqtt",
         clean: true,
-        protocolVersion:4, // MQTT 3.1.1
+        protocolVersion: 4, // MQTT 3.1.1
         connectTimeout: 10000,
         reconnectPeriod: 5000,
         // crendentials info
-        clientId: `webClient_${this.$store.getters["auth/getUserName"]}_${Math.floor(
-          Math.random() * 1000000 + 1
-        )}`,
+        clientId: `webClient_${
+          this.$store.getters["auth/getUserName"]
+        }_${Math.floor(Math.random() * 1000000 + 1)}`,
         username: null,
-        password: null,
+        password: null
       }
     };
   },
@@ -166,13 +163,12 @@ export default {
     },
     defaultLocal() {
       const locale = this.$store.state.locale.locale;
-      if (locale == 'es') return '';
+      if (locale == "es") return "";
       return this.$store.state.locale.locale;
     },
-    userId(){
-      return this.$store.getters['auth/getUserId']
-    },
-
+    userId() {
+      return this.$store.getters["auth/getUserId"];
+    }
   },
   methods: {
     async startMqttClient() {
@@ -191,29 +187,29 @@ export default {
       }
 
       this.client.on("connect", () => {
-        console.log('ok')
+        console.log("ok");
 
-        this.client.subscribe([deviceSubscribeTopic, notifSubscribeTopic], err => {
+        this.client.subscribe(
+          [deviceSubscribeTopic, notifSubscribeTopic],
+          err => {
+            if (err) return err;
+          }
+        );
+        this.client.subscribe(statusSubscribeTopic, { qos: 0 }, err => {
           if (err) return err;
-        });
-        this.client.subscribe(statusSubscribeTopic, {qos:0}, err => {
-          if (err) return err;
-
         });
       });
 
-      this.client.on("error", err => {
-      });
+      this.client.on("error", err => {});
 
       this.client.on("reconnect", err => {
         this.getMqttCredentialsForReconnection();
-
       });
 
       this.client.on("message", (topic, message) => {
         const splittedTopic = topic.split("/");
         const msgType = splittedTopic[3]; // sdata, notif
-
+        //console.log("message recived from: ",topic, " ---- ", message.toString());
         if (msgType == "notif") {
           this.$notify({
             type: "danger",
@@ -221,49 +217,74 @@ export default {
             message: message.toString()
           });
           this.getNotifications();
-        }else if (msgType == "sdata") {
-          this.$nuxt.$emit(topic, JSON.parse(message.toString()));
-        }else if(msgType=='status'){
-          const msg = JSON.parse(message.toString());
+        } else if (msgType == "sdata") {
+          // el timeout es necesario por los mensajes retenidos: le doy un timepo al widget de entrada 
+          // a que se subscriba al topico nuxt y luego le mando el mensaje MQTT entrante
           setTimeout(()=>{
+            this.$nuxt.$emit(topic, JSON.parse(message.toString()))
+          },400)
+        } else if (msgType == "status") {
+          const msg = JSON.parse(message.toString());
+          setTimeout(() => {
             this.getDevices(); // update the view
-          },5000)
+          }, 5000);
           const deviceName = msg.name;
           const status = msg.status;
-          if(status=='offline'){
+          if (status == "offline") {
             this.$notify({
-            type: "danger",
-            icon: "tim-icons icon-bell-55",
-            message: `ATENCIÓN: "${deviceName}" Fuera de Línea` 
-          });
-
-          }else if (status=='online'){
+              type: "danger",
+              icon: "tim-icons icon-bell-55",
+              message: `ATENCIÓN: "${deviceName}" Fuera de Línea`
+            });
+          } else if (status == "online") {
             this.$notify({
-            type: "success",
-            icon: "tim-icons icon-bell-55",
-            message: `ATENCIÓN: "${deviceName}" En Línea` 
-          });
+              type: "success",
+              icon: "tim-icons icon-bell-55",
+              message: `ATENCIÓN: "${deviceName}" En Línea`
+            });
           }
-          
         }
       });
 
+      // escucho los widgtes que quieren enviar mensajes MQTT
       this.$nuxt.$on("mqtt-sender", toSend => {
-        console.log(toSend.flags.qos);
-        this.client.publish(toSend.topic, JSON.stringify(toSend.msg),{
-          qos:toSend.flags.qos,
-          retain:toSend.flags.retain});
+        this.client.publish(toSend.topic, JSON.stringify(toSend.msg), {
+          qos: toSend.flags.qos,
+          retain: toSend.flags.retain
+        });
+      });
+
+      // cuando cambio de dispoistivo hago UNSUBSCRIBE y despues el SUBSCRIBE 
+      // para que me lleguen los mensajes retenidos del dispositivo seleccionado
+      
+      // esto es necesario solo si el dispositivo trabaja con mensajes retenidos
+      this.$nuxt.$on("mqtt-reesubscribe", () => {
+        
+        this.client.unsubscribe(deviceSubscribeTopic, function(err){
+          if(err) {
+            console.log("error unsubs");
+          }
+        })
+
+        this.client.subscribe(deviceSubscribeTopic, function(err, granted){
+          if(err){
+            console.log("error subscribing");
+          }
+          console.log(granted);
+        })
+          
       });
     },
-    findDevice(dId){
-      const devices = this.$store.getters['devices/getDevices'];
-      const {name} = devices.find(device => device.dId == dId) 
+
+    findDevice(dId) {
+      const devices = this.$store.getters["devices/getDevices"];
+      const { name } = devices.find(device => device.dId == dId);
       return name;
     },
     async getNotifications() {
       try {
         await this.$store.dispatch("notif/fetchNotifications");
-        await this.$store.dispatch("notif/fetchNotificationsForDevice",1);
+        await this.$store.dispatch("notif/fetchNotificationsForDevice", 1);
       } catch (e) {
         this.$notify({
           type: "danger",
@@ -272,13 +293,13 @@ export default {
         });
       }
     },
-    
+
     async getDevices() {
       try {
         await this.$store.dispatch("devices/fetchDevices");
-        await this.$store.dispatch("notif/fetchNotificationsForDevice",1);
+        await this.$store.dispatch("notif/fetchNotificationsForDevice", 1);
       } catch (e) {
-        console.log('ERROR GET DEVICES (default.vue)')
+        console.log("ERROR GET DEVICES (default.vue)");
       }
     },
     async getMqttCredentials() {
@@ -294,19 +315,19 @@ export default {
           null,
           axiosHeader
         );
-        
+
         this.options.username = credentials.data.username;
         this.options.password = credentials.data.password;
       } catch (e) {
-        console.log('ERROR GETMQTTCREDENTIALS');
-        if(e.response.status === 400){
+        console.log("ERROR GETMQTTCREDENTIALS");
+        if (e.response.status === 400) {
           localStorage.clear();
-          this.$store.commit('auth/setAuth',null);
-          this.$router.replace('/')
+          this.$store.commit("auth/setAuth", null);
+          this.$router.replace("/");
         }
       }
     },
-    async getMqttCredentialsForReconnection(){
+    async getMqttCredentialsForReconnection() {
       try {
         const token = this.$store.getters["auth/getToken"];
         const axiosHeader = {
@@ -314,7 +335,7 @@ export default {
             "x-auth-token": token
           }
         };
-    
+
         const credentials = await this.$axios.post(
           "/user/getmqttcredentialsforreconnection",
           null,
@@ -323,10 +344,10 @@ export default {
         this.client.options.username = credentials.data.username;
         this.client.options.password = credentials.data.password;
       } catch (e) {
-        if(e.response.status === 400){
+        if (e.response.status === 400) {
           localStorage.clear();
-          this.$store.commit('auth/setAuth',null);
-          this.$router.replace('/')
+          this.$store.commit("auth/setAuth", null);
+          this.$router.replace("/");
         }
       }
     },
@@ -349,12 +370,11 @@ export default {
       } else {
         docClasses.add("perfect-scrollbar-off");
       }
-    },
-
+    }
   },
   async mounted() {
     this.initScrollbar();
-    
+
     setTimeout(() => {
       this.startMqttClient();
     }, 2000);

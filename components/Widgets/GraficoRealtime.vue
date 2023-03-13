@@ -11,7 +11,7 @@
 
       <h3 class="card-title">
         <i
-          class="fa "
+          class=""
           :class="[config.icon, getIconColorClass()]"
           aria-hidden="true"
           style="font-size: 30px;"

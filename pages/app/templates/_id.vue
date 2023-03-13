@@ -238,7 +238,7 @@ export default {
         column: "col-md-6",
         decimalPlaces: 2,
         widgetName: "numberchart",
-        icon: "fa-thermometer",
+        icon: "fa fa-thermometer-half",
         defaultSeriesType: "line",
         chartTimeAgo: 120,
         demo: true
@@ -257,7 +257,7 @@ export default {
         variableType: "input",
         variableSendFreq: "5",
         widgetName: "indicator",
-        icon: "fa-home",
+        icon: "fa fa-home",
         column: "col-md-6"
       },
       switchConfig: {
@@ -284,7 +284,7 @@ export default {
         message: "on",
         widgetName: "button",
         colorButton: "success",
-        icon: "fa-home",
+        icon: "fa fa-home",
         column: "col-md-6"
       },
       oldConfig: {}
