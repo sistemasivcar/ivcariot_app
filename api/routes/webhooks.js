@@ -63,6 +63,7 @@ router.post('/saver-webhook', async (req, res) => {
 // ALARM RULE WEBHOOK
 router.post('/alarm-webhook', async (req, res) => {
     try {
+        
         res.sendStatus(200);
         if (!req.headers.token === process.env.EMQX_MANAGMENT_TOKEN) return res.sendStatus(404);
         const incomingAlarm = req.body;
@@ -81,8 +82,8 @@ router.post('/alarm-webhook', async (req, res) => {
 
             if (incomingAlarm.payload.value) {
                 //send notif ON
-                sendMqttNotif(incomingAlarm.userId, incomingAlarm.messageOn);
-                sendWpp ? sendWhatsappNotif(phones, incomingAlarm.messageOn) : null
+                sendMqttNotif(incomingAlarm.userId, '⚠️'+incomingAlarm.messageOn);
+                sendWpp ? sendWhatsappNotif(phones, '⚠️'+incomingAlarm.messageOn) : null
                 const notifToSave = {
                     ...incomingAlarm,
                     type: 'change',
@@ -91,8 +92,8 @@ router.post('/alarm-webhook', async (req, res) => {
                 saveNotifToMongo(notifToSave);
             } else if (!incomingAlarm.payload.value) {
                 //send notif OFF
-                sendMqttNotif(incomingAlarm.userId, incomingAlarm.messageOff);
-                sendWpp ? sendWhatsappNotif(phones, incomingAlarm.messageOff) : null
+                sendMqttNotif(incomingAlarm.userId, '⚠️'+incomingAlarm.messageOff);
+                sendWpp ? sendWhatsappNotif(phones, '⚠️'+incomingAlarm.messageOff) : null
                 const notifToSave = {
                     ...incomingAlarm,
                     type: 'change',
@@ -126,6 +127,7 @@ router.post('/alarm-webhook', async (req, res) => {
 
             }
         }
+
 
     } catch (e) {
         console.log(e)

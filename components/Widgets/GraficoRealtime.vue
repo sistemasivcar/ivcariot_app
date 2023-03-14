@@ -231,6 +231,7 @@ export default {
     procesReceivedData(data) {
       try {
         this.time = Date.now();
+        console.log(data);
         this.value = data.value;
         setTimeout(() => {
           if (data.save == 1) {
