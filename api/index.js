@@ -24,7 +24,7 @@ require('./startup/db.js')()
 const port = process.env.API_PORT || 3001;
 app.listen(port, () => console.log(`\nListening on port ${port}...`.bgGreen));
 
-if(process.env.environment != "a"){
+if(process.env.environment == "production"){
     const app2 = express();
     app2.listen(3002,function (){
         console.log("Listening on port 3002 (to redirect to ssl)")
