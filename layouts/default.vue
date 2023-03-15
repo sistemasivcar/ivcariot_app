@@ -209,20 +209,30 @@ export default {
       this.client.on("message", (topic, message) => {
         const splittedTopic = topic.split("/");
         const msgType = splittedTopic[3]; // sdata, notif
+
+
         //console.log("message recived from: ",topic, " ---- ", message.toString());
         if (msgType == "notif") {
+
+
           this.$notify({
             type: "danger",
             icon: "tim-icons icon-bell-55",
             message: message.toString()
           });
           this.getNotifications();
+
+
         } else if (msgType == "sdata") {
+          
           // el timeout es necesario por los mensajes retenidos: le doy un timepo al widget de entrada 
           // a que se subscriba al topico nuxt y luego le mando el mensaje MQTT entrante
+          
           setTimeout(()=>{
             this.$nuxt.$emit(topic, JSON.parse(message.toString()))
           },400)
+
+
         } else if (msgType == "status") {
           const msg = JSON.parse(message.toString());
           setTimeout(() => {
@@ -230,6 +240,8 @@ export default {
           }, 5000);
           const deviceName = msg.name;
           const status = msg.status;
+
+
           if (status == "offline") {
             this.$notify({
               type: "danger",
@@ -237,6 +249,8 @@ export default {
               message: `ATENCIÓN: "${deviceName}" Fuera de Línea`
             });
           } else if (status == "online") {
+
+
             this.$notify({
               type: "success",
               icon: "tim-icons icon-bell-55",
@@ -261,16 +275,16 @@ export default {
       this.$nuxt.$on("mqtt-reesubscribe", () => {
         
         this.client.unsubscribe(deviceSubscribeTopic, function(err){
-          if(err) {
-            console.log("error unsubs");
+          if(err){
+            console.log(e);
           }
         })
 
         this.client.subscribe(deviceSubscribeTopic, function(err, granted){
           if(err){
-            console.log("error subscribing");
+            console.log(e);
           }
-          console.log(granted);
+          
         })
           
       });

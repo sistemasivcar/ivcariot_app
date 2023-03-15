@@ -16,7 +16,8 @@
       cuando se recupere.
     </div>
 
-    <div class="row" v-if="hasDevices"> <!-- el v-if es para que no de error al refrescar -->
+    <LoadingPanel v-if="isLoading"></LoadingPanel>
+    <div class="row" v-else-if="hasDevices"> <!-- el v-if es para que no de error al refrescar -->
       <div
         v-for="(widget) in widgets"
         :key="widget.variable"
@@ -47,6 +48,8 @@ import IotIndicator from "../../components/Widgets/IotIndicator.vue";
 import IotNumberchart from "../../components/Widgets/GraficoRealtime.vue";
 import IotButton from "../../components/Widgets/IotButton.vue";
 import IotSwitch from "../../components/Widgets/IotSwitch.vue";
+import { Loading } from 'element-ui';
+import LoadingPanel from '../../components/LoadingPanel.vue'
 
 export default {
 
@@ -55,12 +58,14 @@ export default {
     IotIndicator,
     IotNumberchart,
     IotButton,
-    IotSwitch
+    IotSwitch,
+    LoadingPanel
     
     },
     middleware:'authtenticated',
     data(){
         return {
+          isLoading:true,
           
         }
     },
@@ -93,9 +98,20 @@ export default {
       return this.hasSelectedDevice.status=="offline";
     }
     },
+    watch:{
+      hasSelectedDevice(val){
+        this.isLoading=true;
+        setTimeout(()=>{
+        this.isLoading=false;
+      },500)
+      }
+    },
     mounted(){
       // solo seria necesario si el dispositivo envia mensajes RETENIDOS
       this.$nuxt.$emit('mqtt-reesubscribe');
+      setTimeout(()=>{
+        this.isLoading=false;
+      },400)
     }
 }
 </script>

@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { Select, Option } from "element-ui";
+import { Select, Option, Loading } from 'element-ui';
 export default {
     components: {
     [Select.name]: Select,

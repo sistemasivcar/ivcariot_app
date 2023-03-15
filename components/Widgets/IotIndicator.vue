@@ -84,7 +84,7 @@ export default {
           // esto solo es necesario si el dispositivo manda mensajes retendios por cada  
           // cambio de estado
   
-          this.$nuxt.$off(this.sirena + "/sdata");
+          this.$nuxt.$off(this.topic + "/sdata");
           
           this.topic =
           this.config.userId +
