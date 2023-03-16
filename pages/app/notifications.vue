@@ -17,6 +17,7 @@
           prop="variableFullName"
           label="Var name"
         ></el-table-column>
+        <el-table-column prop="message" label="message"></el-table-column>
         <el-table-column prop="payload.value" label="with"></el-table-column>
         <el-table-column prop="condition" label="condition"></el-table-column>
         <el-table-column prop="value" label="value"></el-table-column>

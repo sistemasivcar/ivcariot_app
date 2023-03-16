@@ -252,7 +252,12 @@ function startMqttClient() {
         if (typeMessage == 'status') {
             const userId = splittedTopic[0];
             const dId = splittedTopic[1];
-            processStatusMessage(dId, userId, JSON.parse(message.toString()))
+            try {
+                processStatusMessage(dId, userId, JSON.parse(message.toString()))
+            } catch (error) {
+                
+            }
+
         }
     })
 

@@ -89,7 +89,9 @@
       </div>
 
       <div class="row">
-        <div class="col-md-12"></div>
+        <div class="col-md-12 mt-2">
+          <p class="text-danger underline" style="text-decoration: underline red;">PLAN: PERÍODO DE PREUBA <strong>GRATUITA</strong></p>
+        </div>
       </div>
 
       <base-button native-type="submit" type="info" class="btn-fill mt-3" :loading="isLoading">

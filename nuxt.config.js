@@ -10,7 +10,8 @@ export default {
     title: 'Ivcar IoT',
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+  
+      { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, "user-scalable=0"' },
       { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
     ],
     link: [
@@ -88,7 +89,7 @@ export default {
   
   server: {
     port: 3000, // default: 3000
-    host: process.env.environment === 'production' ? '0.0.0.0' : 'localhost'
+    host: process.env.environment === 'development' ? '0.0.0.0' : 'localhost'
   },
   serverMiddleware: process.env.environment === 'production' ? {
     '/api': '~/api'

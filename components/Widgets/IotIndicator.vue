@@ -23,7 +23,7 @@ export default {
   data() {
     return {
       topic: "",
-      value: 0,
+      value: false,
     };
   },
   methods:{
@@ -76,14 +76,12 @@ export default {
   },
 
   watch: {
-    config: {
-      immediate: true,
-      deep: true,
-      handler() {
+    'config.selectedDevice.dId'() {
         setTimeout(() => {
-          // esto solo es necesario si el dispositivo manda mensajes retendios por cada  
-          // cambio de estado
-  
+          
+          this.value = false;
+          // si el widget toma mensajes retenidos este valor será pisado cuando haga el $on
+
           this.$nuxt.$off(this.topic + "/sdata");
           
           this.topic =
@@ -96,9 +94,8 @@ export default {
 
           this.$nuxt.$on(this.topic + "/sdata", this.porcessRecivedData);
 
-        }, 300);
+        }, 100);
       }
-    }
   },
   
   mounted(){

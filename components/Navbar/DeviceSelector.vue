@@ -44,7 +44,7 @@ export default {
         const deviceSelected = devices[this.selectedDeviceIndex];
         await this.$store.dispatch("devices/updateSelected", deviceSelected);
         await this.$store.dispatch("devices/fetchDevices");
-        await this.$store.dispatch("notif/fetchNotificationsForDevice", 1);
+        this.$store.dispatch("notif/fetchNotificationsForDevice", 1);
         
         // solo seria necesario si el dispositivo envia mensajes RETENIDOS
         this.$nuxt.$emit('mqtt-reesubscribe');

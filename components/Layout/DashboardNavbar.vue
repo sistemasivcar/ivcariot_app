@@ -23,6 +23,11 @@
 
     <ul class="navbar-nav" :class="$rtl.isRTL ? 'mr-auto' : 'ml-auto'">
 
+      <!-- <li class="mt-2 mr-2 text-danger" style="cursor: pointer;">
+        <i class="tim-icons icon-refresh-02 ml-2"></i>
+        <span>{{ showMenu ? "REFRESH" : ''}}</span>
+      </li> -->
+
       <DeviceSelector></DeviceSelector>
 
       <LanguajeSwitcher></LanguajeSwitcher>
@@ -129,6 +134,7 @@ export default {
 
   methods: {
     logout() {
+      this.$nuxt.$emit('unsubscribe');
       this.$store.dispatch("auth/logout");
     },
 

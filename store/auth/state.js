@@ -10,7 +10,7 @@
     
 const state = () => ({
     auth: null,
-    online:true,
+    subscribed:false
 })
 
 export default state;

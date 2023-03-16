@@ -10,7 +10,6 @@ router.get("/", checkAuth, asyncMiddleware(async (req, res) => {
 
     const userId = req.userData._id;
     const numberPage = req.query.numberPage;
-    console.log(numberPage)
     const pageSize = 10;
 
     const notifications = await Notification.find({ userId: userId })

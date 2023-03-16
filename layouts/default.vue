@@ -120,8 +120,8 @@ import DashboardContent from "@/components/Layout/Content.vue";
 import { SlideYDownTransition, ZoomCenterTransition } from "vue2-transitions";
 import SideBar from "../components/SidebarPlugin/SideBar.vue";
 import mqtt from "mqtt";
-
 export default {
+  
   head() {
     return "Ivcar Application";
   },
@@ -139,6 +139,7 @@ export default {
       sidebarBackground: "blue", //vue|blue|orange|green|red|primary
       client: null,
       dev: process.env.environment,
+      
       options: {
         host: process.env.mqtt_host,
         port: process.env.mqtt_port,
@@ -189,32 +190,31 @@ export default {
       this.client.on("connect", () => {
         console.log("ok");
 
-        this.client.subscribe(
-          [deviceSubscribeTopic, notifSubscribeTopic],
-          err => {
-            if (err) return err;
-          }
-        );
+        this.client.subscribe(deviceSubscribeTopic, { qos: 0 },  (err)=>{
+          if (err) return err;
+          console.log("subs success")
+          this.$store.commit('auth/setSubscription',true);
+        });
         this.client.subscribe(statusSubscribeTopic, { qos: 0 }, err => {
           if (err) return err;
         });
-      });
+        this.client.subscribe(notifSubscribeTopic, { qos: 0 }, err => {
+          if (err) return err;
+        });
 
-      this.client.on("error", err => {});
+      });
 
       this.client.on("reconnect", err => {
         this.getMqttCredentialsForReconnection();
       });
 
       this.client.on("message", (topic, message) => {
+        console.log("message recived from: ",topic, " ---- ", message.toString());
+        
         const splittedTopic = topic.split("/");
-        const msgType = splittedTopic[3]; // sdata, notif
+        const msgType = splittedTopic[3];
 
-
-        //console.log("message recived from: ",topic, " ---- ", message.toString());
         if (msgType == "notif") {
-
-
           this.$notify({
             type: "danger",
             icon: "tim-icons icon-bell-55",
@@ -222,17 +222,27 @@ export default {
           });
           this.getNotifications();
 
-
         } else if (msgType == "sdata") {
           
           // el timeout es necesario por los mensajes retenidos: le doy un timepo al widget de entrada 
           // a que se subscriba al topico nuxt y luego le mando el mensaje MQTT entrante
+          try {
+            const msg = JSON.parse(message.toString());
+            setTimeout(()=>{
+            this.$nuxt.$emit(topic, msg)
+            
+          },300)
+          } catch (e) {
+            this.$notify({
+              type: "danger",
+              icon: "tim-icons icon-bell-55",
+              message: `Formato de mensaje inválido`
+            });
+          }
           
-          setTimeout(()=>{
-            this.$nuxt.$emit(topic, JSON.parse(message.toString()))
-          },400)
 
 
+        
         } else if (msgType == "status") {
           const msg = JSON.parse(message.toString());
           setTimeout(() => {
@@ -258,9 +268,9 @@ export default {
             });
           }
         }
+
       });
 
-      // escucho los widgtes que quieren enviar mensajes MQTT
       this.$nuxt.$on("mqtt-sender", toSend => {
         this.client.publish(toSend.topic, JSON.stringify(toSend.msg), {
           qos: toSend.flags.qos,
@@ -268,26 +278,47 @@ export default {
         });
       });
 
+      this.$nuxt.$on('unsubscribe', ()=>{
+        this.client.unsubscribe([deviceSubscribeTopic, notifSubscribeTopic, statusSubscribeTopic],  (e)=>{
+          if(e){
+            console.log(e);
+            return;
+          }
+        })
+
+      })
+
       // cuando cambio de dispoistivo hago UNSUBSCRIBE y despues el SUBSCRIBE 
       // para que me lleguen los mensajes retenidos del dispositivo seleccionado
       
       // esto es necesario solo si el dispositivo trabaja con mensajes retenidos
-      this.$nuxt.$on("mqtt-reesubscribe", () => {
+      this.$nuxt.$on("mqtt-reesubscribe", ()=>{
+        this.$store.commit('auth/setSubscription',false);
         
-        this.client.unsubscribe(deviceSubscribeTopic, function(err){
-          if(err){
+        this.client.unsubscribe(deviceSubscribeTopic,  (e)=>{
+          if(e){
             console.log(e);
+            return;
           }
         })
 
-        this.client.subscribe(deviceSubscribeTopic, function(err, granted){
-          if(err){
+        this.client.subscribe(deviceSubscribeTopic, (e)=>{
+          if(e){
             console.log(e);
           }
+          
+          this.$store.commit('auth/setSubscription',true);
           
         })
           
       });
+
+      // limpio mensaje retenido del dispositivo elminado
+      this.$nuxt.$on("clean-retain", (dId)=>{
+        this.client.publish(`${this.userId}/${dId}/dummy_var/status`, '',{
+          retain:true
+        });
+      })
     },
 
     findDevice(dId) {
@@ -316,6 +347,7 @@ export default {
         console.log("ERROR GET DEVICES (default.vue)");
       }
     },
+
     async getMqttCredentials() {
       try {
         const token = this.$store.getters["auth/getToken"];
@@ -336,14 +368,24 @@ export default {
         console.log("ERROR GETMQTTCREDENTIALS");
         if (e.response.status === 400) {
           localStorage.clear();
+          this.client.unsubscribe([deviceSubscribeTopic, notifSubscribeTopic, statusSubscribeTopic],  (e)=>{
+          if(e){
+            console.log(e);
+            return;
+          }
+        })
           this.$store.commit("auth/setAuth", null);
           this.$router.replace("/");
         }
       }
     },
     async getMqttCredentialsForReconnection() {
+      
       try {
+        this.$store.commit('auth/setSubscription',false);
         const token = this.$store.getters["auth/getToken"];
+        
+        
         const axiosHeader = {
           headers: {
             "x-auth-token": token
@@ -355,11 +397,21 @@ export default {
           null,
           axiosHeader
         );
+        this.$store.commit('auth/setSubscription',true);
+
         this.client.options.username = credentials.data.username;
         this.client.options.password = credentials.data.password;
       } catch (e) {
         if (e.response.status === 400) {
           localStorage.clear();
+
+          this.client.unsubscribe([deviceSubscribeTopic, notifSubscribeTopic, statusSubscribeTopic],  (e)=>{
+          if(e){
+            console.log(e);
+            return;
+          }
+        })
+
           this.$store.commit("auth/setAuth", null);
           this.$router.replace("/");
         }

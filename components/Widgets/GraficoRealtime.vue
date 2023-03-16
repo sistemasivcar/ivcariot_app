@@ -114,12 +114,11 @@ export default {
     };
   },
   watch: {
-    config: {
-      immediate: true,
-      deep: true,
-      handler() {
+      'config.selectedDevice.dId'() {
         setTimeout(() => {
-          this.value = 0;
+
+          this.value=0;
+
           this.$nuxt.$off(this.topic + "/sdata");
           this.topic =
             this.config.userId +
@@ -127,9 +126,13 @@ export default {
             this.config.selectedDevice.dId +
             "/" +
             this.config.variable;
+
           this.$nuxt.$on(this.topic + "/sdata", this.procesReceivedData);
+
           this.chartOptions.series[0].data = [];
+
           this.chartOptions.chart.defaultSeriesType = this.config.defaultSeriesType;
+          
           this.getChartData();
           this.chartOptions.series[0].name =
             this.config.variableFullName + " " + this.config.unit;
@@ -137,11 +140,23 @@ export default {
           window.dispatchEvent(new Event("resize"));
         }, 300);
       }
+  },
+  watch:{
+    value(val){
+      console.log(val)
     }
   },
   mounted() {
     this.getNow();
+    console.log(this.value)
     this.updateColorClass();
+    this.topic =
+            this.config.userId +
+            "/" +
+            this.config.selectedDevice.dId +
+            "/" +
+            this.config.variable;
+            this.$nuxt.$on(this.topic + "/sdata",this.procesReceivedData);
   },
   beforeDestroy() {
     this.$nuxt.$off(this.topic + "/sdata");

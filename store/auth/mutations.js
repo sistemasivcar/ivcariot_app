@@ -8,6 +8,10 @@ const mutations = {
     usePublicTemplates(state, newValue){
         state.auth.userData.config.usePublicTemplates=newValue;
     },
+    setSubscription(state, subs){
+        state.subscribed=subs;
+    }
+
 }
 
 export default mutations

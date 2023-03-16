@@ -85,6 +85,7 @@ const actions = {
 
             if (response.data.status == 'success' && response.data.data.n === 1) {
                 context.commit('deleteDevice', device)
+                $nuxt.$emit('clean-retain', device.dId);
             }
         } catch (e) {
             console.log(e)
