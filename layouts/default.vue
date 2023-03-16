@@ -182,6 +182,7 @@ export default {
       const connectUrl = `${process.env.mqtt_prefix}://${this.options.host}:${this.options.port}${this.options.endpoint}`;
 
       try {
+        
         this.client = mqtt.connect(connectUrl, this.options);
       } catch (e) {
         console.log(e);

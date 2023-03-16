@@ -10,6 +10,7 @@
         <div @keyup.enter="login()">
           <base-input
             name="email"
+            type="email"
             v-model="user.email"
             :placeholder="$t('auth.emailinp')"
             addon-left-icon="tim-icons icon-email-85"

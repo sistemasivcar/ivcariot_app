@@ -6,7 +6,7 @@
         "fullnameinp":"Nombre Completo",
         "loginbtn":"Ingresar",
         "registerbtn":"Registrarme",
-        "registerlink":"No tengo cuenta",
+        "registerlink":"Registrarme",
         "helplink":"Olvidé mi contraseña",
         "loginlink":"Ya tengo cuenta",
         "emailinv":"El email es inválido",
@@ -62,7 +62,7 @@
         },
         "user":{
             "profile":"Mi Cuenta",
-            "settings":"Config",
+            "settings":"Configuración de Cuenta",
             "help":"Ayuda",
             "logout":"Salir"
         }
@@ -209,10 +209,10 @@
         "pages":"SECCIONES",
         "dashboard":"En esta página verá en tiempo real los datos entrantes de tus dispositivos y realizar acciones sobre estos a través de la plantilla asociada al DISPOSITIVO SELECCIONADO",
         "devices":"En la página de dispositivos, podés crear un nuevo dispositivo y ver los dispositivos creados. Podés configurar si el envío de datos del dispositivo se guarda en la base de datos o no cambiando el estado del GRABADOR. Para crear un dispositivo, debe vincularlo a una PLANTILLA.",
-        "alarms":"Al crear una alarma, se le notificará en tiempo real cuando una determinada variable de su dispositivo infrinja la regla que especificó. Es obligatorio configurar el parámetro TRIGGER TIME para evitar infinitas notificaciones. Este parámetro especifica cuánto tiempo debe pasar antes de realizar una nueva notificación.",
-        "templates":"Una plantilla es un conjunto de WIDGETS, y cada widget es responsable de una VARIABLE individual de su dispositivo. En esta página puede crear plantillas configurando los parámetros para cada widget. Básicamente, tiene widgets para mostrar datos en tiempo real (Indicador o Gráfico ) y otros para enviar acciones a su dispositivo (Activador). Además, desde esta página podrá configurar la FRECUENCIA con la que el dispositivo envía datos.",
-        "notifications":"Esta página es solo una tabla simple que enumera todas las notificaciones históricas que recibió para el DISPOSITIVO SELECCIONADO",
-        "profile":"En la página de perfil verás tus datos ingresados ​​cuando te registraste. La página te permite modificar la información y agregar alguna otra pero debes tener un correo electrónico, un nombre y al menos un número de teléfono registrado (debe ser el CELULAR Nº 1). Puedes tener hasta tres números de teléfono y estos serán utilizados por el sistema para notificar cuando una alarma sea disparada.",
+        "alarms":"Al crear una alarma, se le notificará en tiempo real cuando una determinada variable de su dispositivo infrinja la regla que especificó. Es obligatorio configurar el parámetro TRIGGER TIME para evitar infinitas notificaciones. Este parámetro especifica cuánto tiempo debe pasar antes de realizar una nueva notificación, por más de que la regla se siga cumpliendo",
+        "templates":"Una plantilla es un conjunto de WIDGETS, y cada widget es responsable de una VARIABLE individual de su dispositivo. En esta página puede crear plantillas configurando los parámetros para cada widget. Básicamente, tiene widgets para mostrar datos en tiempo real (Indicador o Gráfico ) y otros para enviar acciones a su dispositivo (Activador). Además, desde esta página podrá configurar la FRECUENCIA con la que el dispositivo envía datos, entre otros parámetros.",
+        "notifications":"Acá verás una tabla con registros históricos de los eventos que se dispararon para cada una de las variables del DISPOSITIVO SELECCIONADO.",
+        "profile":"En esta sección verás los datos ingresados ​​cuando te registraste.Para empezar, tenés que definir una plantilla. Una plantilla es genérica y reutilizable para varios dispositivos. Una vez creada, podés empezar a crear dispositivos y vincularlos a esta plantilla (asumimos que el dispositivo maneja las variables que se definieron en la plantilla). Si deseás recibir notificaciones en tiempo real acerca de los valores que toman tus variables , debés crear una alarma. La página te permite modificar la información y agregar alguna otra pero debes tener un correo electrónico, un nombre y al menos un número de teléfono registrado (debe ser el CELULAR Nº 1). Puedes tener hasta tres números de teléfono y estos serán utilizados por el sistema para notificar cuando una alarma sea disparada.",
         "howtouse":"CÓMO USAR LA PLATAFORMA",
         "howtousetext":"Para empezar, tenés que definir una plantilla. Una plantilla es genérica y reutilizable para varios dispositivos. Una vez creada, podés empezar a crear dispositivos y vincularlos a esta plantilla (asumimos que el dispositivo maneja las variables que se definieron en la plantilla). Si deseás recibir notificaciones en tiempo real acerca de los valores que toman tus variables , debés crear una alarma."
 
@@ -220,7 +220,7 @@
 
 
     "--------TRADUCIONES-PROFILE PAGE-----------":"------PROFILE PAGE--------",
-    "editProfile":"Editar mi Perfil",
+    "editProfile":"Editar mis Datos",
     "inpEmail":"*Direccion de Correo",
     "inpFullName":"*Nombre Completo",
     "phone01":"*Celular Nº 1",

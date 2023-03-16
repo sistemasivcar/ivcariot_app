@@ -22,12 +22,6 @@
     </div>
 
     <ul class="navbar-nav" :class="$rtl.isRTL ? 'mr-auto' : 'ml-auto'">
-
-      <!-- <li class="mt-2 mr-2 text-danger" style="cursor: pointer;">
-        <i class="tim-icons icon-refresh-02 ml-2"></i>
-        <span>{{ showMenu ? "REFRESH" : ''}}</span>
-      </li> -->
-
       <DeviceSelector></DeviceSelector>
 
       <LanguajeSwitcher></LanguajeSwitcher>
@@ -46,7 +40,7 @@
         <template slot="title">
           <i class="tim-icons icon-single-02"></i>
           <b class="caret d-none d-lg-block d-xl-block"></b>
-          <p class="d-lg-none"></p>
+          <p class="d-lg-none">USUARIO</p>
         </template>
         <li class="nav-link">
           <nuxt-link
@@ -76,6 +70,11 @@
           }}</a>
         </li>
       </base-dropdown>
+
+      <li v-if="showMenu" class="mt-2" style="cursor: pointer;" @click="refresh">
+        <i class="tim-icons icon-refresh-02 text-dark"></i>
+        <span class="ml-2 text-dark">{{ showMenu ? "REFRESH" : "" }}</span>
+      </li>
     </ul>
   </base-nav>
 </template>
@@ -134,8 +133,11 @@ export default {
 
   methods: {
     logout() {
-      this.$nuxt.$emit('unsubscribe');
+      this.$nuxt.$emit("unsubscribe");
       this.$store.dispatch("auth/logout");
+    },
+    refresh(){
+      this.$router.go(0);
     },
 
     capitalizeFirstLetter(string) {
