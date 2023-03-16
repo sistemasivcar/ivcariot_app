@@ -4,7 +4,7 @@
       <card class="card-login card-white">
         <template slot="header">
           <img src="/img//card-info.png" alt="" />
-          <h1 class="card-title">IvcarIoT</h1>
+          <h1 class="card-title">Ivcar IoT</h1>
         </template>
 
         <div @keyup.enter="login()">
@@ -60,6 +60,16 @@ export default {
   middleware:'notAuthenticated',
   name: "login-page",
   layout: "auth",
+  head: {
+    title: 'IvcarIoT - Login',
+    meta: [
+      {
+        hid: 'login',
+        name: 'login',
+        content: 'login'
+      }
+    ],
+  },
   data() {
     return {
       user: {
@@ -86,7 +96,7 @@ export default {
         this.$notify({
           type: "success",
           icon: "tim-icons icon-check-2",
-          message: "Hola, " + this.$store.getters['auth/getUserName'] + "!"
+          message: "Bienvenido, " + this.$store.getters['auth/getUserName'] + "!"
         });
         $nuxt.$router.push("/app/dashboard");
 

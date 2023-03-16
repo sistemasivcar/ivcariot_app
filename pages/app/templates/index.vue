@@ -87,7 +87,9 @@ export default {
     BaseButton
   },
   middleware: ["authtenticated"],
-
+  head: {
+    title: 'IvcarIoT - Plantillas',
+  },
   data() {
     return {
       templates: [],

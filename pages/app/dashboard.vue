@@ -58,6 +58,10 @@ import { Loading } from "element-ui";
 import LoadingPanel from "../../components/LoadingPanel.vue";
 import { computed } from "vue";
 export default {
+  head: {
+    title: 'IvcarIoT - Dashboard',
+  },
+
   components: {
     Json,
     IotIndicator,

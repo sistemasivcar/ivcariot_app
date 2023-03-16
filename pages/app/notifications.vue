@@ -59,7 +59,9 @@ export default {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn
   },
-
+  head: {
+    title: 'IvcarIoT - Notificaciones',
+  },
   middleware: "authtenticated",
   data() {
     return {

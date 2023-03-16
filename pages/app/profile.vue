@@ -8,6 +8,9 @@ import UserCard from '../../components/UserProfile/UserCard.vue';
 export default {
     middleware:'authtenticated',
   components: { UserCard },
+  head: {
+    title: 'IvcarIoT - Mi Cuenta',
+  },
   data() {
     return {
 

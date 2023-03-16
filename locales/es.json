@@ -61,7 +61,7 @@
             }
         },
         "user":{
-            "profile":"Perfil",
+            "profile":"Mi Cuenta",
             "settings":"Config",
             "help":"Ayuda",
             "logout":"Salir"
@@ -162,7 +162,7 @@
         "templates":"Plantillas",
         "alarms":"Alarmas",
         "notifications":"Notificaciones",
-        "profile":"Perfil",
+        "profile":"Mi Cuenta",
         "help":"Ayuda"
     },
 
@@ -204,8 +204,8 @@
     },
 
     "docs":{
-        "title":"Bienvenido a nuestra platafroma para proyectos IoT",
-        "subtitle":"Esta es una guía sobre cómo usar la plataforma",
+        "title":"Bienvenido a la plataforma de Ivcar para proyectos IoT",
+        "subtitle":"Con ayuda de esta plataforma te ayudamos a que montes su propio sistema IoT",
         "pages":"SECCIONES",
         "dashboard":"En esta página verá en tiempo real los datos entrantes de tus dispositivos y realizar acciones sobre estos a través de la plantilla asociada al DISPOSITIVO SELECCIONADO",
         "devices":"En la página de dispositivos, podés crear un nuevo dispositivo y ver los dispositivos creados. Podés configurar si el envío de datos del dispositivo se guarda en la base de datos o no cambiando el estado del GRABADOR. Para crear un dispositivo, debe vincularlo a una PLANTILLA.",
@@ -230,7 +230,7 @@
     "city":"Ciudad",
     "country":"País",
     "btnSave":"Guardar",
-    "notif":"Tu perfil fue actualizado!",
+    "notif":"Tu datos fueron actualizados!",
     "invPC":"Código postal inválido",
     "invPhone":"Número de celular inválido",
     "empName":"El nombre no puede estar vacío",

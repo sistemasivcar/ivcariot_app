@@ -256,7 +256,7 @@ export default {
             this.$notify({
               type: "danger",
               icon: "tim-icons icon-bell-55",
-              message: `ATENCIÓN: "${deviceName}" Fuera de Línea`
+              message: `"${deviceName}" Fuera de Línea`
             });
           } else if (status == "online") {
 
@@ -264,7 +264,7 @@ export default {
             this.$notify({
               type: "success",
               icon: "tim-icons icon-bell-55",
-              message: `ATENCIÓN: "${deviceName}" En Línea`
+              message: `"${deviceName}" En Línea`
             });
           }
         }

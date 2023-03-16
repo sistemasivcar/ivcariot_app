@@ -83,6 +83,9 @@ import NewDevice from "../../../components/Devices/NewDevice.vue";
 export default {
   middleware: "authtenticated",
   components: { NewDevice, ListDevices },
+  head: {
+    title: 'IvcarIoT - Dispositivos',
+  },
   data() {
     return {
       showViewCreate: false,

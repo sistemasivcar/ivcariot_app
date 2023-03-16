@@ -1,8 +1,8 @@
 {
-  "name": "ivcar",
+  "name": "IvcarIoT",
   "version": "1.0.0",
-  "description": "Plataforma IvcarIoT",
-  "author": "ivcar.com",
+  "description": "Plataforma de Ivcar para IoT",
+  "author": "ivcariot.com",
   "scripts": {
     "dev": "nuxt",
     "devn": "nodemon api/index.js --exec babel-node",

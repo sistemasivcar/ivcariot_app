@@ -4,7 +4,8 @@
       <card class="card-login card-white">
         <template slot="header">
           <img src="/img//card-info.png" alt="" />
-          <h1 class="card-title">IvcarIoT</h1>
+          <h1 class="card-title">Ivcar
+            IoT</h1>
         </template>
 
         <div @keyup.enter="register()">
@@ -92,6 +93,16 @@
 export default {
   middleware: "notAuthenticated",
   layout: "auth",
+  head: {
+    title: 'IvcarIoT - Registro',
+    meta: [
+      {
+        hid: 'crearcuenta',
+        name: 'crear una cuenta',
+        content: 'crear una cuenta'
+      }
+    ],
+  },
   data() {
     return {
       phone: "",
@@ -133,7 +144,7 @@ export default {
         this.nameValidity = true;
         this.isValidForm = true;
       }
-      if (!this.user.email.match(regexEmail)) {
+      if (!this.user.email || !this.user.email.match(regexEmail)) {
         this.isValidForm = false;
         this.emailValidity = false;
       } else {
@@ -152,7 +163,9 @@ export default {
       try {
         this.validateForm();
 
-        if (!this.isValidForm) return;
+        if (!this.isValidForm || !this.emailValidity) {
+          return;
+        }
 
         this.user.phones = [this.phone];
         this.user.config = {
@@ -160,24 +173,19 @@ export default {
           notifDesconnectedDevices: false
         };
 
-        console.dir(this.user);
-
         const res = await this.$axios.post("/user/register", this.user);
-        console.dir(res);
-        if (res.data.status === "error") {
-          this.$notify({
-            type: "success",
-            icon: "tim-icons icon-check-2",
-            message: "Registro exitoso! Ahora te podés loguar"
-          });
-        }
+
         if (res.data.status === "success") {
           this.$notify({
             type: "success",
             icon: "tim-icons icon-check-2",
-            message: "Registro exitoso! Ahora te podés loguar"
+            message: "Registro exitoso! Ahora te podés loguear"
           });
+          
+          this.$router.push("/auth/login");
+          this.clearInputs();
         }
+
       } catch (e) {
         console.dir(e)
         if (e.response.data.err.errors.email.kind == "unique") {

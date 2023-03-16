@@ -137,6 +137,9 @@ import NewAlarm from "../../../components/Alarms/NewAlarm.vue";
 export default {
   middleware: "authtenticated",
   components: { ListAlarms, NewAlarm },
+  head: {
+    title: 'IvcarIoT - Alarmas',
+  },
   data() {
     return {
       showViewList: true,

@@ -38,6 +38,9 @@
 import Card from '../../components/Cards/Card.vue'
 export default {
   components: { Card },
+  head: {
+    title: 'IvcarIoT - Ayuda',
+  },
     middleware:'authtenticated',
 }
 </script>
