@@ -1,7 +1,7 @@
 {
-  "name": "IvcarIoT",
+  "name": "ivcariot",
   "version": "1.0.0",
-  "description": "Plataforma de Ivcar para IoT",
+  "description": "Plataforma IoT - Montá tu negocio de IoT",
   "author": "ivcariot.com",
   "scripts": {
     "dev": "nuxt",
