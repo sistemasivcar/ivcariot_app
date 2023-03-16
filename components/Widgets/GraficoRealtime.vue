@@ -132,23 +132,21 @@ export default {
           this.chartOptions.series[0].data = [];
 
           this.chartOptions.chart.defaultSeriesType = this.config.defaultSeriesType;
-          
           this.getChartData();
           this.chartOptions.series[0].name =
             this.config.variableFullName + " " + this.config.unit;
           this.updateColorClass();
           window.dispatchEvent(new Event("resize"));
-        }, 300);
+        }, 100);
+      },
+      'config.class'(){
+        this.updateColorClass();
       }
-  },
-  watch:{
-    value(val){
-      console.log(val)
-    }
+
   },
   mounted() {
     this.getNow();
-    console.log(this.value)
+    
     this.updateColorClass();
     this.topic =
             this.config.userId +
@@ -157,6 +155,7 @@ export default {
             "/" +
             this.config.variable;
             this.$nuxt.$on(this.topic + "/sdata",this.procesReceivedData);
+            this.getChartData();
   },
   beforeDestroy() {
     this.$nuxt.$off(this.topic + "/sdata");
@@ -246,7 +245,7 @@ export default {
     procesReceivedData(data) {
       try {
         this.time = Date.now();
-        console.log(data);
+
         this.value = data.value;
         setTimeout(() => {
           if (data.save == 1) {

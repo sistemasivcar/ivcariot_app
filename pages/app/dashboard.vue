@@ -82,7 +82,6 @@ export default {
       // le vuevlo a poner el userId por el tema de plantillas compartidas
       // (sino queda siempre la del usuairo creador) 
       widgetCopy.userId = this.$store.getters["auth/getUserId"]
-      console.log(this.$store.getters["auth/getUserId"]);
       widgetCopy.selectedDevice.name = this.$store.state.devices.selectedDevice.name;
       widgetCopy.selectedDevice.dId = this.$store.state.devices.selectedDevice.dId;
       widgetCopy.demo = false;

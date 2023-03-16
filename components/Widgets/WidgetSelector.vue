@@ -15,7 +15,8 @@
       </el-option>
       <el-option class="text-dark" value="indicator" :label="$t('widindicator')">
       </el-option>
-      <el-option class="text-dark" value="switch" label="Switch "></el-option>
+      <el-option class="text-dark" value="map_" label="Switch (Prox)"></el-option>
+      <el-option class="text-dark" value="switch_" label="Geo-posicionamiento (Prox)"></el-option>
       <el-option class="text-dark" value="button" :label="$t('widbutton')"></el-option>
     </el-select>
   

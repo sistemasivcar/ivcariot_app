@@ -11,7 +11,7 @@ export default {
         this.$router.replace('/app/dashboard');
     },
     head: {
-    title: 'Home - Internet Of Things',
+    title: 'Ivcar - Plataforma IoT - Conectá tus Dispositivos a la Nube',
     meta: [
       {
         hid: 'subí tus dispositivos a la nube',

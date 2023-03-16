@@ -192,7 +192,7 @@ export default {
 
         this.client.subscribe(deviceSubscribeTopic, { qos: 0 },  (err)=>{
           if (err) return err;
-          console.log("subs success")
+          
           this.$store.commit('auth/setSubscription',true);
         });
         this.client.subscribe(statusSubscribeTopic, { qos: 0 }, err => {
@@ -209,7 +209,7 @@ export default {
       });
 
       this.client.on("message", (topic, message) => {
-        console.log("message recived from: ",topic, " ---- ", message.toString());
+        //console.log("message recived from: ",topic, " ---- ", message.toString());
         
         const splittedTopic = topic.split("/");
         const msgType = splittedTopic[3];
