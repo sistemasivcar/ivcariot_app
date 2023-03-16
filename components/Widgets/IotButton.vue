@@ -43,7 +43,7 @@ export default {
   },
   watch:{
     'config.selectedDevice.dId'(){
-      this.topic=`${config.userId}/${config.selectedDevice.dId}/${config.variable}/actdata`
+      this.topic=`${this.config.userId}/${this.config.selectedDevice.dId}/${this.config.variable}/actdata`
     }
   },
   methods: {
@@ -89,7 +89,7 @@ export default {
     }
   },
   mounted() {
-    this.topic=`${config.userId}/${config.selectedDevice.dId}/${config.variable}/actdata`
+    this.topic=`${this.config.userId}/${this.config.selectedDevice.dId}/${this.config.variable}/actdata`
   }
 };
 </script>
