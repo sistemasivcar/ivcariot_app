@@ -1,9 +1,10 @@
 <template>
-  <card >
+  <card>
     <!-- header-card -->
     <template slot="header">
       <h4 class="card-title">
-        {{ capitalizeWord(config.selectedDevice.name) }} - {{ capitalizeWord(config.variableFullName) }}
+        {{ capitalizeWord(config.selectedDevice.name) }} -
+        {{ capitalizeWord(config.variableFullName) }}
       </h4>
     </template>
 
@@ -14,43 +15,48 @@
         :class="[config.icon, getColorIcon]"
         style="font-size:35px"
       ></i>
-      <base-button @click="sendValue" :type="config.colorButton" size="lg" class="pull-right">{{
-        config.text
-      }}</base-button>
-
-      
-
+      <base-button
+        @click="sendValue"
+        :type="config.colorButton"
+        size="lg"
+        class="pull-right"
+        >{{ config.text }}</base-button
+      >
     </template>
 
     <!-- footer-card -->
     <template slot="raw-content"> </template>
-    
   </card>
 </template>
 
 <script>
-import Json from '../Json.vue';
+import Json from "../Json.vue";
 export default {
   components: { Json },
-  props:['config'],
+  props: ["config"],
   data() {
     return {
       sneding: false,
       colorIndicator: "text-",
-      };
+      topic:"",
+    };
+  },
+  watch:{
+    'config.selectedDevice.dId'(){
+      this.topic=`${config.userId}/${config.selectedDevice.dId}/${config.variable}/actdata`
+    }
   },
   methods: {
-        capitalizarPrimeraLetra(str) {
+    capitalizarPrimeraLetra(str) {
       return str.charAt(0).toUpperCase() + str.slice(1);
     },
-    capitalizeWord(str){
-      let res = '';
-      const words = str.split(' ');
+    capitalizeWord(str) {
+      let res = "";
+      const words = str.split(" ");
       words.forEach(w => {
-        res += this.capitalizarPrimeraLetra(w) + ' '
+        res += this.capitalizarPrimeraLetra(w) + " ";
       });
       return res;
-
     },
     sendValue() {
       this.sneding = true;
@@ -62,33 +68,35 @@ export default {
       const retain = this.config.retain || false;
       const qos = this.config.retain ? 1 : 0;
       const toSend = {
-        topic:`${this.config.userId}/${this.config.selectedDevice.dId}/${this.config.variable}/actdata`,
-        msg:{
-            value:this.config.message
+        topic: this.topic,
+        msg: {
+          value: this.config.message
         },
-        flags:{
+        flags: {
           retain,
-          qos,
+          qos
         }
       };
-      this.$nuxt.$emit('mqtt-sender',toSend);
-
-    }
+      this.$nuxt.$emit("mqtt-sender", toSend);
+    },
   },
 
   computed: {
     getColorIcon() {
-      return this.sneding ? this.colorIndicator+this.config.colorButton : this.colorIndicator+"dark";
-    },
-
+      return this.sneding
+        ? this.colorIndicator + this.config.colorButton
+        : this.colorIndicator + "dark";
+    }
   },
-  mounted() {}
+  mounted() {
+    this.topic=`${config.userId}/${config.selectedDevice.dId}/${config.variable}/actdata`
+  }
 };
 </script>
 
 <style scoped>
 .icon-success {
-  color: rgba(0, 240, 205, 0.7)
+  color: rgba(0, 240, 205, 0.7);
 }
 
 .icon-green {
@@ -114,7 +122,6 @@ export default {
   color: rgba(237, 0, 200, 0.7);
 }
 
-
 .button {
   display: inline-block;
   border-radius: 9px;
@@ -122,11 +129,11 @@ export default {
   border: none;
   position: relative;
   overflow: hidden;
-  color: #FFFFFF;
-  text-align:center;
-  margin:4px 1px; 
-        -webkit-transition-duration: 0.4s; /* Safari */
-      transition-duration: 0.4s;
+  color: #ffffff;
+  text-align: center;
+  margin: 4px 1px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
   cursor: pointer;
 }
 .button span {
@@ -136,18 +143,12 @@ export default {
   transition: 0.5s;
 }
 
-
 .button:hover {
-  box-shadow: 2px 2px 6px rgba(0,0,0,.4);
-
- }
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+}
 .button:focus {
   outline: none;
-   width: 75px;
- height: 75px;
+  width: 75px;
+  height: 75px;
 }
-
-
-
-
 </style>
