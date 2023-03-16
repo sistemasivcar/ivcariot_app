@@ -6,7 +6,6 @@
     style="width: 100%;"
   >
 
-  <el-option value="fa-solid fa-faucet-drip" class="text-info" label="askldjksad"> </el-option>
   <el-option value="fa fa-person-rays" class="text-info" label="persona"> </el-option>
   <el-option value="fa fa-bug" class="text-info" label="Bug"> </el-option>
   <el-option value="fa fa-tree" class="text-info" label="Árbol"> </el-option>
