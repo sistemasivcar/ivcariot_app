@@ -89,7 +89,7 @@ export default {
   
   server: {
     port: 3000, // default: 3000
-    host: process.env.environment === 'development' ? '0.0.0.0' : 'localhost'
+    host: process.env.environment === 'production' ? '0.0.0.0' : 'localhost'
   },
   serverMiddleware: process.env.environment === 'production' ? {
     '/api': '~/api'
