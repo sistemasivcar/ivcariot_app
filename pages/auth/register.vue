@@ -12,7 +12,7 @@
             name="name"
             v-model="user.name"
             class="info"
-            :class="{'has-danger':!nameValidity}"
+            :class="{ 'has-danger': !nameValidity }"
             :placeholder="$t('auth.fullnameinp')"
             addon-left-icon="tim-icons icon-badge"
           >
@@ -23,8 +23,8 @@
 
           <base-input
             name="phone"
-            v-model="user.phones"
-            :class="{'has-danger':!phonenumberValidity}"
+            v-model="phone"
+            :class="{ 'has-danger': !phonenumberValidity }"
             :placeholder="$t('auth.phoneinp')"
             addon-left-icon="tim-icons icon-mobile"
           >
@@ -37,7 +37,8 @@
             name="email"
             v-model="user.email"
             :placeholder="$t('auth.emailinp')"
-            :class="{'has-danger':!emailValidity}"
+            type="email"
+            :class="{ 'has-danger': !emailValidity }"
             addon-left-icon="tim-icons icon-email-85"
           >
           </base-input>
@@ -49,7 +50,7 @@
             name="password"
             v-model="user.password"
             type="password"
-            :class="{'has-danger':!passwordValidity}"
+            :class="{ 'has-danger': !passwordValidity }"
             :placeholder="$t('auth.passwordinp')"
             addon-left-icon="tim-icons icon-lock-circle"
           >
@@ -93,12 +94,11 @@ export default {
   layout: "auth",
   data() {
     return {
-      phones: [],
+      phone: "",
       user: {
         name: "",
         email: "",
-        password: "",
-        phones: ""
+        password: ""
       },
       isValidForm: false,
       nameValidity: true,
@@ -116,8 +116,9 @@ export default {
 
     validateForm() {
       var phonesValidos = /^[0-9]+$/;
+      const regexEmail = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
-      if (!this.user.phones || !this.user.phones.match(phonesValidos)) {
+      if (!this.phone || !this.phone.match(phonesValidos)) {
         this.phonenumberValidity = false;
         this.isValidForm = false;
       } else {
@@ -132,7 +133,7 @@ export default {
         this.nameValidity = true;
         this.isValidForm = true;
       }
-      if (!this.user.email) {
+      if (!this.user.email.match(regexEmail)) {
         this.isValidForm = false;
         this.emailValidity = false;
       } else {
@@ -147,48 +148,47 @@ export default {
         this.isValidForm = true;
       }
     },
-    register() {
-      this.validateForm();
+    async register() {
+      try {
+        this.validateForm();
 
-      if (!this.isValidForm) return;
+        if (!this.isValidForm) return;
 
-      this.phones.push(this.user.phones);
-      this.user.phones = this.phones;
-      this.user.config={
-        usePublicTemplates:false,
-        notifDesconnectedDevices:false, 
+        this.user.phones = [this.phone];
+        this.user.config = {
+          usePublicTemplates: false,
+          notifDesconnectedDevices: false
+        };
+
+        console.dir(this.user);
+
+        const res = await this.$axios.post("/user/register", this.user);
+        console.dir(res);
+        if (res.data.status === "error") {
+          this.$notify({
+            type: "success",
+            icon: "tim-icons icon-check-2",
+            message: "Registro exitoso! Ahora te podés loguar"
+          });
+        }
+        if (res.data.status === "success") {
+          this.$notify({
+            type: "success",
+            icon: "tim-icons icon-check-2",
+            message: "Registro exitoso! Ahora te podés loguar"
+          });
+        }
+      } catch (e) {
+        console.dir(e)
+        if (e.response.data.err.errors.email.kind == "unique") {
+          this.$notify({
+            type: "danger",
+            icon: "tim-icons icon-alert-circle-exc",
+            message: "El email ya existe!"
+          });
+          return;
+        }
       }
-
-      this.$axios
-        .post("/user/register", this.user)
-        .then(res => {
-          if (res.data.status === "success") {
-            this.$notify({
-              type: "success",
-              icon: "tim-icons icon-check-2",
-              message: "Registro exitoso! Ahora te podés loguar"
-            });
-
-            this.$router.push("/auth/login");
-
-            this.clearInputs();
-          }
-        })
-        .catch(err => {
-          if (err.response.data.err.errors.email.kind == "unique") {
-            this.$notify({
-              type: "danger",
-              icon: "tim-icons icon-alert-circle-exc",
-              message: "El email ya existe!"
-            });
-          } else {
-            this.$notify({
-              type: "danger",
-              icon: "tim-icons icon-alert-circle-exc",
-              message: "Ups, algo salió mal. Intentá más tarde!"
-            });
-          }
-        });
     }
   }
 };

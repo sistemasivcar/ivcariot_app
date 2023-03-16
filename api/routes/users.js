@@ -25,7 +25,7 @@ router.post('/login', async (req, res) => {
     }
     // email and password are valids
     if (bcrypt.compareSync(password, user.password)) {
-        
+
         user.set('password', undefined, { strict: false });
 
         const token = jwt.sign({ userData: user }, process.env.SECURE_JWT_KEY, { expiresIn: 60 * 60 * 24 * 30 });
@@ -53,6 +53,7 @@ router.post('/login', async (req, res) => {
 // REGISTER
 router.post('/register', asyncMiddleware(async (req, res) => {
 
+    console.log(req.body)
     const password = req.body.password;
     const name = req.body.name;
     const email = req.body.email;
@@ -68,7 +69,9 @@ router.post('/register', asyncMiddleware(async (req, res) => {
         phones,
         config
     };
-    const user = await UserModel.create(newUser)
+
+    await UserModel.create(newUser)
+
     const toSend = {
         status: 'success'
     }
@@ -90,19 +93,19 @@ router.put('/', checkAuth, asyncMiddleware(async (req, res) => {
 
     const resp = await UserModel.updateOne({ _id: userId }, {
         name: userUpdated.name,
-        email:userUpdated.email,
+        email: userUpdated.email,
         phones: userUpdated.phones,
         country: userUpdated.country,
         city: userUpdated.city,
         codezip: userUpdated.codezip,
-        config:{
-            usePublicTemplates:userUpdated.config.usePublicTemplates,
-            locale:userUpdated.config.locale
+        config: {
+            usePublicTemplates: userUpdated.config.usePublicTemplates,
+            locale: userUpdated.config.locale
         }
-        
+
     });
     if (resp.n === 1 && resp.ok === 1) {
-        res.json({status:'success'})
+        res.json({ status: 'success' })
     }
     else {
         res.json({ status: 'error' })
@@ -113,49 +116,49 @@ router.put('/', checkAuth, asyncMiddleware(async (req, res) => {
 
 //GET MQTT CREDENTIALS
 router.post('/getmqttcredentials', checkAuth, asyncMiddleware(async (req, res) => {
-    
+
     const userId = req.userData._id;
     const credentials = await getWebUserMqttCredentials(userId);
     const toSend = {
         status: 'success',
         username: credentials.username,
-        password:credentials.password,
-    }    
-    
+        password: credentials.password,
+    }
+
     res.json(toSend);
 
     setTimeout(() => {
         getWebUserMqttCredentials(userId)
-    },7000)
-    
+    }, 7000)
+
     return;
 
 }));
 
-router.post('/getmqttcredentialsforreconnection', checkAuth,asyncMiddleware(async (req, res) => {
-    
+router.post('/getmqttcredentialsforreconnection', checkAuth, asyncMiddleware(async (req, res) => {
+
     const userId = req.userData._id;
     const credentials = await getWebUserMqttCredentialsForReconnection(userId);
-    if (credentials==false) {
+    if (credentials == false) {
         throw new Error('fail to get credentials')
     }
 
     const toSend = {
         status: 'success',
         username: credentials.username,
-        password:credentials.password
+        password: credentials.password
     }
     res.status(200).json(toSend);
 
     setTimeout(() => {
         getWebUserMqttCredentials(userId);
-    },30000)
+    }, 30000)
 
-    
+
 }))
 
 router.post('/logout', asyncMiddleware(async (req, res) => {
-    
+
 }))
 // mqtt credentials types: "user", "device", "superuser"
 
@@ -200,7 +203,7 @@ async function getWebUserMqttCredentials(userId) {
             }
         }
         return false;
-        
+
 
     } catch (error) {
         return false;
@@ -209,14 +212,14 @@ async function getWebUserMqttCredentials(userId) {
 }
 
 async function getWebUserMqttCredentialsForReconnection(userId) {
-    
+
     try {
         const credentials = await EmqxAuthRule.findOne({ type: 'user', userId: userId });
         if (!credentials) return false;
 
         return {
             username: credentials.username,
-            password:credentials.password
+            password: credentials.password
         }
     } catch (e) {
         return false

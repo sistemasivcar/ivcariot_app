@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
     config:{type:Object}
 });
 
-userSchema.plugin(uniqueValidator, { message: 'Sorry, email or phone already exists ):' });
+userSchema.plugin(uniqueValidator, { message: 'Sorry, email already exists ):' });
 
 const UserModel = mongoose.model('User', userSchema);
 
