@@ -245,12 +245,17 @@ export default {
 
         
         } else if (msgType == "status") {
+
           const msg = JSON.parse(message.toString());
-          setTimeout(() => {
-            this.getDevices(); // update the view
-          }, 5000);
+          
           const deviceName = msg.name;
           const status = msg.status;
+          const dId = splittedTopic[1];
+
+          this.$store.commit("devices/setStatus",{
+            dId,
+            status
+          });
 
 
           if (status == "offline") {
@@ -259,9 +264,8 @@ export default {
               icon: "tim-icons icon-bell-55",
               message: `"${deviceName}" Fuera de Línea`
             });
+            
           } else if (status == "online") {
-
-
             this.$notify({
               type: "success",
               icon: "tim-icons icon-bell-55",

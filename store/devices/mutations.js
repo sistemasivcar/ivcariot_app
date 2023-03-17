@@ -9,6 +9,15 @@ export default {
     setSelectedDevice(state, device) {
         state.selectedDevice = device;
     },
+    setStatus(state, payload){
+        /* payload:{
+            dId:"",
+            status:""
+        } */
+        
+        const device = state.devices.find(d => d.dId = payload.dId);
+        device.status=payload.status;
+    }
 
 
 }
