@@ -106,6 +106,7 @@ export default {
   middleware: "authtenticated",
   data() {
     return {
+      fetchingData:false,
       isLoading:false,
       user: {
         email: "",

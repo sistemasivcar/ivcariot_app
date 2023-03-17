@@ -1,12 +1,12 @@
 <template>
   <div>
-    
-    <LazyNewDevice
+    <LoadingPanel v-if="loadingTemplates"></LoadingPanel>
+    <NewDevice
       v-if="showViewCreate || devices.length == 0"
       @cancel-creation="cancelCreation()"
       @device-created="deviceCreated()"
       :templates="templates"
-    ></LazyNewDevice>
+    ></NewDevice>
 
     <ListDevices
       v-if="showViewList"
@@ -79,15 +79,17 @@
 <script>
 import ListDevices from "../../../components/Devices/ListDevices.vue";
 import NewDevice from "../../../components/Devices/NewDevice.vue";
+import LoadingPanel from "../../../components/LoadingPanel.vue";
 
 export default {
   middleware: "authtenticated",
-  components: { NewDevice, ListDevices },
+  components: { NewDevice, ListDevices, LoadingPanel },
   head: {
     title: 'IvcarIoT - Dispositivos',
   },
   data() {
     return {
+      loadingTemplates:false,
       showViewCreate: false,
       showViewList: true,
       welcome: false,
@@ -108,6 +110,7 @@ export default {
       this.showViewList = true;
     },
     async getTemplates() {
+      this.loadingTemplates=true;
       try {
         const token = this.$store.state.auth.auth.token;
         const axiosHeaders = {
@@ -133,6 +136,8 @@ export default {
           icon: "tim-icons icon-alert-circle-exc",
           message: "Fail to load templates"
         });
+      }finally{
+        this.loadingTemplates=false;
       }
     },
     goTemplates() {

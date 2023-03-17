@@ -1,18 +1,23 @@
 <template>
   <div>
     <div>
-      <NewTemplate
-        @new-template="updateTemplates"
-        :templates="templates"
-        @cancel-creation="(showViewList = true), (showViweCreate = false)"
-        v-if="showViweCreate || templates.length == 0"
-      ></NewTemplate>
-      <ListTemplates
-        v-if="showViewList"
-        @get-templates="updateTemplates"
-        :templates="templates"
-        @create-template="(showViweCreate = true), (showViewList = false)"
-      ></ListTemplates>
+
+      <LoadingPanel v-if="loadingTemplates"></LoadingPanel>
+
+      <div v-else>
+        <NewTemplate
+          @new-template="updateTemplates"
+          :templates="templates"
+          @cancel-creation="(showViewList = true), (showViweCreate = false)"
+          v-if="showViweCreate || templates.length == 0"
+        ></NewTemplate>
+        <ListTemplates
+          v-if="showViewList"
+          @get-templates="updateTemplates"
+          :templates="templates"
+          @create-template="(showViweCreate = true), (showViewList = false)"
+        ></ListTemplates>
+      </div>
     </div>
 
     <Modal
@@ -79,19 +84,22 @@ import ListTemplates from "../../../components/Templates/ListTemplates.vue";
 import NewTemplate from "../../../components/Templates/NewTemplate.vue";
 import { Modal } from "@/components";
 import BaseButton from "../../../components/BaseButton.vue";
+import LoadingPanel from "../../../components/LoadingPanel.vue";
 
 export default {
   components: {
     NewTemplate,
     ListTemplates,
-    BaseButton
-  },
+    BaseButton,
+    LoadingPanel
+},
   middleware: ["authtenticated"],
   head: {
     title: 'IvcarIoT - Plantillas',
   },
   data() {
     return {
+      loadingTemplates:false,  
       templates: [],
       showViweCreate: false,
       showViewList: true,
@@ -107,6 +115,7 @@ export default {
 
     async getTemplates() {
       try {
+        this.loadingTemplates=true;
         const token = this.$store.getters["auth/getToken"];
         const axiosHeaders = {
           headers: {
@@ -119,19 +128,13 @@ export default {
           this.templates = res.data.data;
         }
       } catch (e) {
-        if (!e.response) {
-          this.$notify({
-            type: "danger",
-            icon: "tim-icons icon-alert-circle-exc",
-            message: "Network Error"
-          });
-          return;
-        }
         this.$notify({
           type: "danger",
           icon: "tim-icons icon-alert-circle-exc",
           message: "Fail to load templates"
         });
+      }finally{
+        this.loadingTemplates=false;
       }
     }
   },

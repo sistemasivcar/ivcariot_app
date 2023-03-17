@@ -1,6 +1,6 @@
 <template>
   <div>
-    <LoadingMainPanel v-if="isLoading"></LoadingMainPanel>
+    <LoadingPanel v-if="loadingDevices"></LoadingPanel>
     <div v-else-if="devices.length > 0" class="row">
       <card>
         <template slot="header">
@@ -176,7 +176,7 @@ export default {
   },
   data() {
     return {
-      isLoading: false,
+      loadingDevices:false,
       deviceToDelete: null,
       hasAlarmRules: false
     };
@@ -203,6 +203,7 @@ export default {
     },
     async getDevices() {
       try {
+        this.loadingDevices=true;
         await this.$store.dispatch("devices/fetchDevices");
       } catch (e) {
         this.$notify({
@@ -210,6 +211,8 @@ export default {
           icon: "tim-icons icon-alert-circle-exc",
           message: e
         });
+      }finally{
+        this.loadingDevices=false;
       }
     },
     async updateSaverRuleStatus(device) {

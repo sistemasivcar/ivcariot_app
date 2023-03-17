@@ -102,20 +102,7 @@ export default {
     };
   },
   methods: {
-    
-
-    async getDevices() {
-      try {
-        await this.$store.dispatch("devices/fetchDevices");
-      } catch (e) {
-        this.$notify({
-          type: "danger",
-          icon: "tim-icons icon-alert-circle-exc",
-          message: e
-        });
-      }
-    },
-    
+        
     validateForm() {
       if (
         !this.deviceName ||

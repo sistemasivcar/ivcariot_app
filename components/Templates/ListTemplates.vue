@@ -190,9 +190,10 @@ export default {
     },
     data() {
         return {
-            templateToDelete: null,
+          templateToDelete: null,
             indexToDelete: null,
             templateInUse: false,
+
         }
     },
     computed:{

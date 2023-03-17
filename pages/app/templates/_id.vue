@@ -124,7 +124,8 @@
     </div>
 
     <!-- DASHBOARD PREVIEW -->
-    <div class="row" ref="dashpreview">
+    <LoadingPanel v-if="loadingWidgets"></LoadingPanel>
+    <div class="row" ref="dashpreview" v-else>
 
       <div
         v-for="(widget, index) in widgets"
@@ -193,6 +194,7 @@ import IotNumberchart from "../../../components/Widgets/GraficoRealtime.vue";
 import IotButton from "../../../components/Widgets/IotButton.vue";
 import IotSwitch from "../../../components/Widgets/IotSwitch.vue";
 import BaseButton from "../../../components/BaseButton.vue";
+import LoadingPanel from '../../../components/LoadingPanel.vue';
 
 export default {
   middleware: "authtenticated",
@@ -209,10 +211,12 @@ export default {
     IotIndicator,
     IotNumberchart,
     IotButton,
-    IotSwitch
+    IotSwitch,
+    LoadingPanel
   },
   data() {
     return {
+      loadingWidgets:false,
       templateName: "",
       widgets: [],
       selectedWidgetName: "",
@@ -291,6 +295,7 @@ export default {
     };
   },
   methods: {
+
     getSelectedWidgetName(name) {
       this.selectedWidgetName = name;
     },
@@ -467,6 +472,7 @@ export default {
     },
     async getWidgets() {
       try {
+        this.loadingWidgets=true;
         const token = this.$store.getters["auth/getToken"];
         const axiosHeaders = {
           headers: {
@@ -491,6 +497,8 @@ export default {
           icon: "tim-icons icon-alert-circle-exc",
           message: "Fail to load template"
         });
+      }finally{
+        this.loadingWidgets=false;
       }
     },
     // para que se actualicen los widgets en las demas vistas --> cambio el devices store
