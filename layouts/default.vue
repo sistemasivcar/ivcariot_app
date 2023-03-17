@@ -264,7 +264,7 @@ export default {
               icon: "tim-icons icon-bell-55",
               message: `"${deviceName}" Fuera de Línea`
             });
-            
+
           } else if (status == "online") {
             this.$notify({
               type: "success",

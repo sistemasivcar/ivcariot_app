@@ -61,11 +61,11 @@ router.post('/', checAuth, asyncMiddleware(async (req, res) => {
     const whpassword = makeid(10);
 
 
-    const resultEmqx = await createSaverRuleInEMQX(userId, newDevice.dId, true);
+    const resultEmqx = await createSaverRuleInEMQX(userId, newDevice.dId, false);
     if (resultEmqx.status == 'error') return res.status(500).json({ status: 'error' });
     const emqxRuleId = resultEmqx.emqxRuleId;
 
-    const resultMongo = await createSaverRuleInMongo(newDevice.dId, true, emqxRuleId);
+    const resultMongo = await createSaverRuleInMongo(newDevice.dId, false, emqxRuleId);
     if (resultMongo.status == 'error') {
         if (resultMongo.error.errors.dId.kind === 'unique') {
             res.status(500).json({ status: 'error', data: 'didunique' });
